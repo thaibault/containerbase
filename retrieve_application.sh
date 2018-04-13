@@ -16,7 +16,7 @@
 for path in \
     "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" "$INITIALIZING_FILE_PATH"
 do
-    touch  && chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" "$path"
+    touch "$path" && chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" "$path"
 done
 if \
     [ "$STANDALONE" = true ] && \
