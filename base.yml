@@ -1,0 +1,11 @@
+version: '2'
+services:
+    base:
+        build:
+            context: ./
+            dockerfile: ./Dockerfile
+        container_name: base
+        image: tsickert/base:latest
+        restart: always
+        volumes:
+            - ../:/srv/http/

@@ -1,0 +1,34 @@
+# -*- coding: utf-8 -*-
+# region header
+# Copyright Torben Sickert (t.sickert["~at~"]gmail.com) 16.12.2012
+
+# License
+# -------
+
+# This library written by Torben Sickert stand under a creative commons naming
+# 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+# endregion
+[Unit]
+Description=Base service handler
+After=docker.service
+BindsTo=docker.service
+Conflicts=shutdown.target reboot.target halt.target
+
+[Service]
+Environment=hostname=%H
+User=root
+Restart=always
+RestartSec=10
+WorkingDirectory=/srv/http/base
+ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/full.yml kill $APP
+ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/full.yml rm --force $APP
+ExecStart=/usr/bin/env docker-compose --file serviceHandler/full.yml up --force-recreate --no-build --no-deps $APP
+ExecStop=/usr/bin/env docker-compose --file serviceHandler/full.yml stop $APP
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
+# region vim modline
+# vim: set tabstop=4 shiftwidth=4 expandtab:
+# vim: foldmethod=marker foldmarker=region,endregion:
+# endregion
