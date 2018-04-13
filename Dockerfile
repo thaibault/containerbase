@@ -73,6 +73,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --noconfirm \
                 --sync \
                 git \
+                openssh \
                 neovim && \
             # endregion
             # region tidy up
