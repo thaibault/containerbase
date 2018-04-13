@@ -50,7 +50,8 @@ then
         'branch="$(git config --file "$toplevel/.gitmodules" "submodule.$name.branch")";git clone --depth 1 --branch "$branch"' && \
     git submodule update --remote && \
     rm --recursive --force .git && \
-    chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
+    chown \
+        "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
         "$APPLICATION_PATH"
 fi
 # region vim modline
