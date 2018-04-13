@@ -12,7 +12,7 @@ FROM        finalduty/archlinux
 MAINTAINER  Torben Sickert <info@torben.website>
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 #EXPOSE      80 443
-ENV         APPLICATION_PATH /root
+ENV         APPLICATION_PATH /root/application
 ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH '/usr/bin/env'
             ## region Application specific configuration
             ## endregion
@@ -22,8 +22,8 @@ ENV         INITIALIZING_FILE_PATH '/usr/bin/initialize'
 ENV         MAIN_USER_GROUP_NAME root
 ENV         MAIN_USER_NAME root
 ENV         PRIVATE_SSH_KEY ''
-ENV         PUBLIC_SSH_KEY 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjd2HXYtP81bH7Rs8PJkO5lzoS2VTPnPg6f5wWruciPg/h9B+MyM+5i4fo/qzNkfI+JXjzsYpqGZf64WCj50HI+IfVQtj7EMT9w1oPWn5eDmqPDuZ+N+SUjd67wzTBiHWciEjJwrY3xvU6UnvndwULdYB2DcK+VEeHlBlXqEQ6FzG4RlTOTlMZa0EZdW2WcwZlcqwgEyexGYmB+0bhJ1TtXY77VmIOLh4+bNNRSHBCOJ3INtOBoiJck81BWlD95qR9dEMuFxQQT1fula3BVPKZfsQKm6eN34Jal8M6DyWI0zubrN3MQZuBb940VnryD68KAz6ELTwaYzxqBJPMijH/ webAPP'
-ENV         KNOWN_HOSTS 'bitbucket.org,131.103.20.167 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw=='
+ENV         PUBLIC_SSH_KEY ''
+ENV         KNOWN_HOSTS ''
 ENV         REPOSITORY_URL 'git@bitbucket.org:tsickert/base.git'
 WORKDIR     $APPLICATION_PATH
 USER        root
@@ -114,6 +114,7 @@ RUN         [ "$STANDALONE" = true ] && \
             chmod 600 .ssh/known_hosts && \
             git clone --depth 1 --no-single-branch "$REPOSITORY_URL" \
                 "$APPLICATION_PATH" && \
+            mkdir --parents "$APPLICATION_PATH" && \
             cd "$APPLICATION_PATH" && \
             git submodule init && \
             git submodule foreach \
