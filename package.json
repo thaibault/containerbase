@@ -21,7 +21,9 @@
   "files": [
     "base.yml",
     "application.yml",
-    "Dockerfile"
+    "Dockerfile",
+    "configure_user.sh",
+    "retrieve_application.sh"
   ],
   "main": "base.yml",
   "repository": {
