@@ -13,9 +13,11 @@ MAINTAINER  Torben Sickert <info@torben.website>
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application
 ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH '/application/package.json'
-ENV         COMMAND 'start'
+ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
 ENV         DEFAULT_MAIN_USER_GROUP_ID 100
 ENV         DEFAULT_MAIN_USER_ID 1000
+            # NOTE: This value has be in synchronisation with the "CMD" given
+            # value.
 ENV         INITIALIZING_FILE_PATH '/usr/bin/initialize'
 ENV         MAIN_USER_GROUP_NAME users
 ENV         MAIN_USER_NAME application
@@ -81,12 +83,17 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             # endregion
 COPY        configure_user.sh /usr/bin/configure-user
 COPY        retrieve_application.sh /usr/bin/retrieve-application
+RUN         configure-user
+RUN         touch "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
+            chown \
+                "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
+                "$APPLICATION_USER_ID_INDICATOR_FILE_PATH"
 RUN         env >/etc/default_environment
             # region set proper user ids and bootstrap application
 RUN         echo -e "#!/usr/bin/bash\n\nset -e\nOLD_GROUP_ID=\$(id --group \"\$MAIN_USER_NAME\")\nOLD_USER_ID=\$(id --user \"\$MAIN_USER_NAME\")\nGROUP_ID_CHANGED=false\nif [[ \"\$HOST_GID\" == '' ]]; then\n    HOST_GID=\"\$(stat --format '%g' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\")\"\nfi\nif [[ \$OLD_GROUP_ID != \$HOST_GID ]]; then\n    echo \"Map group id \$OLD_GROUP_ID from application user \$MAIN_USER_NAME to host group id \$HOST_GID from \$(stat --format '%G' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\").\"\n    usermod --gid \"\$HOST_GID\" \"\$MAIN_USER_NAME\"\n    GROUP_ID_CHANGED=true\nfi\nif [[ \"\$HOST_UID\" == '' ]]; then\n    HOST_UID=\"\$(stat --format '%u' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\")\"\nfi\nUSER_ID_CHANGED=false\nif [[ \$OLD_USER_ID != \$HOST_UID ]]; then\n    echo \"Map user id \$OLD_USER_ID from application user \$MAIN_USER_NAME to host user id \$HOST_UID from \$(stat --format '%U' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\").\"\n    usermod --uid \"\$HOST_UID\" \"\$MAIN_USER_NAME\"\n    USER_ID_CHANGED=true\nfi\nif \$GROUP_ID_CHANGED; then\n    find / -xdev -group \$OLD_GROUP_ID -exec chgrp --no-dereference \$MAIN_USER_GROUP_NAME {} \\;\nfi\nif \$USER_ID_CHANGED; then\n    find / -xdev -user \$OLD_USER_ID -exec chown --no-dereference \$MAIN_USER_NAME {} \\;\nfi\nchmod +x /dev/\nchown \$MAIN_USER_NAME:\$MAIN_USER_GROUP_NAME /proc/self/fd/0 /proc/self/fd/1 /proc/self/fd/2\nset +x\ncommand=\"\$(eval \"echo \$COMMAND\")\"\necho Run command \\\"\$command\\\"\nexec su \$MAIN_USER_NAME --group \$MAIN_USER_GROUP_NAME -c \"\$command\"" \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
-CMD         ["$INITIALIZING_FILE_PATH"]
+CMD         '/usr/bin/initialize'
             # endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:
