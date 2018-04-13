@@ -22,18 +22,40 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
             --gid "$DEFAULT_MAIN_USER_GROUP_ID"
             "$MAIN_USER_GROUP_NAME"
     fi
-    if id --user "$MAIN_USER_NAME" &>/dev/null; then
-        usermod \
-            --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
-            --uid "$DEFAULT_MAIN_USER_ID" \
-            "$MAIN_USER_NAME"
-    else
+    existing_user_id="$(id --user "$MAIN_USER_NAME" 2>/dev/null)"
+    existing_user_name="$(
+        getent passwd "$DEFAULT_MAIN_USER_ID" | \
+            cut --delimiter : --fields 1)"
+    if [ "$existing_user_id" = '' ] && [ "$existing_user_name" = '' ]; then
         useradd \
             --create-home \
             --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
             --no-user-group \
             --uid "$DEFAULT_MAIN_USER_ID" \
             "$MAIN_USER_NAME"
+    elif (( existing_user_id != DEFAULT_MAIN_USER_ID )); then
+        if [ "$existing_user_name" = '' ]; then
+            usermod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                --uid "$DEFAULT_MAIN_USER_ID" \
+                "$MAIN_USER_NAME"
+        elif [ "$existing_user_name" = "$MAIN_USER_NAME" ]; then
+            usermod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                --uid "$DEFAULT_MAIN_USER_ID" \
+                "$existing_user_name"
+        elif [ "$existing_user_id" = '' ]; then
+            usermod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                --login "$MAIN_USER_NAME" \
+                "$existing_user_name"
+        else
+            userdel --force --remove "$existing_user_name"
+            usermod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                --uid "$DEFAULT_MAIN_USER_ID" \
+                "$MAIN_USER_NAME"
+        fi
     fi
     chown \
         --recursive \
