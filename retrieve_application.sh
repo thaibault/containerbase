@@ -50,9 +50,6 @@ then
         'branch="$(git config --file "$toplevel/.gitmodules" "submodule.$name.branch")";git clone --depth 1 --branch "$branch"' && \
     git submodule update --remote && \
     rm --recursive --force .git && \
-    echo AA chown \
-        "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
-        "$APPLICATION_PATH" && \
     chown \
         --recursive \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
