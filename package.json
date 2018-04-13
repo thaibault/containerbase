@@ -1,0 +1,39 @@
+{
+  "name": "docker-base",
+  "version": "1.0.0",
+  "license": "CC-BY-3.0",
+  "description": "generic dockerized application",
+  "homepage": "http://torben.website/dockerBase",
+  "documentationWebsite": {
+    "name": "dockerBase",
+    "tagline": "dockerize your application",
+    "trackingCode": "UA-40192634-TODO"
+  },
+  "keywords": [
+    "application",
+    "archLinux",
+    "arch",
+    "container",
+    "docker",
+    "hosting",
+    "linux",
+  ],
+  "files": [
+    "base.yml",
+    "application.yml",
+    "Dockerfile"
+  ],
+  "main": "base.yml",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thaibault/dockerBase"
+  },
+  "scripts": {
+    "clear": "echo clear",
+    "update": "npm version patch && npm publish",
+    "update:documentation": "documentationWebsite --log-level info"
+  },
+  "devDependencies": {
+    "documentation-website": "^1.0.116"
+  }
+}
