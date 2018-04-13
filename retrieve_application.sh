@@ -32,14 +32,18 @@ then
     chmod 600 .ssh/id_rsa.pub && \
     echo -e "$KNOWN_HOSTS" >.ssh/known_hosts && \
     chmod 600 .ssh/known_hosts && \
-    rm --force --recursive "$APPLICATION_PATH" &>/dev/null && \
+    mkdir --parents "$(dirname "$APPLICATION_PATH")"
+    rm --force --recursive "$APPLICATION_PATH" &>/dev/null
+    git \
+        clone \
+        --depth 1 \
+        --no-single-branch \
+        "$REPOSITORY_URL" \
+        "$APPLICATION_PATH" && \
     touch "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
     chown \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
-        "$APPLICATION_USER_ID_INDICATOR_FILE_PATH"
-    git clone --depth 1 --no-single-branch "$REPOSITORY_URL" \
-        "$APPLICATION_PATH" && \
-    mkdir --parents "$APPLICATION_PATH" && \
+        "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
     cd "$APPLICATION_PATH" && \
     git submodule init && \
     git submodule foreach \
