@@ -16,7 +16,7 @@
     "container",
     "docker",
     "hosting",
-    "linux",
+    "linux"
   ],
   "files": [
     "base.yml",
