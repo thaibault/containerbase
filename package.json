@@ -1,6 +1,6 @@
 {
   "name": "docker-base",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "CC-BY-3.0",
   "description": "generic dockerized application",
   "homepage": "http://torben.website/dockerBase",
