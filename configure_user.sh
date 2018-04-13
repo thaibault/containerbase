@@ -63,7 +63,8 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         "$(pwd)" && \
     echo /usr/bin/bash>>/etc/shells && \
     chsh --shell /usr/bin/bash "$MAIN_USER_NAME" && \
-    usermod --home "$(pwd)" "$MAIN_USER_NAME"
+    usermod --home "$(pwd)" "$MAIN_USER_NAME" && \
+    pwd
 fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:

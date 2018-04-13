@@ -53,7 +53,8 @@ then
     chown \
         --recursive \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
-        "$APPLICATION_PATH"
+        "$APPLICATION_PATH" && \
+    pwd
 fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
