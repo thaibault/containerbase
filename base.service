@@ -19,7 +19,7 @@ Environment=hostname=%H
 User=root
 Restart=always
 RestartSec=10
-WorkingDirectory=/srv/http/base
+WorkingDirectory=/root/application
 ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/full.yml kill $APP
 ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/full.yml rm --force $APP
 ExecStart=/usr/bin/env docker-compose --file serviceHandler/full.yml up --force-recreate --no-build --no-deps $APP
