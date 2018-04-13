@@ -41,15 +41,15 @@ then
         "$REPOSITORY_URL" \
         "$APPLICATION_PATH" && \
     touch "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
-    chown \
-        "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
-        "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
     cd "$APPLICATION_PATH" && \
     git submodule init && \
     git submodule foreach \
         'branch="$(git config --file "$toplevel/.gitmodules" "submodule.$name.branch")";git clone --depth 1 --branch "$branch"' && \
     git submodule update --remote && \
     rm --recursive --force .git && \
+    chown \
+        "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
+        "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
     chown \
         --recursive \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
