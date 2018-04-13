@@ -50,7 +50,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
                 --login "$MAIN_USER_NAME" \
                 "$existing_user_name"
         else
-            userdel --force --remove "$existing_user_name"
+            userdel --force "$existing_user_name"
             usermod \
                 --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
                 --uid "$DEFAULT_MAIN_USER_ID" \
