@@ -10,9 +10,9 @@
 # 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
-# NOTE: Current version of the application will be live in the
-# image. For development scenarios we can simply mount our working
-# copy over the application root.
+# NOTE: Current version of the application will live in the image. For
+# development scenarios we can simply mount our working copy over the
+# application root.
 touch "$INITIALIZING_FILE_PATH" && \
 chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
     "$INITIALIZING_FILE_PATH"
