@@ -30,6 +30,7 @@ if [[ \$OLD_USER_ID != \$HOST_UID ]]; then
     usermod --uid \"\$HOST_UID\" \"\$MAIN_USER_NAME\"
     USER_ID_CHANGED=true
 fi
+# TODO do this for given paths!
 if \$GROUP_ID_CHANGED; then
     find \"\$TEMPORARY_NGINX_PATH\" -xdev -group \$OLD_GROUP_ID -exec chgrp --no-dereference \$MAIN_USER_GROUP_NAME {} \\;
     find ./ -xdev -group \$OLD_GROUP_ID -exec chgrp --no-dereference \$MAIN_USER_GROUP_NAME {} \\;
