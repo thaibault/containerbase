@@ -81,8 +81,9 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             # region tidy up
             rm /var/cache/* --recursive --force
             # endregion
-COPY        configure_user.sh /usr/bin/configure-user
-COPY        retrieve_application.sh /usr/bin/retrieve-application
+COPY        configure-user.sh /usr/bin/configure-user
+COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
+COPY        retrieve-application.sh /usr/bin/retrieve-application
 RUN         configure-user
 RUN         retrieve-application
 RUN         env >/etc/default_environment
