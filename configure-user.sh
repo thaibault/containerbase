@@ -28,19 +28,24 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         exit 1
     fi
     if grep --quiet "$MAIN_USER_GROUP_NAME" /etc/group; then
+        # Change existing group id to specified one.
         groupmod \
             --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
             "$MAIN_USER_GROUP_NAME"
     else
+        # Create non existing group with specified id.
         groupadd \
             --gid "$DEFAULT_MAIN_USER_GROUP_ID"
             "$MAIN_USER_GROUP_NAME"
     fi
+    # NOTE: We have to create or modify existing user depending on user names
+    # or ids which have been assigned already.
     existing_user_id="$(id --user "$MAIN_USER_NAME" 2>/dev/null)"
     existing_user_name="$(
         getent passwd "$DEFAULT_MAIN_USER_ID" | \
             cut --delimiter : --fields 1)"
     if [ "$existing_user_id" = '' ] && [ "$existing_user_name" = '' ]; then
+        # Create specified user with not yet existing name and id.
         useradd \
             --create-home \
             --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
@@ -49,27 +54,35 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
             "$MAIN_USER_NAME"
     elif (( existing_user_id != DEFAULT_MAIN_USER_ID )); then
         if [ "$existing_user_name" = '' ]; then
+            # Change existing user (name already exists) to specified user and
+            # group id.
             usermod \
                 --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
                 --uid "$DEFAULT_MAIN_USER_ID" \
                 "$MAIN_USER_NAME"
         elif [ "$existing_user_name" = "$MAIN_USER_NAME" ]; then
+            # Change existing user (id already exists and name matches
+            # specified one) group id to specified one.
             usermod \
                 --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
-                --uid "$DEFAULT_MAIN_USER_ID" \
                 "$existing_user_name"
         elif [ "$existing_user_id" = '' ]; then
+            # Change existing user (id already exists) to specified user name
+            # and group id.
             usermod \
                 --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
                 --login "$MAIN_USER_NAME" \
                 "$existing_user_name"
         else
+            # Remove existing user with clashing user id and change user and
+            # group id of already existing user (name already exists).
             userdel --force "$existing_user_name"
             usermod \
                 --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
                 --uid "$DEFAULT_MAIN_USER_ID" \
                 "$MAIN_USER_NAME"
         fi
+    # else -> A user already exist with specified user and group id.
     fi
     chown \
         --recursive \
