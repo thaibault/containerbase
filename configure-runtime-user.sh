@@ -10,39 +10,65 @@
 # 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
-OLD_GROUP_ID=\$(id --group \"\$MAIN_USER_NAME\")
-OLD_USER_ID=\$(id --user \"\$MAIN_USER_NAME\")
-GROUP_ID_CHANGED=false
-if [ \"\$HOST_GID\" = '' ]; then
-    HOST_GID=\"\$(stat --format '%g' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\")\"
+EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
+EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
+USER_GROUP_ID_CHANGED=false
+if [ "$HOST_USER_GROUP_ID" = '' ]; then
+    HOST_USER_GROUP_ID="$(
+        stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
-if [[ \$OLD_GROUP_ID != \$HOST_GID ]]; then
-    echo \"Map group id \$OLD_GROUP_ID from application user \$MAIN_USER_NAME to host group id \$HOST_GID from \$(stat --format '%G' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\").\"
-    usermod --gid \"\$HOST_GID\" \"\$MAIN_USER_NAME\"
-    GROUP_ID_CHANGED=true
+if [[ $EXISTING_USER_GROUP_ID != $HOST_USER_GROUP_ID ]]; then
+    echo \
+        Map group id $EXISTING_USER_GROUP_ID from application user \
+        $MAIN_USER_NAME to host group id $HOST_USER_GROUP_ID from \
+        $(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH").
+    usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
+    USER_GROUP_ID_CHANGED=true
 fi
-if [ \"\$HOST_UID\" = '' ]; then
-    HOST_UID=\"\$(stat --format '%u' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\")\"
+if [ "$HOST_USER_ID" = '' ]; then
+    HOST_USER_ID="$(
+        stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
 USER_ID_CHANGED=false
-if [[ \$OLD_USER_ID != \$HOST_UID ]]; then
-    echo \"Map user id \$OLD_USER_ID from application user \$MAIN_USER_NAME to host user id \$HOST_UID from \$(stat --format '%U' \"\$APPLICATION_USER_ID_INDICATOR_FILE_PATH\").\"
-    usermod --uid \"\$HOST_UID\" \"\$MAIN_USER_NAME\"
+if [[ $EXISTING_USER_ID != $HOST_USER_ID ]]; then
+    echo \
+        Map user id $EXISTING_USER_ID from application user $MAIN_USER_NAME \
+        to host user id $HOST_USER_ID from \
+        $(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH").
+    usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
     USER_ID_CHANGED=true
 fi
-# TODO do this for given paths!
-if \$GROUP_ID_CHANGED; then
-    find \"\$TEMPORARY_NGINX_PATH\" -xdev -group \$OLD_GROUP_ID -exec chgrp --no-dereference \$MAIN_USER_GROUP_NAME {} \\;
-    find ./ -xdev -group \$OLD_GROUP_ID -exec chgrp --no-dereference \$MAIN_USER_GROUP_NAME {} \\;
-fi
-if \$USER_ID_CHANGED; then
-    find \"\$TEMPORARY_NGINX_PATH\" -xdev -user \$OLD_USER_ID -exec chown --no-dereference \$MAIN_USER_NAME {} \\;
-    find ./ -xdev -user \$OLD_USER_ID -exec chown --no-dereference \$MAIN_USER_NAME {} \\;
-fi
+for path in "$@"; do
+    if $USER_GROUP_ID_CHANGED; then
+        find \
+            "$path" \
+            -exec chgrp \
+            -group $EXISTING_USER_GROUP_ID \
+            --no-dereference \
+            -xdev \
+            $MAIN_USER_GROUP_NAME {} \;
+    fi
+    if $USER_ID_CHANGED; then
+        find \
+            "$path" \
+            -exec chown \
+            --no-dereference \
+            -user $EXISTING_USER_ID \
+            -xdev \
+            $MAIN_USER_NAME {} \;
+    fi
+done
 chmod +x /dev/
-chown --dereference -L \$MAIN_USER_NAME:\$MAIN_USER_GROUP_NAME /proc/self/fd/0 /proc/self/fd/1 /proc/self/fd/2
+chown \
+    --dereference \
+    -L \
+    $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+    /proc/self/fd/0 \
+    /proc/self/fd/1 \
+    /proc/self/fd/2
 set +x
-exec su \$MAIN_USER_NAME --group \$MAIN_USER_GROUP_NAME -c \"[ ! -f '\${APPLICATION_PATH}/magnolia/'*-webapp/target/*.war ] && npm run build; npm run \$COMMAND\"
+exec su $MAIN_USER_NAME --group $MAIN_USER_GROUP_NAME -c \
+    "[ ! -f '${APPLICATION_PATH}/magnolia/'*-webapp/target/*.war ] && npm run build; npm run $COMMAND"
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
