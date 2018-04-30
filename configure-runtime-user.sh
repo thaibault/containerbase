@@ -62,7 +62,7 @@ for path in "$@"; do
             $MAIN_USER_NAME {} \;
     fi
 done
-if $USER_GROUP_ID_CHANGED || $USER_ID_CHANGED; then
+if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
     chown \
         --dereference \
