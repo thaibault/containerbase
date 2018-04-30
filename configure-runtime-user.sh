@@ -17,7 +17,9 @@ if [ "$HOST_USER_GROUP_ID" = '' ]; then
     HOST_USER_GROUP_ID="$(
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
-if [[ $EXISTING_USER_GROUP_ID != $HOST_USER_GROUP_ID ]]; then
+if (( EXISTING_USER_GROUP_ID == 0 )); then
+    echo Host user group id is \"0\" \(root\), ignoring user mapping.
+elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
     echo \
         Map group id $EXISTING_USER_GROUP_ID from application user \
         $MAIN_USER_NAME to host group id $HOST_USER_GROUP_ID from \
@@ -30,7 +32,9 @@ if [ "$HOST_USER_ID" = '' ]; then
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
 USER_ID_CHANGED=false
-if [[ $EXISTING_USER_ID != $HOST_USER_ID ]]; then
+if (( EXISTING_USER_ID == 0 )); then
+    echo Host user group id is \"0\" \(root\), ignoring user mapping.
+if (( EXISTING_USER_ID != HOST_USER_ID )); then
     echo \
         Map user id $EXISTING_USER_ID from application user $MAIN_USER_NAME \
         to host user id $HOST_USER_ID from \
@@ -58,14 +62,16 @@ for path in "$@"; do
             $MAIN_USER_NAME {} \;
     fi
 done
-chmod +x /dev/
-chown \
-    --dereference \
-    -L \
-    $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
-    /proc/self/fd/0 \
-    /proc/self/fd/1 \
-    /proc/self/fd/2
+if $USER_GROUP_ID_CHANGED || $USER_ID_CHANGED; then
+    chmod +x /dev/
+    chown \
+        --dereference \
+        -L \
+        $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+        /proc/self/fd/0 \
+        /proc/self/fd/1 \
+        /proc/self/fd/2
+fi
 set +x
 exec su $MAIN_USER_NAME --group $MAIN_USER_GROUP_NAME -c \
     "[ ! -f '${APPLICATION_PATH}/magnolia/'*-webapp/target/*.war ] && npm run build; npm run $COMMAND"
