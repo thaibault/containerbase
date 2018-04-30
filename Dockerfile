@@ -88,7 +88,7 @@ RUN         configure-user
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region set proper user ids and bootstrap application
-RUN         echo -e "#!/usr/bin/bash\n\nset -e\nconfigure-runtime-user /\ncommand=\"\$(eval \"echo \$COMMAND\")\"\necho Run command \\\"\$command\\\"\nexec su \$MAIN_USER_NAME --group \$MAIN_USER_GROUP_NAME -c \"\$command\"" \
+RUN         echo -e '#!/usr/bin/bash\n\nset -e\nconfigure-runtime-user /' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
 CMD         '/usr/bin/initialize'
