@@ -22,10 +22,21 @@ if (( EXISTING_USER_GROUP_ID == 0 )); then
 elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
     echo \
         Map group id $EXISTING_USER_GROUP_ID from application user \
-        $MAIN_USER_NAME to host group id $HOST_USER_GROUP_ID from \
-        $(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH").
-    usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
-    USER_GROUP_ID_CHANGED=true
+        \"$MAIN_USER_NAME\" to host group id $HOST_USER_GROUP_ID from \
+        \"$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\".
+    declare -r existing_user_group_name="$(
+        getent group "$HOST_USER_GROUP_ID" | \
+            cut --delimiter : --fields 1)"
+    if [ "$existing_user_group_id" = '' ]; then
+        usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
+        USER_GROUP_ID_CHANGED=true
+    else
+        echo \
+            Host user group id $HOST_USER_GROUP_ID could not be mapped into \
+            container since this group id id is already used by application \
+            user group \"$existing_user_group_name\". &>2
+        exit 1
+    fi
 fi
 if [ "$HOST_USER_ID" = '' ]; then
     HOST_USER_ID="$(
@@ -36,11 +47,22 @@ if (( EXISTING_USER_ID == 0 )); then
     echo Host user group id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_ID != HOST_USER_ID )); then
     echo \
-        Map user id $EXISTING_USER_ID from application user $MAIN_USER_NAME \
-        to host user id $HOST_USER_ID from \
-        $(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH").
-    usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
-    USER_ID_CHANGED=true
+        Map user id $EXISTING_USER_ID from application user \
+        \"$MAIN_USER_NAME\" to host user id $HOST_USER_ID from \
+        \"$(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\".
+    declare -r existing_user_name="$(
+        getent passwd "$HOST_USER_ID" | \
+            cut --delimiter : --fields 1)"
+    if [ "$existing_user_id" = '' ]; then
+        usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
+        USER_ID_CHANGED=true
+    else
+        echo \
+            Host user id $HOST_USER_ID could not be mapped into container \
+            since this user id is already used by application user \
+            \"$existing_user_name\". &>2
+        exit 1
+    fi
 fi
 for path in "$@"; do
     if $USER_GROUP_ID_CHANGED; then
