@@ -30,7 +30,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
     # NOTE: We have to create or modify existing user group depending on user
     # group names or ids which have been assigned already.
     declare -r existing_user_group_id="$(
-        getent group "$DEFAULT_MAIN_USER_GROUP_ID" | \
+        getent group "$MAIN_USER_GROUP_NAME" | \
             cut --delimiter : --fields 3)"
     declare -r existing_user_group_name="$(
         getent group "$DEFAULT_MAIN_USER_GROUP_ID" | \
