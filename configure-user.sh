@@ -27,16 +27,50 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
             &>/dev/stderr
         exit 1
     fi
-    if grep --quiet "$MAIN_USER_GROUP_NAME" /etc/group; then
-        # Change existing group id to specified one.
-        groupmod \
-            --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
-            "$MAIN_USER_GROUP_NAME"
-    else
-        # Create non existing group with specified id.
-        groupadd \
-            --gid "$DEFAULT_MAIN_USER_GROUP_ID"
-            "$MAIN_USER_GROUP_NAME"
+    # NOTE: We have to create or modify existing user group depending on user
+    # group names or ids which have been assigned already.
+    declare -r existing_user_group_id="$(
+        getent group "$DEFAULT_MAIN_USER_GROUP_ID" | \
+            cut --delimiter : --fields 3)"
+    declare -r existing_user_group_name="$(
+        getent group "$DEFAULT_MAIN_USER_GROUP_ID" | \
+            cut --delimiter : --fields 1)"
+    if \
+        [ "$existing_user_group_id" = '' ] && \
+        [ "$existing_user_group_name" = '' ]
+    then
+        # Create specified user group with not yet existing name and id.
+        groupadd --gid "$DEFAULT_MAIN_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
+    elif (( existing_user_group_id != DEFAULT_MAIN_USER_GROUP_ID )); then
+        if [ "$existing_user_group_name" = '' ]; then
+            # Change existing user group (name already exists) to specified
+            # user group id.
+            groupmod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                "$MAIN_USER_GROUP_NAME"
+        elif [ "$existing_user_group_name" = "$MAIN_USER_GROUP_NAME" ]; then
+            # Change existing user group (id already exists and name matches
+            # specified one) id to specified one.
+            groupmod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                "$existing_user_group_name"
+        elif [ "$existing_user_group_id" = '' ]; then
+            # Change existing user group (id already exists) to specified user
+            # group name and id.
+            groupmod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                --new-name "$MAIN_USER_GROUP_NAME" \
+                "$existing_user_group_name"
+        else
+            # Remove existing user group with clashing user group id and change
+            # user group id of already existing user group (name already
+            # exists).
+            groupdel --force "$existing_user_group_name"
+            groupmod \
+                --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
+                "$MAIN_USER_GROUP_NAME"
+        fi
+    # else -> A user group already exist with specified user group id.
     fi
     # NOTE: We have to create or modify existing user depending on user names
     # or ids which have been assigned already.
