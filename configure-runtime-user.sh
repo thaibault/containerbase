@@ -10,7 +10,7 @@
 # 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
-declare -ir EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
+declare -ir EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_GROUP_NAME")
 declare -ir EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 USER_GROUP_ID_CHANGED=false
 if [ "$HOST_USER_GROUP_ID" = '' ]; then

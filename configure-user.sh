@@ -40,8 +40,8 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
     fi
     # NOTE: We have to create or modify existing user depending on user names
     # or ids which have been assigned already.
-    declare -ir existing_user_id="$(id --user "$MAIN_USER_NAME" 2>/dev/null)"
-    declare -ir existing_user_name="$(
+    declare -r existing_user_id="$(id --user "$MAIN_USER_NAME" 2>/dev/null)"
+    declare -r existing_user_name="$(
         getent passwd "$DEFAULT_MAIN_USER_ID" | \
             cut --delimiter : --fields 1)"
     if [ "$existing_user_id" = '' ] && [ "$existing_user_name" = '' ]; then
