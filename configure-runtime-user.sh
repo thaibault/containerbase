@@ -10,7 +10,7 @@
 # 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
-declare -ir EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_GROUP_NAME")
+declare -ir EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 declare -ir EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 USER_GROUP_ID_CHANGED=false
 if [ "$HOST_USER_GROUP_ID" = '' ]; then
@@ -68,20 +68,18 @@ for path in "$@"; do
     if $USER_GROUP_ID_CHANGED; then
         find \
             "$path" \
-            -exec chgrp \
             -group $EXISTING_USER_GROUP_ID \
             --no-dereference \
             -xdev \
-            $MAIN_USER_GROUP_NAME {} \;
+            -exec chgrp $MAIN_USER_GROUP_NAME {} \;
     fi
     if $USER_ID_CHANGED; then
         find \
             "$path" \
-            -exec chown \
             --no-dereference \
             -user $EXISTING_USER_ID \
             -xdev \
-            $MAIN_USER_NAME {} \;
+            -exec chown $MAIN_USER_NAME {} \;
     fi
 done
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
