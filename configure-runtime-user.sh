@@ -17,7 +17,7 @@ if [ "$HOST_USER_GROUP_ID" = '' ]; then
     HOST_USER_GROUP_ID="$(
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
-if (( EXISTING_USER_GROUP_ID == 0 )); then
+if (( HOST_USER_GROUP_ID == 0 )); then
     echo Host user group id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
     echo \
@@ -43,8 +43,8 @@ if [ "$HOST_USER_ID" = '' ]; then
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
 USER_ID_CHANGED=false
-if (( EXISTING_USER_ID == 0 )); then
-    echo Host user group id is \"0\" \(root\), ignoring user mapping.
+if (( HOST_USER_ID == 0 )); then
+    echo Host user id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_ID != HOST_USER_ID )); then
     echo \
         Map user id $EXISTING_USER_ID from application user \
