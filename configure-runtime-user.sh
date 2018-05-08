@@ -27,7 +27,7 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
     declare -r existing_user_group_name="$(
         getent group "$HOST_USER_GROUP_ID" | \
             cut --delimiter : --fields 1)"
-    if [ "$existing_user_group_id" = '' ]; then
+    if [ "$EXISTING_USER_GROUP_ID" = '' ]; then
         usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
         USER_GROUP_ID_CHANGED=true
     else
@@ -53,7 +53,7 @@ elif (( EXISTING_USER_ID != HOST_USER_ID )); then
     declare -r existing_user_name="$(
         getent passwd "$HOST_USER_ID" | \
             cut --delimiter : --fields 1)"
-    if [ "$existing_user_id" = '' ]; then
+    if [ "$EXISTING_USER_ID" = '' ]; then
         usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
         USER_ID_CHANGED=true
     else
