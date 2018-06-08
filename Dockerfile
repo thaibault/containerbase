@@ -71,8 +71,11 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --remote-name \
                 https://aur.archlinux.org/cgit/aur.git/snapshot/package-query.tar.gz && \
             tar --extract --file package-query.tar.gz --verbose --ungzip && \
+            rm package-query.tar.gz && \
             pushd package-query && \
-            makepkg --install --syncdeps && \
+            echo A && \
+            makepkg --install --noconfirm --syncdeps && \
+            echo B $? && \
             popd && \
             rm --force --recursive package-query && \
             # Install yaourt:
@@ -80,8 +83,9 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --remote-name \
                 https://aur.archlinux.org/cgit/aur.git/snapshot/yaourt.tar.gz && \
             tar --extract --file yaourt.tar.gz --verbose --ungzip && \
+            rm yaourt.tar.gz && \
             pushd yaourt && \
-            makepkg --install --syncdeps && \
+            makepkg --install --noconfirm --syncdeps && \
             popd && \
             rm --force --recursive yaourt && \
             # endregion
