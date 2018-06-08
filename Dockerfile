@@ -75,6 +75,15 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             makepkg --install --syncdeps && \
             popd && \
             rm --force --recursive package-query && \
+            # Install yaourt:
+            curl \
+                --remote-name \
+                https://aur.archlinux.org/cgit/aur.git/snapshot/yaourt.tar.gz && \
+            tar --extract --file yaourt.tar.gz --verbose --ungzip && \
+            pushd yaourt && \
+            makepkg --install --syncdeps && \
+            popd && \
+            rm --force --recursive yaourt && \
             # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
