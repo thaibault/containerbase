@@ -60,13 +60,21 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --noconfirm \
                 --noprogressbar \
                 --sync \
-                base-devel \
-                yaourt && \
+                base-devel && \
             # NOTE: We have to patch "makepkg" to use it as root.
             sed \
                 --in-place \
                 's/if (( EUID == 0 )); then/if (( EUID == 0 )) \&\& false; then/' \
                 /usr/bin/makepkg && \
+            # Install package-query for yaourt:
+            curl \
+                --remote-name \
+                https://aur.archlinux.org/cgit/aur.git/snapshot/package-query.tar.gz && \
+            tar --extract --file package-query.tar.gz --verbose --ungzip && \
+            pushd package-query && \
+            makepkg --install --syncdeps && \
+            popd && \
+            rm --force --recursive package-query && \
             # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
