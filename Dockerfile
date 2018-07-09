@@ -73,9 +73,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             tar --extract --file package-query.tar.gz --verbose --ungzip && \
             rm package-query.tar.gz && \
             pushd package-query && \
-            echo A && \
             makepkg --install --noconfirm --syncdeps && \
-            echo B $? && \
             popd && \
             rm --force --recursive package-query && \
             # Install yaourt:
