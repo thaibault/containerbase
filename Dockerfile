@@ -8,7 +8,7 @@
 # - docker-compose --file application.yml up
 
             # region configuration
-FROM        finalduty/archlinux
+FROM        base/archlinux
 MAINTAINER  Torben Sickert <info@torben.website>
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application
@@ -37,8 +37,9 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             url='https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on' && \
             temporaryFilePath="$(mktemp --suffix=-mirrorlist)" && \
             echo Donwloading latest mirror list. && \
-            wget --output-document - "$url" | sed 's/^#Server/Server/g' \
-                >"$temporaryFilePath" && \
+            wget --output-document - "$url" | \
+                sed 's/^#Server/Server/g' \
+                    >"$temporaryFilePath" && \
             echo Backing up the original mirrorlist file. && \
             mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
             echo Rotating the new list into place. && \
