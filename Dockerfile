@@ -54,38 +54,27 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --sync \
                 --sysupgrade && \
             # endregion
-            # region install and configure yaourt
+            # region install and configure yay
             pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
                 --sync \
-                base-devel && \
+                base-devel \
+                git && \
             # NOTE: We have to patch "makepkg" to use it as root.
             sed \
                 --in-place \
                 's/if (( EUID == 0 )); then/if (( EUID == 0 )) \&\& false; then/' \
                 /usr/bin/makepkg && \
-            # Install package-query for yaourt:
-            curl \
-                --remote-name \
-                https://aur.archlinux.org/cgit/aur.git/snapshot/package-query.tar.gz && \
-            tar --extract --file package-query.tar.gz --verbose --ungzip && \
-            rm package-query.tar.gz && \
-            pushd package-query && \
-            makepkg --install --noconfirm --syncdeps && \
+            # Install yay:
+            pushd /tmp && \
+            git clone https://aur.archlinux.org/yay.git && \
+            pushd yay && \
+            makepkg --install --syncdeps && \
             popd && \
-            rm --force --recursive package-query && \
-            # Install yaourt:
-            curl \
-                --remote-name \
-                https://aur.archlinux.org/cgit/aur.git/snapshot/yaourt.tar.gz && \
-            tar --extract --file yaourt.tar.gz --verbose --ungzip && \
-            rm yaourt.tar.gz && \
-            pushd yaourt && \
-            makepkg --install --noconfirm --syncdeps && \
+            rm --force --recursive yay && \
             popd && \
-            rm --force --recursive yaourt && \
             # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
