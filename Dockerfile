@@ -57,10 +57,10 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --noprogressbar \
                 --refresh \
                 --sync \
-                --sysupgrade
+                --sysupgrade && \
             # endregion
             # region install and configure yay
-RUN         pacman \
+            pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
@@ -72,24 +72,22 @@ RUN         pacman \
                 --in-place \
                 's/if (( EUID == 0 )); then/if (( EUID == 0 )) \&\& false; then/' \
                 /usr/bin/makepkg && \
-            # Install yay:
             pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
-            makepkg --install --syncdeps && \
+            makepkg --install --needed --noconfirm --syncdeps && \
             popd && \
             rm --force --recursive yay && \
             popd && \
             # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
-            yaourt \
+            yay \
                 --needed \
                 --noconfirm \
                 --sync \
-                git \
-                openssh \
-                neovim && \
+                neovim \
+                openssh && \
             # endregion
             # region tidy up
             rm /var/cache/* --recursive --force
