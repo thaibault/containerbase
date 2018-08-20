@@ -31,7 +31,13 @@ USER        root
             # endregion
             # region retrieve wget
 RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
-            pacman --needed --noconfirm --noprogressbar --sync wget && \
+            pacman \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --refresh \
+                --sync \
+                wget && \
             # endregion
             # region get fastest server update list for germany
             url='https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on' && \
