@@ -44,8 +44,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             echo Rotating the new list into place. && \
             mv "$temporaryFilePath" /etc/pacman.d/mirrorlist && \
             # endregion
-            # region adding arch user repository and download database file
-            if ! grep '^\[archlinuxfr\]' /etc/pacman.conf &>/dev/null; then echo -n -e '\n[archlinuxfr]\nSigLevel = Optional TrustAll\nServer = http://repo.archlinux.fr/$arch' >>/etc/pacman.conf; fi; \
+            # region download database file
             pacman \
                 --needed \
                 --noconfirm \
