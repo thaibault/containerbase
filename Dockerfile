@@ -36,8 +36,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --noconfirm \
                 --noprogressbar \
                 --refresh \
-                --sync \
-                wget && \
+                --sync wget && \
             # endregion
             # region get fastest server update list for germany
             url='https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on' && \
@@ -58,10 +57,10 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --noprogressbar \
                 --refresh \
                 --sync \
-                --sysupgrade && \
+                --sysupgrade
             # endregion
             # region install and configure yay
-            pacman \
+RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
