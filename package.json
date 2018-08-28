@@ -3,7 +3,7 @@
   "version": "1.0.45",
   "license": "CC-BY-3.0",
   "description": "generic dockerized application",
-  "homepage": "http://torben.website/dockerBase",
+  "homepage": "https://torben.website/dockerBase",
   "documentationWebsite": {
     "name": "dockerBase",
     "tagline": "dockerize your application",
@@ -36,6 +36,6 @@
     "update:documentation": "documentationWebsite --log-level info"
   },
   "devDependencies": {
-    "documentation-website": "^1.0.136"
+    "documentation-website": "*"
   }
 }
