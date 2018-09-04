@@ -89,8 +89,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --sync \
                 neovim \
                 openssh && \
-            # endregion
-            # region tidy up
+            # tidy up
             rm /var/cache/* --recursive --force
             # endregion
 COPY        configure-user.sh /usr/bin/configure-user
