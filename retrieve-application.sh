@@ -16,7 +16,8 @@
 for path in \
     "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" "$INITIALIZING_FILE_PATH"
 do
-    touch "$path" && chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" "$path"
+    touch "$path" && \
+        chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" "$path"
 done
 if \
     [ "$STANDALONE" = true ] && \
@@ -24,7 +25,7 @@ if \
     [[ "$PUBLIC_SSH_KEY" != '' ]] && \
     [[ "$REPOSITORY_URL" != '' ]]
 then
-    cd && \
+    cd &>/dev/null && \
     mkdir --parents .ssh && \
     echo -e "$PRIVATE_SSH_KEY" >.ssh/id_rsa && \
     chmod 600 .ssh/id_rsa && \
@@ -32,31 +33,32 @@ then
     chmod 600 .ssh/id_rsa.pub && \
     echo -e "$KNOWN_HOSTS" >.ssh/known_hosts && \
     chmod 600 .ssh/known_hosts && \
-    mkdir --parents "$(dirname "$APPLICATION_PATH")"
+    mkdir --parents "$(dirname "$APPLICATION_PATH")" &>/dev/null && \
     rm --force --recursive "$APPLICATION_PATH" &>/dev/null
     git \
         clone \
         --depth 1 \
         --no-single-branch \
         "$REPOSITORY_URL" \
-        "$APPLICATION_PATH" && \
-    pushd "$APPLICATION_PATH" && \
-    git checkout "$([ "$BRANCH" = '' ] && echo master || echo "$BRANCH")" && \
-    popd && \
-    touch "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
-    cd "$APPLICATION_PATH" && \
-    git submodule init && \
+        "$APPLICATION_PATH" \
+            >/dev/null && \
+    cd "$APPLICATION_PATH" >/dev/null && \
+    git checkout "$([ "$BRANCH" = '' ] && echo master || echo "$BRANCH")" >/dev/null && \
+    touch "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" >/dev/null && \
+    git submodule init >/dev/null && \
     git submodule foreach \
-        'branch="$(git config --file "$toplevel/.gitmodules" "submodule.$name.branch")";git clone --depth 1 --branch "$branch"' && \
-    git submodule update --remote && \
-    rm --recursive --force .git && \
+        'branch="$(git config --file "$toplevel/.gitmodules" "submodule.$name.branch")";git clone --depth 1 --branch "$branch"' >/dev/null && \
+    git submodule update --remote >/dev/null && \
+    rm --recursive --force .git >/dev/null && \
     chown \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
-        "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
+        "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" \
+            >/dev/null && \
     chown \
         --recursive \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
-        "$APPLICATION_PATH" && \
+        "$APPLICATION_PATH" \
+            >/dev/null && \
     pwd
 fi
 # region vim modline
