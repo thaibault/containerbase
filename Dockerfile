@@ -13,6 +13,7 @@ MAINTAINER  Torben Sickert <info@torben.website>
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application
 ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH '/application/package.json'
+ENV         BRANCH master
 ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
 ENV         DEFAULT_MAIN_USER_GROUP_ID 100
 ENV         DEFAULT_MAIN_USER_ID 1000
