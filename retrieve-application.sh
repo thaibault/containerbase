@@ -40,6 +40,7 @@ then
         --no-single-branch \
         "$REPOSITORY_URL" \
         "$APPLICATION_PATH" && \
+    git checkout "$([ "$BRANCH" = '' ] && echo master || echo "$BRANCH")" && \
     touch "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" && \
     cd "$APPLICATION_PATH" && \
     git submodule init && \
