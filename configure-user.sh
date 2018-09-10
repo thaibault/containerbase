@@ -35,14 +35,22 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
     declare -r existing_user_group_name="$(
         getent group "$DEFAULT_MAIN_USER_GROUP_ID" | \
             cut --delimiter : --fields 1)"
-    if \
-        [ "$existing_user_group_id" = '' ] && \
-        [ "$existing_user_group_name" = '' ]
-    then
+    if [[
+        (
+            "$existing_user_group_id" = '' ||
+            "$existing_user_group_id" = UNKNOWN
+        ) && (
+            "$existing_user_group_name" = '' ||
+            "$existing_user_group_name" = UNKNOWN
+        )
+    ]]; then
         # Create specified user group with not yet existing name and id.
         groupadd --gid "$DEFAULT_MAIN_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
     elif (( existing_user_group_id != DEFAULT_MAIN_USER_GROUP_ID )); then
-        if [ "$existing_user_group_name" = '' ]; then
+        if \
+            [ "$existing_user_group_name" = '' ] ||
+            [ "$existing_user_group_name" = UNKNOWN ]
+        then
             # Change existing user group (name already exists) to specified
             # user group id.
             groupmod \
@@ -54,7 +62,10 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
             groupmod \
                 --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
                 "$existing_user_group_name"
-        elif [ "$existing_user_group_id" = '' ]; then
+        elif \
+            [ "$existing_user_group_id" = '' ] || \
+            [ "$existing_user_group_id" = UNKNOWN ]
+        then
             # Change existing user group (id already exists) to specified user
             # group name and id.
             groupmod \
@@ -78,7 +89,15 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
     declare -r existing_user_name="$(
         getent passwd "$DEFAULT_MAIN_USER_ID" | \
             cut --delimiter : --fields 1)"
-    if [ "$existing_user_id" = '' ] && [ "$existing_user_name" = '' ]; then
+    if [[
+        (
+            "$existing_user_id" = '' ||
+            "$existing_user_id" = UNKNOWN
+        ) && (
+            "$existing_user_name" = '' ||
+            "$existing_user_name" = UNKNOWN
+        )
+    ]]; then
         # Create specified user with not yet existing name and id.
         useradd \
             --create-home \
@@ -87,7 +106,10 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
             --uid "$DEFAULT_MAIN_USER_ID" \
             "$MAIN_USER_NAME"
     elif (( existing_user_id != DEFAULT_MAIN_USER_ID )); then
-        if [ "$existing_user_name" = '' ]; then
+        if \
+            [ "$existing_user_name" = '' ] || \
+            [ "$existing_user_name" = UNKNOWN ]
+        then
             # Change existing user (name already exists) to specified user and
             # group id.
             usermod \
@@ -100,7 +122,10 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
             usermod \
                 --gid "$DEFAULT_MAIN_USER_GROUP_ID" \
                 "$existing_user_name"
-        elif [ "$existing_user_id" = '' ]; then
+        elif \
+            [ "$existing_user_id" = '' ] || \
+            [ "$existing_user_id" = UNKNOWN ]
+        then
             # Change existing user (id already exists) to specified user name
             # and group id.
             usermod \
