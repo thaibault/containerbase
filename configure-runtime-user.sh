@@ -13,7 +13,7 @@
 declare -ir EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 declare -ir EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 USER_GROUP_ID_CHANGED=false
-if [ "$HOST_USER_GROUP_ID" = '' ]; then
+if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
     HOST_USER_GROUP_ID="$(
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
@@ -25,7 +25,10 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
         \(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user \
         \"$MAIN_USER_NAME\" to host\'s group id $HOST_USER_GROUP_ID \
         \(\"$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
-    if [ "$EXISTING_USER_GROUP_ID" = '' ]; then
+    if \
+        [ "$EXISTING_USER_GROUP_ID" = '' ] || \
+        [ "$EXISTING_USER_GROUP_ID" = UNKNOWN ]
+    then
         usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
         USER_GROUP_ID_CHANGED=true
     else
@@ -39,7 +42,7 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
         exit 1
     fi
 fi
-if [ "$HOST_USER_ID" = '' ]; then
+if [ "$HOST_USER_ID" = '' ] || [ "$HOST_USER_ID" = UNKNOWN ]; then
     HOST_USER_ID="$(
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
@@ -51,7 +54,7 @@ elif (( EXISTING_USER_ID != HOST_USER_ID )); then
         Map container\'s existing user id $EXISTING_USER_ID \
         \(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID \
         \(\"$(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
-    if [ "$EXISTING_USER_ID" = '' ]; then
+    if [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]; then
         usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
         USER_ID_CHANGED=true
     else
@@ -95,7 +98,7 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
 fi
 set +x
 command="$(eval "echo $COMMAND")"
-if [[ "$command" != '' ]]; then
+if [[ "$command" != '' ]] && [[ "$command" != UNKNOWN ]]; then
     echo Run command \"$command\"
     exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$command"
 fi
