@@ -25,16 +25,41 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
         \(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user \
         \"$MAIN_USER_NAME\" to host\'s group id $HOST_USER_GROUP_ID \
         \(\"$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
-    if \
+    declare -r existing_user_group_name="$(
+        getent group "$HOST_USER_GROUP_ID" | \
+            cut --delimiter : --fields 1)"
+    USER_GROUP_ID_CHANGED=true
+    if [ "$existing_user_group_name" = '' ]; then
+        if \
+            [ "$EXISTING_USER_GROUP_ID" = '' ] || \
+            [ "$EXISTING_USER_GROUP_ID" = UNKNOWN ]
+        then
+            echo \
+                Host user group id does not exist in container and container \
+                does not have any application user group \
+                \"$MAIN_USER_GROUP_NAME\". Creating corresponding user group \
+                and assign to the application user \"$MAIN_USER_NAME\".
+            groupadd --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
+        else
+            echo \
+                Host user group id does not exist in container and container \
+                has already an application user group \
+                \"$MAIN_USER_GROUP_NAME\". Changing corresponding user group \
+                id and assign to the application user \"$MAIN_USER_NAME\".
+            groupmod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
+        fi
+        usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
+    elif \
         [ "$EXISTING_USER_GROUP_ID" = '' ] || \
         [ "$EXISTING_USER_GROUP_ID" = UNKNOWN ]
     then
-        usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
-        USER_GROUP_ID_CHANGED=true
+        echo \
+            Current application user \"$MAIN_USER_NAME\" has no corresponding \
+            group and hosts one exists in container \
+            \"$existing_user_group_name\": assign it to them.
+        usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
+        groupmod --new-name "$MAIN_USER_NAME" "$existing_user_group_name"
     else
-        declare -r existing_user_group_name="$(
-            getent group "$HOST_USER_GROUP_ID" | \
-                cut --delimiter : --fields 1)"
         echo \
             Host user group id $HOST_USER_GROUP_ID could not be mapped into \
             container since this group id is already used by application user \
@@ -51,16 +76,45 @@ if (( HOST_USER_ID == 0 )); then
     echo Host user id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_ID != HOST_USER_ID )); then
     echo \
-        Map container\'s existing user id $EXISTING_USER_ID \
+        Map container\'s existing application user id $EXISTING_USER_ID \
         \(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID \
         \(\"$(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
-    if [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]; then
-        usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
-        USER_ID_CHANGED=true
+    declare -r existing_user_name="$(
+        getent passwd "$HOST_USER_ID" | \
+            cut --delimiter : --fields 1)"
+    USER_ID_CHANGED=true
+    if [ "$existing_user_name" = '' ]; then
+        if \
+            [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]
+        then
+            echo \
+                Host user id does not exist in container and container does \
+                not have any application user \"$MAIN_USER_NAME\". Creating \
+                corresponding user and assign id to them.
+            useradd \
+                --create-home \
+                --gid "$HOST_USER_GROUP_ID" \
+                --no-user-group \
+                --uid "$HOST_USER_ID" \
+                "$MAIN_USER_NAME"
+        else
+            echo \
+                Host user group id does not exist in container and container \
+                has already an application user \"$MAIN_USER_NAME\". \
+                Changing corresponding user id.
+            usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
+        fi
+    elif [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]; then
+        echo \
+            Current application user \"$MAIN_USER_NAME\" does not exist but \
+            hosts one \"$existing_user_name\". Change corresponding user id \
+            to hosts one.
+        usermod \
+            --login "$MAIN_USER_NAME" \
+            --uid "$HOST_USER_ID" \
+            "$existing_user_name"
+        usermod --home "/home/$MAIN_USER_NAME" --move-home "$MAIN_USER_NAME"
     else
-        declare -r existing_user_name="$(
-            getent passwd "$HOST_USER_ID" | \
-                cut --delimiter : --fields 1)"
         echo \
             Host user id $HOST_USER_ID could not be mapped into container \
             since this user id is already used by application user \
