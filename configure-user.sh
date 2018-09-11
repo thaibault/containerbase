@@ -10,13 +10,13 @@
 # 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
-# Set proper default user and group id to avoid expensive user id
-# mapping on application startup.
+# Set proper default user and group id to avoid expensive user id mapping on
+# application startup.
 if [[ "$MAIN_USER_NAME" != root ]]; then
     if (( DEFAULT_MAIN_USER_GROUP_ID == 0 )); then
         echo \
-            If you define \"0\" as default main user group id \"MAIN_USER_GROUP_NAME\" \
-            has to be configured as \"root\". \
+            If you define \"0\" as default main user group id \
+            \"MAIN_USER_GROUP_NAME\" has to be configured as \"root\". \
             &>/dev/stderr
         exit 1
     fi
