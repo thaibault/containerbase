@@ -63,7 +63,8 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
         echo \
             Host user group id $HOST_USER_GROUP_ID could not be mapped into \
             container since this group id is already used by application user \
-            group \"$existing_user_group_name\". &>2
+            group \"$existing_user_group_name\". &>/dev/stderr
+        sync
         exit 1
     fi
 fi
@@ -118,7 +119,7 @@ elif (( EXISTING_USER_ID != HOST_USER_ID )); then
         echo \
             Host user id $HOST_USER_ID could not be mapped into container \
             since this user id is already used by application user \
-            \"$existing_user_name\". &>2
+            \"$existing_user_name\". &>/dev/stderr
         exit 1
     fi
 fi
@@ -127,17 +128,15 @@ for path in "$@"; do
         find \
             "$path" \
             -group $EXISTING_USER_GROUP_ID \
-            --no-dereference \
             -xdev \
-            -exec chgrp $MAIN_USER_GROUP_NAME {} \;
+            -exec chgrp --no-dereference $MAIN_USER_GROUP_NAME {} \;
     fi
     if $USER_ID_CHANGED; then
         find \
             "$path" \
-            --no-dereference \
             -user $EXISTING_USER_ID \
             -xdev \
-            -exec chown $MAIN_USER_NAME {} \;
+            -exec chown --no-dereference $MAIN_USER_NAME {} \;
     fi
 done
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
