@@ -40,6 +40,7 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
                 \"$MAIN_USER_GROUP_NAME\". Creating corresponding user group \
                 and assign to the application user \"$MAIN_USER_NAME\".
             groupadd --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
+            usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         else
             echo \
                 Host user group id does not exist in container and container \
@@ -48,7 +49,6 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
                 id and assign to the application user \"$MAIN_USER_NAME\".
             groupmod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
         fi
-        usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
     elif \
         [ "$EXISTING_USER_GROUP_ID" = '' ] || \
         [ "$EXISTING_USER_GROUP_ID" = UNKNOWN ]
@@ -124,26 +124,143 @@ elif (( EXISTING_USER_ID != HOST_USER_ID )); then
     fi
 fi
 for path in "$@"; do
-    if $USER_GROUP_ID_CHANGED; then
+    all=false
+    follow=false
+    # NOTE: This case hase o be handled before the other to avoid shadowing.
+    if [[ "$path" == *:all:follow ]] || [[ $path == *:follow:all ]]; then
+        all=true
+        follow=true
+        path=${path%:all:follow}
+        path=${path%:follow:all}
+    elif [[ "$path" == *:all ]]; then
+        all=true
+        path=${path%:all}
+    elif [[ "$path" == *:follow ]]; then
+        follow=true
+        path=${path%:follow}
+    fi
+    if $all; then
+        find \
+            "$path" \
+            -xdev \
+            -exec \
+                chgrp \
+                    --no-dereference \
+                    --preserve-root \
+                    "$MAIN_USER_GROUP_NAME" \
+                    {} \
+                    \;
+        if $follow; then
+            find \
+                "$path" \
+                -xdev \
+                -exec \
+                    chgrp \
+                        --dereference \
+                        -H \
+                        --preserve-root \
+                        --recursive \
+                        "$MAIN_USER_GROUP_NAME" \
+                        {} \
+                        \;
+        fi
+    elif \
+        ! $all && \
+        $USER_GROUP_ID_CHANGED && \
+        [[ "$EXISTING_USER_GROUP_ID" != '' ]] && \
+        [[ "$EXISTING_USER_GROUP_ID" != UNKNOWN ]]
+    then
         find \
             "$path" \
             -group $EXISTING_USER_GROUP_ID \
             -xdev \
-            -exec chgrp --no-dereference $MAIN_USER_GROUP_NAME {} \;
+            -exec \
+                chgrp \
+                    --no-dereference \
+                    --preserve-root \
+                    "$MAIN_USER_GROUP_NAME" \
+                    {} \
+                    \;
+        if $follow; then
+            find \
+                "$path" \
+                -group $EXISTING_USER_GROUP_ID \
+                -xdev \
+                -exec \
+                    chgrp \
+                        --dereference \
+                        -H \
+                        --preserve-root \
+                        --recursive \
+                        "$MAIN_USER_GROUP_NAME" \
+                        {} \
+                        \;
+        fi
     fi
-    if $USER_ID_CHANGED; then
+    if $all; then
+        find \
+            "$path" \
+            -xdev \
+            -exec \
+                chown \
+                    --no-dereference \
+                    --preserve-root \
+                    "$MAIN_USER_NAME" \
+                    {} \
+                    \;
+        if $follow; then
+            find \
+                "$path" \
+                -xdev \
+                -exec \
+                    chown \
+                        --dereference \
+                        -H \
+                        --preserve-root \
+                        --recursive \
+                        "$MAIN_USER_NAME" \
+                        {} \
+                        \;
+        fi
+    elif \
+        $USER_ID_CHANGED && \
+        [[ "$EXISTING_USER_ID" != '' ]] && \
+        [[ "$EXISTING_USER_ID" != UNKNOWN ]]
+    then
         find \
             "$path" \
             -user $EXISTING_USER_ID \
             -xdev \
-            -exec chown --no-dereference $MAIN_USER_NAME {} \;
+            -exec \
+                chown \
+                    --no-dereference \
+                    --preserve-root \
+                    "$MAIN_USER_NAME" \
+                    {} \
+                    \;
+        if $follow; then
+            find \
+                "$path" \
+                -user $EXISTING_USER_ID \
+                -xdev \
+                -exec \
+                    chown \
+                        --dereference \
+                        -H \
+                        --preserve-root \
+                        --recursive \
+                        "$MAIN_USER_NAME" \
+                        {} \
+                        \;
+        fi
     fi
 done
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
     chown \
         --dereference \
-        -L \
+        -H \
+        --preserve-root \
         "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
         /proc/self/fd/0 \
         /proc/self/fd/1 \
