@@ -19,13 +19,13 @@
     "linux"
   ],
   "files": [
-    "base.yml",
-    "application.yml",
+    "base.yaml",
+    "application.yaml",
     "Dockerfile",
     "configure_user.sh",
     "retrieve_application.sh"
   ],
-  "main": "base.yml",
+  "main": "base.yaml",
   "repository": {
     "type": "git",
     "url": "https://github.com/thaibault/dockerBase"
