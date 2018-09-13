@@ -1,11 +1,11 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - docker pull base/archlinux && docker-compose --file base.yml build --no-cache
+# - docker pull base/archlinux && docker-compose --file base.yaml build --no-cache
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
-# - docker-compose --file application.yml up
+# - docker-compose --file application.yaml up
 # endregion
             # region configuration
 FROM        base/archlinux

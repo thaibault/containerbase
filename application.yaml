@@ -1,8 +1,13 @@
-version: '2'
+version: '3'
 services:
     base:
-        extends:
-            file: ./base.yml
-            service: base
+        build:
+            context: ./
+            dockerfile: ./Dockerfile
+        container_name: base
         environment:
             NAME: "${hostname}+`hostname`"
+        image: tsickert/base:latest
+        restart: always
+        volumes:
+            - ../:/srv/http/
