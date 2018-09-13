@@ -20,10 +20,10 @@ User=root
 Restart=always
 RestartSec=10
 WorkingDirectory=/root/application
-ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/full.yml kill $APP
-ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/full.yml rm --force $APP
-ExecStart=/usr/bin/env docker-compose --file serviceHandler/full.yml up --force-recreate --no-build --no-deps $APP
-ExecStop=/usr/bin/env docker-compose --file serviceHandler/full.yml stop $APP
+ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/base.yaml kill $APP
+ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/base.yaml rm --force $APP
+ExecStart=/usr/bin/env docker-compose --file serviceHandler/base.yaml up --force-recreate --no-build --no-deps $APP
+ExecStop=/usr/bin/env docker-compose --file serviceHandler/base.yaml stop $APP
 NotifyAccess=all
 
 [Install]
