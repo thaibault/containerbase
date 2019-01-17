@@ -13,9 +13,9 @@ bootstrap@^3.3.7:
   integrity sha512-F1yTDO9OHKH0xjl03DsOe8Nu1OWBIeAugGMhy3UTIYDdbbIPesQIhCEbj+HEr6wqlwweGAlP8F3OBC6kEuhFuw==
 
 clientnode@*:
-  version "3.0.195"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.195.tgz#e90641bcd08123a6af7e8b0fad665ac36c14b1d4"
-  integrity sha512-8oFrBe8rzvIAr5684pa3TC0V9eSaUk/zSnci4Wd0sRsaNI/XAKqZp3eIG+kam6n25+WQy5qB3kjTe6R6v8M32g==
+  version "3.0.199"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.199.tgz#fe2b9582a7d45139f7531b71731dc41ccacc2943"
+  integrity sha512-sE93hupmvPxc6Cg6WntMSGQNIf7SJ1BggUutlyFagJZI0vwO6FiW9r+ewD/AObpUQJ2Qu6aCWP+evt7rr3Ghfg==
   dependencies:
     colors "*"
 
