@@ -13,14 +13,14 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - docker pull base/archlinux && docker-compose --file base.yaml build --no-cache
+# - docker pull archlinux/base && docker-compose --file base.yaml build --no-cache
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
 # - docker-compose --file application.yaml up
 # endregion
             # region configuration
-FROM        base/archlinux
+FROM        archlinux/base
 MAINTAINER  Torben Sickert <info@torben.website>
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application
