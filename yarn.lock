@@ -13,9 +13,9 @@ bootstrap@^3.3.7:
   integrity sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA==
 
 clientnode@*:
-  version "3.0.322"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.322.tgz#d161f4e65c42b49789dc256990c02bc24e641e86"
-  integrity sha512-TbWNJk9ApoYItstUQYPjtG4aPV65Eo5iitMLrt3VeHCqf1Lr5x54D0n0X0uu1Y7xCjKwXXsp8AgpqVMMzaa+bQ==
+  version "3.0.343"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.343.tgz#68f9e4ea907efca22a5a8f830ba950655925704d"
+  integrity sha512-a81IUdOsxzOxhUqDCbDvRiisk3wzvfoOYNZpvqQTUfwMkid6drQbwpkoE3i8Qa2R4ykoxIMWpuZjh/TMlJI5gw==
   dependencies:
     colors "*"
 
@@ -25,18 +25,18 @@ colors@*:
   integrity sha512-mmGt/1pZqYRjMxB1axhTo16/snVZ5krrKkcmMeVKxzECMMXoCgnvTPp10QgHfcbQZw8Dq2jMNG6je4JlWU0gWg==
 
 documentation-website@*:
-  version "1.0.227"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.227.tgz#075dfe213563f74ff2a6bd9e0ef8d4ca3b18a768"
-  integrity sha512-ZIX8m36yJSo+XsbkLlHVzG0cD7X/QsraU5qTe6h1zoQ1ZLZ+lE/fZR9+Q7fQdk2raY6wBYlwqzwRkT0Qsafr7w==
+  version "1.0.229"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.229.tgz#755886c37622ac8fca99df045be2c770d602a02b"
+  integrity sha512-7YSZyRkAiGBbOZEE45bdRzcSAV/rjtrRRBunFVA+0Qyn22p/l0GWn+p/dDJz8YyUYGtEduRmoB0uAwe/y56t4w==
   dependencies:
     boostnode "*"
     bootstrap "^3.3.7"
     website-utilities "*"
 
 internationalisation@*:
-  version "1.0.189"
-  resolved "https://registry.yarnpkg.com/internationalisation/-/internationalisation-1.0.189.tgz#b686f812bd424be2a0f772cbec278589703d3235"
-  integrity sha512-bL9SqsDLILyaazI3QyqXJZ3ELMGlkvCTHKLmRSR8EHVvt2O3N8+Yw+dsFLNWurKXpNA2jvPvlxHFwOfMRSQeSw==
+  version "1.0.196"
+  resolved "https://registry.yarnpkg.com/internationalisation/-/internationalisation-1.0.196.tgz#4074d52456de3f7310c8ebdb0692f738cd73008c"
+  integrity sha512-dtlhGcru8CDR+ns6/37ahJzRFzk0vyXka2kE0SVlh1g5ZOUe9/xpkmDN+kmuQ6tKhlnfvORBznEDTeFsrbKdNg==
 
 jquery.scrollto@*:
   version "2.1.2"
@@ -56,9 +56,9 @@ spin.js@*:
   integrity sha512-uJN9Q4/I4I7PRZAp1c5reoY89thAfvFB5thbJncAwkPjPhqCfUrCooJc8GMN8q8WKFGIMy+JMf477RW7deCInA==
 
 website-utilities@*:
-  version "1.0.209"
-  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.209.tgz#b1a620af5252cbfade6491c9630f2eca86598148"
-  integrity sha512-pwUv1MwYaO7bfAhqO0EJb/hu0WiCjr5QPWSRbAHRi2u0+L9K3o7XjYM2RTRa9ojf9K825Lyyej8WwQRyHMnFCw==
+  version "1.0.215"
+  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.215.tgz#93c161c6eb6aecd9cd04812aea9b93209ce80821"
+  integrity sha512-sZpnvoyhg4xFGiD1vbdDa59qs4VEgSFc48Fd1ipRWS2Y2beut3UhYAYQccT2Nm68XUho1ua/ErADfeQLzByxgg==
   dependencies:
     clientnode "*"
     internationalisation "*"
