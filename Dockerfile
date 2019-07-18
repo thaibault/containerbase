@@ -44,6 +44,14 @@ USER        root
             # endregion
             # region retrieve wget
 RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
+            # Update current version to avoid wget compatibility problems
+            pacman \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --refresh \
+                --sync \
+                --sysupgrade && \
             pacman \
                 --needed \
                 --noconfirm \
@@ -63,7 +71,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             echo Rotating the new list into place. && \
             mv "$temporaryFilePath" /etc/pacman.d/mirrorlist && \
             # endregion
-            # region download database file
+            # region update system with refreshed mirrorlist
             pacman \
                 --needed \
                 --noconfirm \
