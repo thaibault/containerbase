@@ -57,7 +57,8 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --noconfirm \
                 --noprogressbar \
                 --refresh \
-                --sync wget && \
+                --sync \
+                wget && \
             # endregion
             # region get fastest server update list for germany
             url='https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on' && \
@@ -70,6 +71,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
             echo Rotating the new list into place. && \
             mv "$temporaryFilePath" /etc/pacman.d/mirrorlist && \
+            chmod +r /etc/pacman.d/mirrorlist && \
             # endregion
             # region update system with refreshed mirrorlist
             pacman \
