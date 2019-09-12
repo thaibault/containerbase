@@ -99,8 +99,18 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
 COPY        configure-user.sh /usr/bin/configure-user
 COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
 COPY        retrieve-application.sh /usr/bin/retrieve-application
-RUN         configure-user
-            # region install and configure yay
+            # region configure user
+RUN         configure-user && \
+            # We cannot use yay as root user so we introduce an (unatted)
+            # install user.
+            # Create specified user with not yet existing name and id.
+            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
+            echo \
+                -e \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
+                >>/etc/sudoers
+            # endregion
+            # region install needed packages
 RUN         pacman \
                 --needed \
                 --noconfirm \
@@ -109,25 +119,18 @@ RUN         pacman \
                 base-devel \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
-            rm /var/cache/* --recursive --force && \
-            pushd /tmp && \
+            rm /var/cache/* --recursive --force
+            # endregion
+            # region install and configure yay
+USER        $INSTALLER_USER_NAME
+RUN         pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
-            # We cannot use yay as root user so we introduce an (unatted)
-            # install user.
-            # Create specified user with not yet existing name and id.
-            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
-            echo \
-                -e \
-                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
-                >>/etc/sudoers #&& \
-            runuser \
-                --login $INSTALLER_USER_NAME \
-                --preserve-environment \
-                --command '/usr/bin/makepkg --install --needed --noconfirm --syncdeps' && \
+            /usr/bin/makepkg --install --needed --noconfirm --syncdeps && \
             popd && \
             rm --force --recursive yay && \
             popd
+USER        root
             # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
