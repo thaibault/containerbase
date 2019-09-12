@@ -60,6 +60,8 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --refresh \
                 --sync \
                 wget && \
+            # NOTE: We should avoid leaving unnecessary data in that layer.
+            rm /var/cache/* --recursive --force && \
             # endregion
             # region get fastest server update list for germany
             url='https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on' && \
@@ -91,6 +93,8 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --sync \
                 neovim \
                 openssh && \
+            # NOTE: We should avoid leaving unnecessary data in that layer.
+            rm /var/cache/* --recursive --force
             # endregion
 COPY        configure-user.sh /usr/bin/configure-user
 COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
@@ -104,6 +108,8 @@ RUN         pacman \
                 --sync \
                 base-devel \
                 git && \
+            # NOTE: We should avoid leaving unnecessary data in that layer.
+            rm /var/cache/* --recursive --force && \
             pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
@@ -119,9 +125,6 @@ RUN         pacman \
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
                 >>/etc/sudoers && \
-            # endregion
-            # region tidy up
-RUN         rm /var/cache/* --recursive --force
             # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
