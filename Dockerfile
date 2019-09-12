@@ -114,7 +114,7 @@ RUN         pacman \
             # We cannot use yay as root user so we introduce an (unatted)
             # install user.
             # Create specified user with not yet existing name and id.
-            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}"
+            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
             echo \
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
