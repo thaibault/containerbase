@@ -120,14 +120,11 @@ RUN         pacman \
             echo \
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
-                >>/etc/sudoers && \
+                >>/etc/sudoers #&& \
             runuser \
-                --user $INSTALLER_USER_NAME \
-                makepkg \
-                    --install \
-                    --needed \
-                    --noconfirm \
-                    --syncdeps && \
+                --login $INSTALLER_USER_NAME \
+                --preserve-environment \
+                --command '/usr/bin/makepkg --install --needed --noconfirm --syncdeps' && \
             popd && \
             rm --force --recursive yay && \
             popd
