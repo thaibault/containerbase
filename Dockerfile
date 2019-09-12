@@ -113,10 +113,6 @@ RUN         pacman \
             pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
-            makepkg --install --needed --noconfirm --syncdeps && \
-            popd && \
-            rm --force --recursive yay && \
-            popd && \
             # We cannot use yay as root user so we introduce an (unatted)
             # install user.
             # Create specified user with not yet existing name and id.
@@ -125,6 +121,16 @@ RUN         pacman \
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
                 >>/etc/sudoers && \
+            runuser \
+                --user $INSTALLER_USER_NAME \
+                makepkg \
+                    --install \
+                    --needed \
+                    --noconfirm \
+                    --syncdeps && \
+            popd && \
+            rm --force --recursive yay && \
+            popd
             # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
