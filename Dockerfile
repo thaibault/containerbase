@@ -32,6 +32,7 @@ ENV         DEFAULT_MAIN_USER_ID 1000
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH '/usr/bin/initialize'
+ENV         INSTALLER_USER_NAME installer
 ENV         MAIN_USER_GROUP_NAME users
 ENV         MAIN_USER_NAME application
 ENV         PRIVATE_SSH_KEY ''
@@ -82,30 +83,9 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --sync \
                 --sysupgrade && \
             # endregion
-            # region install and configure yay
-            pacman \
-                --needed \
-                --noconfirm \
-                --noprogressbar \
-                --sync \
-                base-devel \
-                git && \
-            # NOTE: We have to patch "makepkg" to use it as root.
-            sed \
-                --in-place \
-                's/if (( EUID == 0 )); then/if (( EUID == 0 )) \&\& false; then/' \
-                /usr/bin/makepkg && \
-            pushd /tmp && \
-            git clone https://aur.archlinux.org/yay.git && \
-            pushd yay && \
-            makepkg --install --needed --noconfirm --syncdeps && \
-            popd && \
-            rm --force --recursive yay && \
-            popd && \
-            # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
-            yay \
+            pacman \
                 --needed \
                 --noconfirm \
                 --sync \
@@ -118,6 +98,30 @@ COPY        configure-user.sh /usr/bin/configure-user
 COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
 COPY        retrieve-application.sh /usr/bin/retrieve-application
 RUN         configure-user
+            # region install and configure yay
+            pacman \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --sync \
+                base-devel \
+                git && \
+            pushd /tmp && \
+            git clone https://aur.archlinux.org/yay.git && \
+            pushd yay && \
+            makepkg --install --needed --noconfirm --syncdeps && \
+            popd && \
+            rm --force --recursive yay && \
+            popd && \
+            # We cannot use yay as root user so we introduce an (unatted)
+            # install user.
+            # Create specified user with not yet existing name and id.
+            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}"
+            echo \
+                -e \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
+                >>/etc/sudoers && \
+            # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region set proper user ids and bootstrap application
