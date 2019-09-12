@@ -91,15 +91,13 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --sync \
                 neovim \
                 openssh && \
-            # tidy up
-            rm /var/cache/* --recursive --force
             # endregion
 COPY        configure-user.sh /usr/bin/configure-user
 COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
 COPY        retrieve-application.sh /usr/bin/retrieve-application
 RUN         configure-user
             # region install and configure yay
-            pacman \
+RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
@@ -121,6 +119,9 @@ RUN         configure-user
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
                 >>/etc/sudoers && \
+            # endregion
+            # region tidy up
+RUN         rm /var/cache/* --recursive --force
             # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
