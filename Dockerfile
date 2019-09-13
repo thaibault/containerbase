@@ -107,7 +107,7 @@ RUN         configure-user && \
             useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
             echo \
                 -e \
-                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman" \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
                 >>/etc/sudoers
             # endregion
             # region install needed packages
