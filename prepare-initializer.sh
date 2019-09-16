@@ -21,11 +21,12 @@ if \
 then
     if [ -s "$PASSWORD_FILE_PATH" ]; then
         gocryptfs \
-            -extpass "cat '$PASSWORD_FILE_PATH'" \
+            -allow_other \
+            -passfile "$PASSWORD_FILE_PATH" \
             "$ENCRYPTED_PATH" \
             "$DECRYPTED_PATH"
     else
-        gocryptfs "$ENCRYPTED_PATH" "$DECRYPTED_PATH"
+        gocryptfs -allow_other "$ENCRYPTED_PATH" "$DECRYPTED_PATH"
     fi
 fi
 # endregion
