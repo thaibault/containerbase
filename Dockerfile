@@ -32,6 +32,7 @@ ENV         DEFAULT_MAIN_USER_ID 1000
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH '/usr/bin/initialize'
+ENV         INSTALLER_USER_NAME installer
 ENV         MAIN_USER_GROUP_NAME users
 ENV         MAIN_USER_NAME application
 ENV         PRIVATE_SSH_KEY ''
@@ -57,7 +58,10 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --noconfirm \
                 --noprogressbar \
                 --refresh \
-                --sync wget && \
+                --sync \
+                wget && \
+            # NOTE: We should avoid leaving unnecessary data in that layer.
+            rm /var/cache/* --recursive --force && \
             # endregion
             # region get fastest server update list for germany
             url='https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on' && \
@@ -70,6 +74,7 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
             mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
             echo Rotating the new list into place. && \
             mv "$temporaryFilePath" /etc/pacman.d/mirrorlist && \
+            chmod +r /etc/pacman.d/mirrorlist && \
             # endregion
             # region update system with refreshed mirrorlist
             pacman \
@@ -80,42 +85,53 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --sync \
                 --sysupgrade && \
             # endregion
-            # region install and configure yay
+            # region install needed packages
+            # NOTE: "neovim" is only needed for debugging scenarios.
             pacman \
+                --needed \
+                --noconfirm \
+                --sync \
+                neovim \
+                openssh && \
+            # NOTE: We should avoid leaving unnecessary data in that layer.
+            rm /var/cache/* --recursive --force
+            # endregion
+COPY        configure-user.sh /usr/bin/configure-user
+COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
+COPY        retrieve-application.sh /usr/bin/retrieve-application
+            # region configure user
+RUN         configure-user && \
+            # We cannot use yay as root user so we introduce an (unatted)
+            # install user.
+            # Create specified user with not yet existing name and id.
+            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
+            echo \
+                -e \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
+                >>/etc/sudoers
+            # endregion
+            # region install needed packages
+RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
                 --sync \
                 base-devel \
                 git && \
-            # NOTE: We have to patch "makepkg" to use it as root.
-            sed \
-                --in-place \
-                's/if (( EUID == 0 )); then/if (( EUID == 0 )) \&\& false; then/' \
-                /usr/bin/makepkg && \
-            pushd /tmp && \
-            git clone https://aur.archlinux.org/yay.git && \
-            pushd yay && \
-            makepkg --install --needed --noconfirm --syncdeps && \
-            popd && \
-            rm --force --recursive yay && \
-            popd && \
-            # endregion
-            # region install needed packages
-            # NOTE: "neovim" is only needed for debugging scenarios.
-            yay \
-                --needed \
-                --noconfirm \
-                --sync \
-                neovim \
-                openssh && \
-            # tidy up
+            # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # endregion
-COPY        configure-user.sh /usr/bin/configure-user
-COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
-COPY        retrieve-application.sh /usr/bin/retrieve-application
-RUN         configure-user
+            # region install and configure yay
+USER        $INSTALLER_USER_NAME
+RUN         pushd /tmp && \
+            git clone https://aur.archlinux.org/yay.git && \
+            pushd yay && \
+            /usr/bin/makepkg --install --needed --noconfirm --syncdeps && \
+            popd && \
+            rm --force --recursive yay && \
+            popd
+USER        root
+            # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region set proper user ids and bootstrap application
