@@ -28,6 +28,8 @@ ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH '/application/package.json'
 ENV         BRANCH master
 ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
 ENV         DECRYPT false
+ENV         ENCRYPTED_PATH "${APPLICATION_PATH}encrypted/"
+ENV         DECRYPTED_PATH "${APPLICATION_PATH}plain/"
 ENV         DEFAULT_MAIN_USER_GROUP_ID 100
 ENV         DEFAULT_MAIN_USER_ID 1000
             # NOTE: This value has be in synchronisation with the "CMD" given
@@ -36,6 +38,7 @@ ENV         INITIALIZING_FILE_PATH '/usr/bin/initialize'
 ENV         INSTALLER_USER_NAME installer
 ENV         MAIN_USER_GROUP_NAME users
 ENV         MAIN_USER_NAME application
+ENV         PASSWORD_FILE_PATH "${APPLICATION_PATH}.encryptionPassword"
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
 ENV         KNOWN_HOSTS ''
