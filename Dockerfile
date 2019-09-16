@@ -23,10 +23,11 @@
 FROM        archlinux/base
 MAINTAINER  Torben Sickert <info@torben.website>
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
-ENV         APPLICATION_PATH /application
+ENV         APPLICATION_PATH /application/
 ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH '/application/package.json'
 ENV         BRANCH master
 ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
+ENV         DECRYPT false
 ENV         DEFAULT_MAIN_USER_GROUP_ID 100
 ENV         DEFAULT_MAIN_USER_ID 1000
             # NOTE: This value has be in synchronisation with the "CMD" given
@@ -39,7 +40,7 @@ ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
 ENV         KNOWN_HOSTS ''
 ENV         REPOSITORY_URL 'git@bitbucket.org:tsickert/base.git'
-ENV         STANDALONE 'true'
+ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
             # endregion
@@ -117,6 +118,7 @@ RUN         pacman \
                 --noprogressbar \
                 --sync \
                 base-devel \
+                gocryptfs \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
@@ -134,11 +136,12 @@ USER        root
             # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
-            # region set proper user ids and bootstrap application
-RUN         echo -e '#!/usr/bin/bash\n\nset -e\nconfigure-runtime-user /' \
+            # region bootstrap application
+COPY        prepare-initializer.sh /usr/bin/prepare-initializer
+RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer\nset -e\nconfigure-runtime-user /' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
-CMD         '/usr/bin/initialize'
+CMD         /usr/bin/initialize
             # endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:
