@@ -22,11 +22,12 @@ then
     if [ -s "$PASSWORD_FILE_PATH" ]; then
         gocryptfs \
             -allow_other \
+            -nonempty \
             -passfile "$PASSWORD_FILE_PATH" \
             "$ENCRYPTED_PATH" \
             "$DECRYPTED_PATH"
     else
-        gocryptfs -allow_other "$ENCRYPTED_PATH" "$DECRYPTED_PATH"
+        gocryptfs -allow_other -nonempty "$ENCRYPTED_PATH" "$DECRYPTED_PATH"
     fi
 fi
 # endregion
