@@ -14,21 +14,28 @@ if [[ "$1" != '--no-check-local-initializer' ]]; then
 fi
 # endregion
 # region decrypt security related artefacts needed at runtime
-if \
-    [[ "$DECRYPT" != false ]] && \
-    [ -d "$ENCRYPTED_PATH" ] && \
-    [ -d "$DECRYPTED_PATH" ]
-then
-    if [ -s "$PASSWORD_FILE_PATH" ]; then
-        gocryptfs \
-            -allow_other \
-            -nonempty \
-            -passfile "$PASSWORD_FILE_PATH" \
-            "$ENCRYPTED_PATH" \
-            "$DECRYPTED_PATH"
-    else
-        gocryptfs -allow_other -nonempty "$ENCRYPTED_PATH" "$DECRYPTED_PATH"
-    fi
+if [[ "$DECRYPT" != false ]]; then
+    for index in "${!ENCRYPTED_PATHS[@]}"; do
+        if \
+            [ -d "${ENCRYPTED_PATHS[index]}" ] && \
+            [ -d "${DECRYPTED_PATHS[index]}" ]
+        then
+            if [ -s "${PASSWORD_FILE_PATHS[index]}" ]; then
+                gocryptfs \
+                    -allow_other \
+                    -nonempty \
+                    -passfile "${PASSWORD_FILE_PATHS[index]}" \
+                    "${ENCRYPTED_PATH[index]}" \
+                    "${DECRYPTED_PATH[index]}"
+            else
+                gocryptfs \
+                    -allow_other \
+                    -nonempty \
+                    "${ENCRYPTED_PATH[index]}" \
+                    "${DECRYPTED_PATH[index]}"
+            fi
+        fi
+    done
 fi
 # endregion
 # region vim modline
