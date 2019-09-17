@@ -126,7 +126,8 @@ RUN         pacman \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
-            echo user_allow_other >> /etc/fuse.conf
+            echo user_allow_other >> /etc/fuse.conf && \
+            mkdir --parents /etc/dockerBase
             # endregion
             # region install and configure yay
 USER        $INSTALLER_USER_NAME
