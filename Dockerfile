@@ -32,7 +32,7 @@ ENV         ENCRYPTED_PATHS ("${APPLICATION_PATH}encrypted/")
 ENV         DECRYPTED_PATHS ("${APPLICATION_PATH}plain/")
 ENV         DEFAULT_MAIN_USER_GROUP_ID 100
 ENV         DEFAULT_MAIN_USER_ID 1000
-ENV         ENVIRONMENT_FILE_PATHS ("${APPLICATION_PATH}serviceHandler/environment.sh" "${APPLICATION_PATH}environment.sh")
+ENV         ENVIRONMENT_FILE_PATHS ("/etc/dockerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh" "${APPLICATION_PATH}environment.sh")
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH '/usr/bin/initialize'
