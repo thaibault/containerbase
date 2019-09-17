@@ -3,15 +3,20 @@
 # region choose initializer script
 # We prefer the local mounted working copy managed initializer if available.
 if [[ "$1" != '--no-check-local-initializer' ]]; then
-    for file_path in \
-        "${APPLICATION_PATH}serviceHandler/initialize.sh" \
-        "${APPLICATION_PATH}initialize.sh"
-    do
+    for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
+        file_path="$(dirname "$file_path")/initialize.sh"
         if [ -s "$file_path" ]; then
             exec "$file_path" --no-check-local-initializer
         fi
     done
 fi
+# endregion
+# region load dynamic environment variables
+for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
+    if [ -f "$file_path" ]; then
+        source "$file_path"
+    fi
+done
 # endregion
 # region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
