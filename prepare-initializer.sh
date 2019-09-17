@@ -35,14 +35,14 @@ if [[ "$DECRYPT" != false ]]; then
                     -allow_other \
                     -nonempty \
                     -passfile "${PASSWORD_FILE_PATHS[index]}" \
-                    "${ENCRYPTED_PATH[index]}" \
-                    "${DECRYPTED_PATH[index]}"
+                    "${ENCRYPTED_PATHS[index]}" \
+                    "${DECRYPTED_PATHS[index]}"
             else
                 gocryptfs \
                     -allow_other \
                     -nonempty \
-                    "${ENCRYPTED_PATH[index]}" \
-                    "${DECRYPTED_PATH[index]}"
+                    "${ENCRYPTED_PATHS[index]}" \
+                    "${DECRYPTED_PATHS[index]}"
             fi
         fi
     done
