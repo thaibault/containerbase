@@ -1,5 +1,10 @@
 #!/usr/bin/bash
 # -*- coding: utf-8 -*-
+# region convert strings into arrays
+ENVIRONMENT_FILE_PATHS=($ENVIRONMENT_FILE_PATHS)
+ENVIRONMENT_FILE_PATHS=($ENVIRONMENT_FILE_PATHS)
+PASSWORD_FILE_PATHS=($PASSWORD_FILE_PATHS)
+# endregion
 # region choose initializer script
 # We prefer the local mounted working copy managed initializer if available.
 if [[ "$1" != '--no-check-local-initializer' ]]; then
