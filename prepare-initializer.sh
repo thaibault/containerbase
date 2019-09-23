@@ -26,10 +26,8 @@ done
 # region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS[@]}"; do
-        if \
-            [ -d "${ENCRYPTED_PATHS[index]}" ] && \
-            [ -d "${DECRYPTED_PATHS[index]}" ]
-        then
+        if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
+            mkdir --parents "${DECRYPTED_PATHS[index]}"
             if [ -s "${PASSWORD_FILE_PATHS[index]}" ]; then
                 gocryptfs \
                     -allow_other \
