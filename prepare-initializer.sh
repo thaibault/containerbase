@@ -28,6 +28,10 @@ if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS[@]}"; do
         if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
             mkdir --parents "${DECRYPTED_PATHS[index]}"
+            chown \
+                --recursive \
+                $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+                "${DECRYPTED_PATHS[index]}"
             if [ -s "${PASSWORD_FILE_PATHS[index]}" ]; then
                 gocryptfs \
                     -allow_other \
