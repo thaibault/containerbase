@@ -7,11 +7,13 @@ PASSWORD_FILE_PATHS=($PASSWORD_FILE_PATHS)
 # endregion
 # region choose initializer script
 # We prefer the local mounted working copy managed initializer if available.
-if [[ "$1" != '--no-check-local-initializer' ]]; then
+if [ "$1" = '--no-check-local-initializer' ]; then
+    shift
+else
     for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
         file_path="$(dirname "$file_path")/initialize.sh"
         if [ -s "$file_path" ]; then
-            exec "$file_path" --no-check-local-initializer
+            exec "$file_path" --no-check-local-initializer "$@"
         fi
     done
 fi
@@ -23,7 +25,7 @@ for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
     fi
 done
 # endregion
-# region decrypt security related artefacts needed at runtime
+# region decrypt security related a rtefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS[@]}"; do
         if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
@@ -37,6 +39,14 @@ if [[ "$DECRYPT" != false ]]; then
                     -allow_other \
                     -nonempty \
                     -passfile "${PASSWORD_FILE_PATHS[index]}" \
+                    -quiet \
+                    "${ENCRYPTED_PATHS[index]}" \
+                    "${DECRYPTED_PATHS[index]}"
+            elif [ "$1" != '' ]; then
+                gocryptfs \
+                    -allow_other \
+                    -extpass "echo '$1'" \
+                    -nonempty \
                     -quiet \
                     "${ENCRYPTED_PATHS[index]}" \
                     "${DECRYPTED_PATHS[index]}"
