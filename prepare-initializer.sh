@@ -35,20 +35,16 @@ if [[ "$DECRYPT" != false ]]; then
                 $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
                 "${DECRYPTED_PATHS[index]}"
             if [ -s "${PASSWORD_FILE_PATHS[index]}" ]; then
+                cp ${PASSWORD_FILE_PATHS[index]} /tmp/intermediatePasswordFile
+            elif [[ "$1" != '' ]]; then
+                echo -n "$1" >/tmp/intermediatePasswordFile
+            fi
+            if [ -s /tmp/intermediatePasswordFile ]; then
                 gocryptfs \
                     -allow_other \
                     -nonempty \
                     -nosyslog \
-                    -passfile "${PASSWORD_FILE_PATHS[index]}" \
-                    -quiet \
-                    "${ENCRYPTED_PATHS[index]}" \
-                    "${DECRYPTED_PATHS[index]}"
-            elif [ "$1" != '' ]; then
-                gocryptfs \
-                    -allow_other \
-                    -extpass "echo -n '$1'" \
-                    -nonempty \
-                    -nosyslog \
+                    -passfile /tmp/intermediatePasswordFile \
                     -quiet \
                     "${ENCRYPTED_PATHS[index]}" \
                     "${DECRYPTED_PATHS[index]}"
