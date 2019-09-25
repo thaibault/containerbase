@@ -25,7 +25,7 @@ for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
     fi
 done
 # endregion
-# region decrypt security related a rtefacts needed at runtime
+# region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS[@]}"; do
         if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
@@ -38,6 +38,7 @@ if [[ "$DECRYPT" != false ]]; then
                 gocryptfs \
                     -allow_other \
                     -nonempty \
+                    -nosyslog \
                     -passfile "${PASSWORD_FILE_PATHS[index]}" \
                     -quiet \
                     "${ENCRYPTED_PATHS[index]}" \
@@ -45,8 +46,9 @@ if [[ "$DECRYPT" != false ]]; then
             elif [ "$1" != '' ]; then
                 gocryptfs \
                     -allow_other \
-                    -extpass "echo '$1'" \
+                    -extpass "echo -n '$1'" \
                     -nonempty \
+                    -nosyslog \
                     -quiet \
                     "${ENCRYPTED_PATHS[index]}" \
                     "${DECRYPTED_PATHS[index]}"
@@ -54,6 +56,7 @@ if [[ "$DECRYPT" != false ]]; then
                 gocryptfs \
                     -allow_other \
                     -nonempty \
+                    -nosyslog \
                     -quiet \
                     "${ENCRYPTED_PATHS[index]}" \
                     "${DECRYPTED_PATHS[index]}"
