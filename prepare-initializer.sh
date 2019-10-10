@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 # -*- coding: utf-8 -*-
 # region convert strings into arrays
-ENVIRONMENT_FILE_PATHS=($ENVIRONMENT_FILE_PATHS)
+DECRYPTED_PATHS=($DECRYPTED_PATHS)
+ENCRYPTED_PATHS=($ENCRYPTED_PATHS)
 ENVIRONMENT_FILE_PATHS=($ENVIRONMENT_FILE_PATHS)
 PASSWORD_FILE_PATHS=($PASSWORD_FILE_PATHS)
 # endregion
@@ -10,7 +11,16 @@ PASSWORD_FILE_PATHS=($PASSWORD_FILE_PATHS)
 if [ "$1" = '--no-check-local-initializer' ]; then
     shift
 else
+    # Reverse list of paths.
+    reversed_environment_file_paths=()
     for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
+        if [ "${#reversed_environment_file_paths[@]}" = 0 ]; then
+            reversed_environment_file_paths=("$file_path")
+        else
+            reversed_environment_file_paths=("$file_path" "${reversed_environment_file_paths[@]}")
+        fi
+    done
+    for file_path in "${reversed_environment_file_paths[@]}"; do
         file_path="$(dirname "$file_path")/initialize.sh"
         if [ -s "$file_path" ]; then
             exec "$file_path" --no-check-local-initializer "$@"
@@ -18,14 +28,14 @@ else
     done
 fi
 # endregion
-# region load dynamic environment variables
+# region load  dynamic environment variables
 for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
     if [ -f "$file_path" ]; then
         source "$file_path"
     fi
 done
 # endregion
-# region decrypt security related artefacts needed at runtime
+# region decrypt s ecurity related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS[@]}"; do
         if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
