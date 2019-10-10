@@ -21,7 +21,7 @@
 # endregion
             # region configuration
 FROM        archlinux/base
-MAINTAINER  Torben Sickert <info@torben.website>
+LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application/
 ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH '/application/package.json'
