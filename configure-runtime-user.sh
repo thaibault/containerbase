@@ -126,6 +126,7 @@ fi
 # Disable user account expiration.
 for user_name in root "$MAIN_USER_NAME"; do
     chage --expiredate -1 "$user_name"
+done
 for path in "$@"; do
     all=false
     follow=false
