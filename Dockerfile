@@ -58,6 +58,10 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --refresh \
                 --sync \
                 --sysupgrade && \
+            rm --force --recursive /etc/pacman.d/gnupg && \
+            # Update pacman keys
+            pacman-key --init && \
+            pacman-key --populate archlinux && \
             pacman \
                 --needed \
                 --noconfirm \
