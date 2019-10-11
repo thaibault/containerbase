@@ -8,7 +8,7 @@ for name in \
     PASSWORD_FILE_PATHS
 do
     if ! [[ "$(declare -p "$name")" =~ 'declare -a' ]]; then
-        eval "${name}=(\$${name})"
+        eval "export ${name}=(\$${name})"
     fi
 done
 # endregion
