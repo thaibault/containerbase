@@ -123,6 +123,8 @@ elif (( EXISTING_USER_ID != HOST_USER_ID )); then
         exit 1
     fi
 fi
+# Disable user account expiration.
+chage --expiredate -1 "$MAIN_USER_NAME" && \
 for path in "$@"; do
     all=false
     follow=false

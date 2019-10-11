@@ -28,14 +28,14 @@ else
     done
 fi
 # endregion
-# region load  dynamic environment variables
+# region load dynamic environment variables
 for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
     if [ -f "$file_path" ]; then
         source "$file_path"
     fi
 done
 # endregion
-# region decrypt s ecurity related artefacts needed at runtime
+# region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS[@]}"; do
         if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
