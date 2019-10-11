@@ -1,10 +1,16 @@
 #!/usr/bin/bash
 # -*- coding: utf-8 -*-
-# region convert strings into arrays
-DECRYPTED_PATHS=($DECRYPTED_PATHS)
-ENCRYPTED_PATHS=($ENCRYPTED_PATHS)
-ENVIRONMENT_FILE_PATHS=($ENVIRONMENT_FILE_PATHS)
-PASSWORD_FILE_PATHS=($PASSWORD_FILE_PATHS)
+# region convert environment variables given as string into corresponding array
+for name in \
+    DECRYPTED_PATHS
+    ENCRYPTED_PATHS
+    ENVIRONMENT_FILE_PATHS
+    PASSWORD_FILE_PATHS
+do
+    if ! [[ "$(declare -p "$name")" =~ 'declare -a' ]]; then
+        eval "${name}=(\$${name})"
+    fi
+done
 # endregion
 # region choose initializer script
 # We prefer the local mounted working copy managed initializer if available.
