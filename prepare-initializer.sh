@@ -1,14 +1,14 @@
 #!/usr/bin/bash
 # -*- coding: utf-8 -*-
-# region convert environment variables given as string into corresponding array
+# region convert environment variables given as string into local arrays
 for name in \
     DECRYPTED_PATHS \
     ENCRYPTED_PATHS \
     ENVIRONMENT_FILE_PATHS \
     PASSWORD_FILE_PATHS
 do
-    if ! [[ "$(declare -p "$name")" =~ 'declare -a' ]]; then
-        eval "export ${name}=(\$${name})"
+    if ! [[ "$(declare -p "$name" 2>/dev/null)" =~ 'declare -a' ]]; then
+        eval "declare -a ${name}_ARRAY=(\$${name})"
     fi
 done
 # endregion
@@ -19,7 +19,7 @@ if [ "$1" = '--no-check-local-initializer' ]; then
 else
     # Reverse list of paths.
     reversed_environment_file_paths=()
-    for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
+    for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
         if [ "${#reversed_environment_file_paths[@]}" = 0 ]; then
             reversed_environment_file_paths=("$file_path")
         else
@@ -35,7 +35,7 @@ else
 fi
 # endregion
 # region load dynamic environment variables
-for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
+for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     if [ -f "$file_path" ]; then
         source "$file_path"
     fi
@@ -43,7 +43,7 @@ done
 # endregion
 # region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
-    for index in "${!ENCRYPTED_PATHS[@]}"; do
+    for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
             mkdir --parents "${DECRYPTED_PATHS[index]}"
             chown \
