@@ -44,14 +44,16 @@ done
 # region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
-        if [ -d "${ENCRYPTED_PATHS[index]}" ]; then
-            mkdir --parents "${DECRYPTED_PATHS[index]}"
+        if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
+            mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
             chown \
                 --recursive \
                 $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
-                "${DECRYPTED_PATHS[index]}"
-            if [ -s "${PASSWORD_FILE_PATHS[index]}" ]; then
-                cp ${PASSWORD_FILE_PATHS[index]} /tmp/intermediatePasswordFile
+                "${DECRYPTED_PATHS_ARRAY[index]}"
+            if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
+                cp \
+                    ${PASSWORD_FILE_PATHS_ARRAY[index]} \
+                    /tmp/intermediatePasswordFile
             elif [[ "$1" != '' ]]; then
                 echo -n "$1" >/tmp/intermediatePasswordFile
             fi
@@ -62,16 +64,16 @@ if [[ "$DECRYPT" != false ]]; then
                     -nosyslog \
                     -passfile /tmp/intermediatePasswordFile \
                     -quiet \
-                    "${ENCRYPTED_PATHS[index]}" \
-                    "${DECRYPTED_PATHS[index]}"
+                    "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    "${DECRYPTED_PATHS_ARRAY[index]}"
             else
                 gocryptfs \
                     -allow_other \
                     -nonempty \
                     -nosyslog \
                     -quiet \
-                    "${ENCRYPTED_PATHS[index]}" \
-                    "${DECRYPTED_PATHS[index]}"
+                    "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    "${DECRYPTED_PATHS_ARRAY[index]}"
             fi
         fi
     done
