@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 # region convert environment variables given as string into corresponding array
 for name in \
-    DECRYPTED_PATHS
-    ENCRYPTED_PATHS
-    ENVIRONMENT_FILE_PATHS
+    DECRYPTED_PATHS \
+    ENCRYPTED_PATHS \
+    ENVIRONMENT_FILE_PATHS \
     PASSWORD_FILE_PATHS
 do
     if ! [[ "$(declare -p "$name")" =~ 'declare -a' ]]; then
