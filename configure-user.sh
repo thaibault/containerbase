@@ -10,6 +10,8 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
+# Disable root account expiration.
+chage --expiredate -1 root && \
 # Set proper default user and group id to avoid expensive user id mapping on
 # application startup.
 if [[ "$MAIN_USER_NAME" != root ]]; then
@@ -143,6 +145,8 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         fi
     # else -> A user already exist with specified user and group id.
     fi
+    # Disable user account expiration.
+    chage --expiredate -1 "$MAIN_USER_NAME" && \
     chown \
         --recursive \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
