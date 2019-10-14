@@ -65,7 +65,8 @@ if [[ "$DECRYPT" != false ]]; then
                     -passfile /tmp/intermediatePasswordFile \
                     -quiet \
                     "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    "${DECRYPTED_PATHS_ARRAY[index]}"
+                    "${DECRYPTED_PATHS_ARRAY[index]}" || \
+                exit 1
             else
                 gocryptfs \
                     -allow_other \
@@ -73,7 +74,8 @@ if [[ "$DECRYPT" != false ]]; then
                     -nosyslog \
                     -quiet \
                     "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    "${DECRYPTED_PATHS_ARRAY[index]}"
+                    "${DECRYPTED_PATHS_ARRAY[index]}" ||
+                exit 1
             fi
         fi
     done

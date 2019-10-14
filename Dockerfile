@@ -148,7 +148,7 @@ RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
 COPY        prepare-initializer.sh /usr/bin/prepare-initializer
-RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer\nset -e\nconfigure-runtime-user /' \
+RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nconfigure-runtime-user /' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
 CMD         /usr/bin/initialize
