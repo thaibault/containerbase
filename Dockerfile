@@ -13,7 +13,7 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - docker pull archlinux/base && docker-compose --file base.yaml build --no-cache
+# - podman pull archlinux/base && podman build --file base.yaml --no-cache
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
