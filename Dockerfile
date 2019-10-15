@@ -13,7 +13,7 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - podman pull archlinux/base && podman build --file base.yaml --no-cache
+# - podman pull archlinux/base && podman build --file Dockerfile --no-cache
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
@@ -50,7 +50,10 @@ USER        root
             # endregion
             # region retrieve wget
 RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
-            # Update current version to avoid wget compatibility problems
+            # Update pacman keys
+            pacman-key --init && \
+            pacman-key --populate archlinux && \
+            # Update package database first to retreive newest wget version
             pacman \
                 --needed \
                 --noconfirm \
@@ -59,9 +62,6 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --sync \
                 --sysupgrade && \
             rm --force --recursive /etc/pacman.d/gnupg && \
-            # Update pacman keys
-            pacman-key --init && \
-            pacman-key --populate archlinux && \
             pacman \
                 --needed \
                 --noconfirm \
