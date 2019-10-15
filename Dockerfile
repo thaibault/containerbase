@@ -13,7 +13,8 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - docker pull archlinux/base && docker-compose --file base.yaml build --no-cache
+# - podman pull archlinux/base && podman build --file Dockerfile --no-cache --tag docker.io/tsickert/base
+# - podman push docker.io/tsickert/base
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
@@ -37,56 +38,49 @@ ENV         ENVIRONMENT_FILE_PATHS "/etc/dockerBase/environment.sh ${APPLICATION
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
 ENV         INSTALLER_USER_NAME installer
+ENV         KNOWN_HOSTS ''
 ENV         MAIN_USER_GROUP_NAME users
 ENV         MAIN_USER_NAME application
+ENV         MIRROR_AREA_PATTERN Germany
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
-ENV         KNOWN_HOSTS ''
 ENV         REPOSITORY_URL 'git@bitbucket.org:tsickert/base.git'
 ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
             # endregion
             # region retrieve wget
-RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
-            # Update current version to avoid wget compatibility problems
-            pacman \
+            # Install needed base packages
+RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
                 --refresh \
                 --sync \
-                --sysupgrade && \
-            rm --force --recursive /etc/pacman.d/gnupg && \
-            # Update pacman keys
-            pacman-key --init && \
-            pacman-key --populate archlinux && \
-            pacman \
-                --needed \
-                --noconfirm \
-                --noprogressbar \
-                --refresh \
-                --sync \
-                wget && \
+                base \
+                gnupg \
+                nawk && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
-            rm /var/cache/* --recursive --force && \
-            # endregion
-            # region get fastest server update list for germany
-            url='https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on' && \
-            temporaryFilePath="$(mktemp --suffix=-mirrorlist)" && \
-            echo Donwloading latest mirror list. && \
-            wget --output-document - "$url" | \
-                sed 's/^#Server/Server/g' \
-                    >"$temporaryFilePath" && \
-            echo Backing up the original mirrorlist file. && \
-            mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
-            echo Rotating the new list into place. && \
-            mv "$temporaryFilePath" /etc/pacman.d/mirrorlist && \
-            chmod +r /etc/pacman.d/mirrorlist && \
-            # endregion
-            # region update system with refreshed mirrorlist
-            pacman \
+            rm /var/cache/* --recursive --force
+            # Update mirrorlist if existing
+RUN         mv \
+                /etc/pacman.d/mirrorlist.pacnew \
+                /etc/pacman.d/mirrorlist \
+                &>/dev/null || \
+                true; \
+            cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
+            awk \
+                '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
+                /etc/pacman.d/mirrorlist.orig \
+                >/etc/pacman.d/mirrorlist #&& \
+            # Update pacman keys
+            #rm --force --recursive /etc/pacman.d/gnupg
+            #pacman-key --init && \
+            #pacman-key --populate archlinux && \
+            #pacman-key --refresh-keys && \
+            # Update package database to retrieve newest package versions
+RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
