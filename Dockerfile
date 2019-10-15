@@ -13,7 +13,8 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - podman pull archlinux/base && podman build --file Dockerfile --no-cache
+# - podman pull archlinux/base && podman build --file Dockerfile --no-cache --tag docker.io/tsickert/base
+# - podman push docker.io/tsickert/base
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
