@@ -50,9 +50,6 @@ USER        root
             # endregion
             # region retrieve wget
 RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
-            # Update pacman keys
-            pacman-key --init && \
-            pacman-key --populate archlinux && \
             # Update package database first to retreive newest wget version
             pacman \
                 --needed \
@@ -61,8 +58,19 @@ RUN         sed 's/^#//g' --in-place /etc/pacman.d/mirrorlist && \
                 --refresh \
                 --sync \
                 --sysupgrade && \
-            rm --force --recursive /etc/pacman.d/gnupg && \
+            # Update pacman keys
+            pacman-key --init && \
+            pacman-key --populate archlinux && \
             pacman \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --refresh \
+                --sync \
+                base && \
+            # NOTE: We should avoid leaving unnecessary data in that layer.
+            rm --force --recursive /etc/pacman.d/gnupg
+RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
