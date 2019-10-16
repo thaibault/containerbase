@@ -130,7 +130,7 @@ done
 for path in "$@"; do
     all=false
     follow=false
-    # NOTE: This case hase o be handled before the other to avoid shadowing.
+    # NOTE: This case has to be handled before the other to avoid shadowing.
     if [[ "$path" == *:all:follow ]] || [[ $path == *:follow:all ]]; then
         all=true
         follow=true
