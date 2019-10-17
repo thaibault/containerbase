@@ -73,12 +73,12 @@ RUN         mv \
             awk \
                 '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
                 /etc/pacman.d/mirrorlist.orig \
-                >/etc/pacman.d/mirrorlist #&& \
+                >/etc/pacman.d/mirrorlist && \
             # Update pacman keys
-            #rm --force --recursive /etc/pacman.d/gnupg
-            #pacman-key --init && \
-            #pacman-key --populate archlinux && \
-            #pacman-key --refresh-keys && \
+            rm --force --recursive /etc/pacman.d/gnupg && \
+            pacman-key --init && \
+            pacman-key --populate archlinux && \
+            pacman-key --refresh-keys && \
             # Update package database to retrieve newest package versions
 RUN         pacman \
                 --needed \
