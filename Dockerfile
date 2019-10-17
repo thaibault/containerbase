@@ -18,7 +18,7 @@
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
-# - docker-compose --file application.yaml up
+# - podman play kube service/kubernetes/full.yaml
 # endregion
             # region configuration
 FROM        archlinux/base
