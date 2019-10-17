@@ -268,7 +268,9 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
         "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
         /proc/self/fd/0 \
         /proc/self/fd/1 \
-        /proc/self/fd/2
+        /proc/self/fd/2 \
+        &>/dev/null ||
+    true
 fi
 set +x
 command="$(eval "echo $COMMAND")"
