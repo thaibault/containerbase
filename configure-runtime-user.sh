@@ -130,7 +130,7 @@ done
 for path in "$@"; do
     all=false
     follow=false
-    # NOTE: This case hase o be handled before the other to avoid shadowing.
+    # NOTE: This case has to be handled before the other to avoid shadowing.
     if [[ "$path" == *:all:follow ]] || [[ $path == *:follow:all ]]; then
         all=true
         follow=true
@@ -274,7 +274,11 @@ set +x
 command="$(eval "echo $COMMAND")"
 if [[ "$command" != '' ]] && [[ "$command" != UNKNOWN ]]; then
     echo Run command \"$command\"
-    exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$command"
+    if (( HOST_USER_ID == 0 )); then
+        exec $command
+    else
+        exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$command"
+    fi
 fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
