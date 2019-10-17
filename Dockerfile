@@ -78,7 +78,7 @@ RUN         mv \
             rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
             pacman-key --populate archlinux && \
-            pacman-key --refresh-keys && \
+            pacman-key --refresh-keys
             # Update package database to retrieve newest package versions
 RUN         pacman \
                 --needed \
