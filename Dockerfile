@@ -18,7 +18,7 @@
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
-# - podman play kube service/kubernetes/full.yaml
+# - podman pod rm --force base_pod; podman play kube service/kubernetes/base.yaml
 # endregion
             # region configuration
 FROM        archlinux/base
