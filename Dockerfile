@@ -1,5 +1,5 @@
 # region header
-# [Project page](https://torben.website/dockerbase)
+# [Project page](https://torben.website/containerbase)
 
 # Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
 
@@ -9,6 +9,9 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
+
+# Basic ArchLinux with user-mapping, AUR integration and support for decryption
+# of security related files.
 # endregion
 # region create image commands
 # Run the following command in the directory where this file lives to build a
