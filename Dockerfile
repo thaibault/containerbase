@@ -17,7 +17,7 @@
 # Run the following command in the directory where this file lives to build a
 # new docker image:
 # - podman pull archlinux/base && podman build --file Dockerfile --no-cache --tag docker.pkg.github.com/thaibault/containerbase/base
-# - podman push docker.pkg.github.com/thaibault/containerbase/base
+# - podman push docker.pkg.github.com/thaibault/containerbase/base:latest --creds "thaibault:$(cat "${ILU_CONFIGURATION_PATH}web/github/masterToken.txt")"
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
