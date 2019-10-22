@@ -105,6 +105,20 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # endregion
+            # region install needed packages
+RUN         pacman \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --sync \
+                base-devel \
+                gocryptfs \
+                git && \
+            # NOTE: We should avoid leaving unnecessary data in that layer.
+            rm /var/cache/* --recursive --force && \
+            echo user_allow_other >> /etc/fuse.conf && \
+            mkdir --parents /etc/dockerBase
+            # endregion
 RUN         git \
                 clone \
                 --depth 1 \
@@ -127,20 +141,6 @@ RUN         configure-user && \
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
                 >>/etc/sudoers
-            # endregion
-            # region install needed packages
-RUN         pacman \
-                --needed \
-                --noconfirm \
-                --noprogressbar \
-                --sync \
-                base-devel \
-                gocryptfs \
-                git && \
-            # NOTE: We should avoid leaving unnecessary data in that layer.
-            rm /var/cache/* --recursive --force && \
-            echo user_allow_other >> /etc/fuse.conf && \
-            mkdir --parents /etc/dockerBase
             # endregion
             # region install and configure yay
 USER        $INSTALLER_USER_NAME
