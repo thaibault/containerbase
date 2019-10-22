@@ -17,11 +17,14 @@
 # Run the following command in the directory where this file lives to build a
 # new docker image:
 # - podman pull archlinux/base && podman build --file Dockerfile --no-cache --tag docker.pkg.github.com/thaibault/containerbase/base
+# - docker pull archlinux/base && docker build --no-cache --tag tsickert/base:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
 # - podman push docker.pkg.github.com/thaibault/containerbase/base:latest --creds "thaibault:$(cat "${ILU_CONFIGURATION_PATH}web/github/masterToken.txt")"
+# - docker push tsickert/base
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
-# - podman pod rm --force base_pod; podman play kube service/kubernetes/base.yaml
+# - podman pod rm --force base_pod; podman play kube kubernetes.yaml
+# - docker-compose run
 # endregion
             # region configuration
 FROM        archlinux/base
@@ -102,9 +105,18 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # endregion
-COPY        configure-user.sh /usr/bin/configure-user
-COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
-COPY        retrieve-application.sh /usr/bin/retrieve-application
+RUN         git \
+                clone \
+                --depth 1 \
+                --no-single-branch \
+                "$REPOSITORY_URL" \
+                /tmp/containerBase && \
+            pushd /tmp/containerBase && \
+            cp ./configure-user.sh /usr/bin/configure-user && \
+            cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
+            cp ./retrieve-application.sh /usr/bin/retrieve-application && \
+            popd && \
+            rm --recursively /tmp/containerBase
             # region configure user
 RUN         configure-user && \
             # We cannot use yay as root user so we introduce an (unatted)
