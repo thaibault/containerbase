@@ -131,7 +131,7 @@ RUN         git \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             popd && \
-            rm --recursively /tmp/containerBase
+            rm --recursive /tmp/containerBase
             # region configure user
 RUN         configure-user && \
             # We cannot use yay as root user so we introduce an (unatted)
