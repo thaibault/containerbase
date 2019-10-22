@@ -130,7 +130,7 @@ RUN         git \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
-            cp ./prepare-initializer.sh /usr/bin/prepare-initializer
+            cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
             popd && \
             rm --recursive /tmp/containerBase
             # region configure user
