@@ -130,6 +130,7 @@ RUN         git \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
+            cp ./prepare-initializer.sh /usr/bin/prepare-initializer
             popd && \
             rm --recursive /tmp/containerBase
             # region configure user
@@ -157,7 +158,6 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-COPY        prepare-initializer.sh /usr/bin/prepare-initializer
 RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nconfigure-runtime-user /' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
