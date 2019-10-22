@@ -51,7 +51,8 @@ ENV         MIRROR_AREA_PATTERN Germany
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
-ENV         REPOSITORY_URL git@github.com:thaibault/containerBase
+            # git@github.com:thaibault/containerBase
+ENV         REPOSITORY_URL https://github.com/thaibault/containerBase.git
 ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
