@@ -10,11 +10,11 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
-declare -ir EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
-declare -ir EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
-USER_GROUP_ID_CHANGED=false
+export EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
+export EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
+export USER_GROUP_ID_CHANGED=false
 if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
-    HOST_USER_GROUP_ID="$(
+    export HOST_USER_GROUP_ID="$(
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
 if (( HOST_USER_GROUP_ID == 0 )); then
@@ -28,7 +28,7 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
     declare -r existing_user_group_name="$(
         getent group "$HOST_USER_GROUP_ID" | \
             cut --delimiter : --fields 1)"
-    USER_GROUP_ID_CHANGED=true
+    export USER_GROUP_ID_CHANGED=true
     if [ "$existing_user_group_name" = '' ]; then
         if \
             [ "$EXISTING_USER_GROUP_ID" = '' ] || \
@@ -69,7 +69,7 @@ elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
     fi
 fi
 if [ "$HOST_USER_ID" = '' ] || [ "$HOST_USER_ID" = UNKNOWN ]; then
-    HOST_USER_ID="$(
+    export HOST_USER_ID="$(
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
 USER_ID_CHANGED=false
@@ -83,7 +83,7 @@ elif (( EXISTING_USER_ID != HOST_USER_ID )); then
     declare -r existing_user_name="$(
         getent passwd "$HOST_USER_ID" | \
             cut --delimiter : --fields 1)"
-    USER_ID_CHANGED=true
+    export USER_ID_CHANGED=true
     if [ "$existing_user_name" = '' ]; then
         if \
             [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]
