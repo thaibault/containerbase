@@ -24,7 +24,7 @@
 # region start container commands
 # Run the following command in the directory where this file lives to start:
 # - podman pod rm --force base_pod; podman play kube kubernetes.yaml
-# - docker-compose run
+# - docker rm --force base; docker-compose run
 # endregion
             # region configuration
 FROM        archlinux/base
@@ -120,6 +120,7 @@ RUN         pacman \
             echo user_allow_other >> /etc/fuse.conf && \
             mkdir --parents /etc/dockerBase
             # endregion
+            # region retrieve artefacts
 RUN         git \
                 clone \
                 --depth 1 \
@@ -133,6 +134,7 @@ RUN         git \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
             popd && \
             rm --recursive /tmp/containerBase
+            # endregion
             # region configure user
 RUN         configure-user && \
             # We cannot use yay as root user so we introduce an (unatted)
