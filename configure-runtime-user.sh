@@ -72,7 +72,7 @@ if [ "$HOST_USER_ID" = '' ] || [ "$HOST_USER_ID" = UNKNOWN ]; then
     export HOST_USER_ID="$(
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
-USER_ID_CHANGED=false
+export USER_ID_CHANGED=false
 if (( HOST_USER_ID == 0 )); then
     echo Host user id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_ID != HOST_USER_ID )); then
