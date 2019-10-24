@@ -269,6 +269,9 @@ for path in "$@"; do
 done
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
+    # NOTE: If you redirect the output of this "chown" command to "/dev/null"
+    # you will end up in indeterministic behavior during accessing file
+    # descriptors. 
     if chown \
         --dereference \
         -H \
@@ -276,8 +279,7 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
         "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
         /proc/self/fd/0 \
         /proc/self/fd/1 \
-        /proc/self/fd/2 \
-            &>/dev/null
+        /proc/self/fd/2
     then
         echo \
             Changing input and output file descriptors ownership to user \
