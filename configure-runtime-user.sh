@@ -280,13 +280,14 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
             &>/dev/null
     then
         echo \
+            Changing input and output file descriptors ownership to user \
+            \"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\".
+    else
+        echo \
             Warning: Changing input and output file descriptors ownership to \
             user \"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\" did \
             not work.
-    else
-        echo \
-            Changing input and output file descriptors ownership to user \
-            \"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\".
+    fi
 fi
 set +x
 command="$(eval "echo $COMMAND")"
