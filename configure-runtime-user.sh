@@ -19,7 +19,11 @@ if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
 fi
 if (( HOST_USER_GROUP_ID == 0 )); then
     echo Host user group id is \"0\" \(root\), ignoring user mapping.
-elif (( EXISTING_USER_GROUP_ID != HOST_USER_GROUP_ID )); then
+elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
+    echo \
+        Existing user group id \"$EXISTING_USER_GROUP_ID\" already matching \
+        the containers one.
+else
     echo \
         Map container\'s existing user group id $EXISTING_USER_GROUP_ID \
         \(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user \
@@ -75,7 +79,11 @@ fi
 export USER_ID_CHANGED=false
 if (( HOST_USER_ID == 0 )); then
     echo Host user id is \"0\" \(root\), ignoring user mapping.
-elif (( EXISTING_USER_ID != HOST_USER_ID )); then
+elif (( EXISTING_USER_ID == HOST_USER_ID )); then
+    echo \
+        Existing user id \"$EXISTING_USER_ID\" already matching the \
+        containers one.
+else
     echo \
         Map container\'s existing application user id $EXISTING_USER_ID \
         \(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID \
