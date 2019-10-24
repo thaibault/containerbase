@@ -269,7 +269,7 @@ for path in "$@"; do
 done
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
-    chown \
+    if chown \
         --dereference \
         -H \
         --preserve-root \
@@ -277,11 +277,16 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
         /proc/self/fd/0 \
         /proc/self/fd/1 \
         /proc/self/fd/2 \
-        &>/dev/null ||
-    echo \
-        Warning: Chanhing input and output file descriptors ownership to \
-        user \"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\" did not \
-        work.
+            &>/dev/null
+    then
+        echo \
+            Warning: Changing input and output file descriptors ownership to \
+            user \"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\" did \
+            not work.
+    else
+        echo \
+            Changing input and output file descriptors ownership to user \
+            \"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\".
 fi
 set +x
 command="$(eval "echo $COMMAND")"
