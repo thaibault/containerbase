@@ -284,7 +284,7 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
         work.
 fi
 set +x
-command="$(eval "$COMMAND")"
+command="$(eval "echo $COMMAND")"
 if [[ "$command" != '' ]] && [[ "$command" != UNKNOWN ]]; then
     echo Run command \"$command\"
     if (( HOST_USER_ID == 0 )); then
