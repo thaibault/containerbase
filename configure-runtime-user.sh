@@ -271,7 +271,7 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
     # NOTE: If you redirect the output of this "chown" command to "/dev/null"
     # you will end up in indeterministic behavior during accessing file
-    # descriptors. 
+    # descriptors.
     if chown \
         --dereference \
         -H \
