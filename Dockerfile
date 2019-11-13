@@ -16,12 +16,15 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - podman pull archlinux/base && podman build --file Dockerfile --no-cache --tag docker.pkg.github.com/thaibault/containerbase/base
-# - podman push docker.pkg.github.com/thaibault/containerbase/base
+# - podman pull archlinux/base && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag docker.pkg.github.com/thaibault/containerbase/base .
+# - docker pull archlinux/base && docker build --no-cache --tag tsickert/base:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - podman push docker.pkg.github.com/thaibault/containerbase/base:latest --creds "thaibault:$(cat "${ILU_CONFIGURATION_PATH}web/github/masterToken.txt")"
+# - docker push tsickert/base
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
-# - podman pod rm --force base_pod; podman play kube service/kubernetes/base.yaml
+# - podman pod rm --force base_pod; podman play kube kubernetes.yaml
+# - docker rm --force base; docker-compose up
 # endregion
             # region configuration
 FROM        archlinux/base
@@ -36,7 +39,7 @@ ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
 ENV         DECRYPTED_PATHS "/tmp/plain/"
 ENV         DEFAULT_MAIN_USER_GROUP_ID 100
 ENV         DEFAULT_MAIN_USER_ID 1000
-ENV         ENVIRONMENT_FILE_PATHS "/etc/dockerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
+ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
@@ -48,7 +51,8 @@ ENV         MIRROR_AREA_PATTERN Germany
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
-ENV         REPOSITORY_URL git@github.com:thaibault/containerBase
+            # git@github.com:thaibault/containerbase
+ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
 ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
@@ -102,20 +106,6 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # endregion
-COPY        configure-user.sh /usr/bin/configure-user
-COPY        configure-runtime-user.sh /usr/bin/configure-runtime-user
-COPY        retrieve-application.sh /usr/bin/retrieve-application
-            # region configure user
-RUN         configure-user && \
-            # We cannot use yay as root user so we introduce an (unatted)
-            # install user.
-            # Create specified user with not yet existing name and id.
-            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
-            echo \
-                -e \
-                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
-                >>/etc/sudoers
-            # endregion
             # region install needed packages
 RUN         pacman \
                 --needed \
@@ -128,7 +118,33 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
             echo user_allow_other >> /etc/fuse.conf && \
-            mkdir --parents /etc/dockerBase
+            mkdir --parents /etc/containerBase
+            # endregion
+            # region retrieve artefacts
+RUN         git \
+                clone \
+                --depth 1 \
+                --no-single-branch \
+                "$REPOSITORY_URL" \
+                /tmp/containerbase && \
+            pushd /tmp/containerbase && \
+            cp ./configure-user.sh /usr/bin/configure-user && \
+            cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
+            cp ./retrieve-application.sh /usr/bin/retrieve-application && \
+            cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
+            popd && \
+            rm --recursive /tmp/containerbase
+            # endregion
+            # region configure user
+RUN         configure-user && \
+            # We cannot use yay as root user so we introduce an (unatted)
+            # install user.
+            # Create specified user with not yet existing name and id.
+            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
+            echo \
+                -e \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
+                >>/etc/sudoers
             # endregion
             # region install and configure yay
 USER        $INSTALLER_USER_NAME
@@ -144,8 +160,7 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-COPY        prepare-initializer.sh /usr/bin/prepare-initializer
-RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nconfigure-runtime-user /' \
+RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nsource configure-runtime-user /' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
 CMD         /usr/bin/initialize

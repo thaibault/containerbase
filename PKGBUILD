@@ -9,12 +9,12 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https//creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-pkgname=docker-base
+pkgname=container-base
 pkgver=1.0.0
 pkgrel=1
 pkgdesc='docker base configuration'
 arch=(any)
-url=https://torben.website/dockerBase
+url=https://torben.website/containerbase
 license=(CC-BY-3.0)
 depends=(bash docker)
 source=(base.yaml Dockerfile proxy.service)

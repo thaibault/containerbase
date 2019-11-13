@@ -3,9 +3,9 @@
   "version": "1.0.116",
   "license": "CC-BY-3.0",
   "description": "generic dockerized application",
-  "homepage": "https://torben.website/dockerBase",
+  "homepage": "https://torben.website/containerbase",
   "documentationWebsite": {
-    "name": "dockerBase",
+    "name": "containerBase",
     "tagline": "dockerize your application",
     "trackingCode": "UA-40192634-TODO"
   },
@@ -28,7 +28,7 @@
   "main": "base.yaml",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thaibault/dockerBase"
+    "url": "https://github.com/thaibault/containerbase"
   },
   "scripts": {
     "clear": "echo clear",

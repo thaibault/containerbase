@@ -58,23 +58,31 @@ if [[ "$DECRYPT" != false ]]; then
                 echo -n "$1" >/tmp/intermediatePasswordFile
             fi
             if [ -s /tmp/intermediatePasswordFile ]; then
-                gocryptfs \
+                if ! gocryptfs \
                     -allow_other \
                     -nonempty \
                     -nosyslog \
                     -passfile /tmp/intermediatePasswordFile \
                     -quiet \
                     "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    "${DECRYPTED_PATHS_ARRAY[index]}" || \
-                exit 1
-            else
-                gocryptfs \
-                    -allow_other \
-                    -nonempty \
-                    -nosyslog \
-                    -quiet \
-                    "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    "${DECRYPTED_PATHS_ARRAY[index]}" ||
+                    "${DECRYPTED_PATHS_ARRAY[index]}"
+                then
+                    echo \
+                        Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+                        \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
+                    exit 1
+                fi
+            elif ! gocryptfs \
+                -allow_other \
+                -nonempty \
+                -nosyslog \
+                -quiet \
+                "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                "${DECRYPTED_PATHS_ARRAY[index]}"
+            then
+                echo \
+                    Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+                    \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
                 exit 1
             fi
         fi
