@@ -39,7 +39,7 @@ ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
 ENV         DECRYPTED_PATHS "/tmp/plain/"
 ENV         DEFAULT_MAIN_USER_GROUP_ID 100
 ENV         DEFAULT_MAIN_USER_ID 1000
-ENV         ENVIRONMENT_FILE_PATHS "/etc/dockerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
+ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
@@ -51,8 +51,8 @@ ENV         MIRROR_AREA_PATTERN Germany
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
-            # git@github.com:thaibault/containerBase
-ENV         REPOSITORY_URL https://github.com/thaibault/containerBase.git
+            # git@github.com:thaibault/containerbase
+ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
 ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
@@ -118,7 +118,7 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
             echo user_allow_other >> /etc/fuse.conf && \
-            mkdir --parents /etc/dockerBase
+            mkdir --parents /etc/containerBase
             # endregion
             # region retrieve artefacts
 RUN         git \
@@ -126,14 +126,14 @@ RUN         git \
                 --depth 1 \
                 --no-single-branch \
                 "$REPOSITORY_URL" \
-                /tmp/containerBase && \
-            pushd /tmp/containerBase && \
+                /tmp/containerbase && \
+            pushd /tmp/containerbase && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
             popd && \
-            rm --recursive /tmp/containerBase
+            rm --recursive /tmp/containerbase
             # endregion
             # region configure user
 RUN         configure-user && \
