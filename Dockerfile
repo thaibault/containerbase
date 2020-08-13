@@ -16,8 +16,8 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - podman pull archlinux/base && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag docker.pkg.github.com/thaibault/containerbase/base .
-# - docker pull archlinux/base && docker build --no-cache --tag tsickert/base:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag docker.pkg.github.com/thaibault/containerbase/base .
+# - docker pull archlinux && docker build --no-cache --tag tsickert/base:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
 # - podman push docker.pkg.github.com/thaibault/containerbase/base:latest --creds "thaibault:$(cat "${ILU_CONFIGURATION_PATH}web/github/masterToken.txt")"
 # - docker push tsickert/base
 # endregion
@@ -27,7 +27,7 @@
 # - docker rm --force base; docker-compose up
 # endregion
             # region configuration
-FROM        archlinux/base
+FROM        archlinux
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application/
