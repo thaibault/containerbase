@@ -82,6 +82,7 @@ RUN         mv \
                 /etc/pacman.d/mirrorlist.orig \
                 >/etc/pacman.d/mirrorlist && \
             # Update pacman keys (sometime not working)
+            echo
             #rm --force --recursive /etc/pacman.d/gnupg && \
             #pacman-key --init && \
             #pacman-key --populate archlinux && \
