@@ -1,6 +1,6 @@
 {
   "name": "containerbase",
-  "version": "1.0.117",
+  "version": "1.0.118",
   "license": "CC-BY-3.0",
   "description": "generic containerized application",
   "homepage": "https://torben.website/containerbase",
