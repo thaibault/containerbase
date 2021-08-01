@@ -1,5 +1,23 @@
 #!/usr/bin/bash
 # -*- coding: utf-8 -*-
+# [Project page](https://torben.website/containerbase)
+
+# Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+# License
+# -------
+
+# This library written by Torben Sickert stand under a creative commons naming
+# 3.0 unported license.
+# See https://creativecommons.org/licenses/by/3.0/deed.de
+
+# Basic ArchLinux with user-mapping, AUR integration and support for decryption
+# of security related files.
+
+# 1. Checks if newer initialier is bind into container and exec into to if
+# present.
+# 2. Loads environment files if existing.
+# 3. Decrypt configured locations if specified.
 # region convert environment variables given as string into local arrays
 for name in \
     DECRYPTED_PATHS \

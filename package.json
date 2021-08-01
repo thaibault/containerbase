@@ -1,12 +1,12 @@
 {
-  "name": "docker-base",
+  "name": "containerbase",
   "version": "1.0.117",
   "license": "CC-BY-3.0",
-  "description": "generic dockerized application",
+  "description": "generic containerized application",
   "homepage": "https://torben.website/containerbase",
   "documentationWebsite": {
     "name": "containerBase",
-    "tagline": "dockerize your application",
+    "tagline": "containerize your application",
     "trackingCode": "UA-40192634-TODO"
   },
   "keywords": [
@@ -14,7 +14,6 @@
     "archLinux",
     "arch",
     "container",
-    "docker",
     "hosting",
     "linux"
   ],

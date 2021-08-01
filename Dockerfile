@@ -16,10 +16,11 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - podman pull archlinux/base && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag docker.pkg.github.com/thaibault/containerbase/base .
-# - docker pull archlinux/base && docker build --no-cache --tag tsickert/base:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
-# - podman push docker.pkg.github.com/thaibault/containerbase/base:latest --creds "thaibault:$(cat "${ILU_CONFIGURATION_PATH}web/github/masterToken.txt")"
-# - docker push tsickert/base
+# - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase .
+# - podman push ghcr.io/thaibault/containerbase:latest --creds "thaibault:$(cat "${ILU_CONFIGURATION_PATH}web/github/masterToken.txt")"
+
+# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - cat "${ILU_CONFIGURATION_PATH}web/github/masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
@@ -27,7 +28,7 @@
 # - docker rm --force base; docker-compose up
 # endregion
             # region configuration
-FROM        archlinux/base
+FROM        archlinux
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application/
@@ -81,11 +82,12 @@ RUN         mv \
                 '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
                 /etc/pacman.d/mirrorlist.orig \
                 >/etc/pacman.d/mirrorlist && \
-            # Update pacman keys
-            rm --force --recursive /etc/pacman.d/gnupg && \
-            pacman-key --init && \
-            pacman-key --populate archlinux && \
-            pacman-key --refresh-keys
+            # Update pacman keys (sometime not working)
+            echo
+            #rm --force --recursive /etc/pacman.d/gnupg && \
+            #pacman-key --init && \
+            #pacman-key --populate archlinux && \
+            #pacman-key --refresh-keys
             # Update package database to retrieve newest package versions
 RUN         pacman \
                 --needed \
