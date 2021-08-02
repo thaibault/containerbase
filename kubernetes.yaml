@@ -10,5 +10,5 @@ spec:
   - env:
     - name: container
       value: podman
-    image: docker.io/tsickert/base:latest
+    image: ghcr.io/thaibault/containerbase:latest
     name: base
