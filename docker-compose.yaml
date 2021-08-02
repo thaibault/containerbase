@@ -9,7 +9,6 @@ services:
                 delay: 10s
                 max_attempts: 5
                 window: 120s
-        #image: docker.pkg.github.com/thaibault/containerbase/base:latest
-        image: tsickert/base:latest
+        image: ghcr.io/thaibault/containerbase:latest
         # NOTE: Only for "docker-compose" (not "docker stack deploy").
         restart: on-failure
