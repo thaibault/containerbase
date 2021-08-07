@@ -1,14 +1,7 @@
 {
   "name": "containerbase",
   "version": "1.0.119",
-  "license": "CC-BY-3.0",
   "description": "generic containerized application",
-  "homepage": "https://torben.website/containerbase",
-  "documentationWebsite": {
-    "name": "containerBase",
-    "tagline": "containerize your application",
-    "trackingCode": "UA-40192634-TODO"
-  },
   "keywords": [
     "application",
     "archLinux",
@@ -17,6 +10,17 @@
     "hosting",
     "linux"
   ],
+  "homepage": "https://torben.website/containerbase",
+  "bugs": {
+    "email": "info@torben.website",
+    "url": "https://github.com/thaibault/containerbase/issues"
+  },
+  "license": "CC-BY-3.0",
+  "author": {
+    "name": "Torben Sickert",
+    "email": "info@torben.website",
+    "url": "https://torben.website"
+  },
   "files": [
     "base.yaml",
     "application.yaml",
@@ -36,5 +40,10 @@
   },
   "devDependencies": {
     "documentation-website": "*"
+  },
+  "documentationWebsite": {
+    "name": "containerBase",
+    "tagline": "containerize your application",
+    "trackingCode": "UA-40192634-TODO"
   }
 }
