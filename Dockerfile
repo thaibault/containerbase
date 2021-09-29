@@ -25,7 +25,7 @@
 # region start container commands
 # Run the following command in the directory where this file lives to start:
 # - podman pod rm --force base_pod; podman play kube kubernetes.yaml
-# - docker rm --force base; docker-compose up
+# - docker rm --force base; docker compose up
 # endregion
             # region configuration
 FROM        archlinux

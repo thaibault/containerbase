@@ -2,7 +2,7 @@ version: '3.7'
 services:
     base:
         container_name: base
-        # NOTE: Only for "docker stack deploy" (not "docker-compose").
+        # NOTE: Only for "docker stack deploy" (not "docker compose").
         deploy:
             restart_policy:
                 condition: on-failure
@@ -10,5 +10,5 @@ services:
                 max_attempts: 5
                 window: 120s
         image: ghcr.io/thaibault/containerbase:latest
-        # NOTE: Only for "docker-compose" (not "docker stack deploy").
+        # NOTE: Only for "docker compose" (not "docker stack deploy").
         restart: on-failure
