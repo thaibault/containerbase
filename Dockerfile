@@ -103,19 +103,19 @@ RUN         pacman \
                 --needed \
                 --noconfirm \
                 --sync \
+                --noprogressbar \
                 neovim \
                 openssh && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # endregion
-            # region install needed packages
+            # region install packages to build other packages
 RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
                 --sync \
                 base-devel \
-                gocryptfs \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
@@ -132,6 +132,7 @@ RUN         git \
             pushd /tmp/containerbase && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
+            cp ./encrypt.sh /usr/bin/encrypt && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
             popd && \
@@ -159,6 +160,12 @@ RUN         pushd /tmp && \
             popd
 USER        root
             # endregion
+RUN         yay \
+                --needed \
+                --noconfirm \
+                --sync \
+                --noprogressbar \
+                gpgdir
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
