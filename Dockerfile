@@ -58,8 +58,7 @@ ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
             # endregion
-            # region retrieve wget
-            # Install needed base packages
+            # region install needed base packages
 RUN         pacman \
                 --needed \
                 --noconfirm \
@@ -67,7 +66,6 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 base \
-                gnupg \
                 nawk && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
