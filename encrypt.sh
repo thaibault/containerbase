@@ -37,7 +37,6 @@ do
         break
     fi
 done
-echo TODO: $gpgdir
 # endregion
 # region encrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
@@ -69,7 +68,7 @@ if [[ "$DECRYPT" != false ]]; then
             fi
 
             if [ -s /tmp/intermediatePasswordFile ]; then
-                if ! /usr/bin/perlbin/site_perl/gpgdir \
+                if ! "$gpgdir" \
                     --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
                     --overwrite-encrypted \
                     --pw-file /tmp/intermediatePasswordFile \
@@ -82,7 +81,7 @@ if [[ "$DECRYPT" != false ]]; then
 
                     exit 1
                 fi
-            elif ! /usr/bin/perlbin/site_perl/gpgdir \
+            elif ! "$gpgdir" \
                 --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
                 --overwrite-encrypted \
                 --Symmetric \
