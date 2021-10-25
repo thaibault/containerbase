@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
     env:
