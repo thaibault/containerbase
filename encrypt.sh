@@ -73,7 +73,7 @@ if [[ "$DECRYPT" != false ]]; then
                     --overwrite-encrypted \
                     --pw-file /tmp/intermediatePasswordFile \
                     --Symmetric \
-                    --verbose
+                    --quiet
                 then
                     echo \
                         Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
@@ -85,7 +85,7 @@ if [[ "$DECRYPT" != false ]]; then
                 --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
                 --overwrite-encrypted \
                 --Symmetric \
-                --verbose
+                --quiet
             then
                 echo \
                     Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
