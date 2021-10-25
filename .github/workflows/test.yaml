@@ -20,7 +20,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - run: sudo apt-get install --assume-yes libgnupg-interface-perl libterm-readkey-perl 
-      - run: cd /tmp && curl https://www.cipherdyne.org/gpgdir/download/gpgdir-nodeps-1.9.6.tar.gz --output - | tar --extract --gzip && cd gpgdir-nodeps-*/gpgdir
+      - run: cd /tmp
+      - run: curl https://www.cipherdyne.org/gpgdir/download/gpgdir-nodeps-1.9.6.tar.gz --output - | tar --extract --gzip
+      - run: cd gpgdir-nodeps-*/gpgdir
       - run: ./encrypt.sh
 
       - name: Log in to the Container registry

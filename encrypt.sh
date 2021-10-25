@@ -28,10 +28,10 @@ done
 # endregion
 # region determine gpgdir
 for gpgdir in \
-    /usr/bin/perlbin/site_perl/gpgdir \
-    /tmp/gpgdir-nodeps-*/gpgdir \
     /tmp/gpgdir \
-    /usr/bin/gpgdir
+    /usr/bin/gpgdir \
+    /usr/bin/perlbin/site_perl/gpgdir \
+    /tmp/gpgdir-nodeps-*/gpgdir
 do
     if [ -f "$gpgdir" ]; then
         break
