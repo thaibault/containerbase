@@ -158,12 +158,17 @@ RUN         pushd /tmp && \
             popd
 USER        root
             # endregion
+            # region install "gpgdir"
+USER        $INSTALLER_USER_NAME
 RUN         yay \
                 --needed \
                 --noconfirm \
                 --sync \
                 --noprogressbar \
-                gpgdir
+                gpgdir && \
+            sudo rm /var/cache/* --recursive --force
+USER        root
+            # endregion
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
