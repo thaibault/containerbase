@@ -63,10 +63,21 @@ done
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
+            rm \
+                --force \
+                --recursive \
+                "${DECRYPTED_PATHS_ARRAY[index]}" \
+                &>/dev/null
             mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
             chown \
                 --recursive \
                 $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+                "${DECRYPTED_PATHS_ARRAY[index]}"
+
+            cp \
+                --force \
+                --recursive \
+                "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
                 "${DECRYPTED_PATHS_ARRAY[index]}"
 
             if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
@@ -79,11 +90,11 @@ if [[ "$DECRYPT" != false ]]; then
 
             if [ -s /tmp/intermediatePasswordFile ]; then
                 if ! /usr/bin/perlbin/site_perl/gpgdir \
-                    --decrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
                     --overwrite-decrypted \
                     --pw-file /tmp/intermediatePasswordFile \
-                    --quiet \
-                    "${DECRYPTED_PATHS_ARRAY[index]}"
+                    --Symmetric \
+                    --quiet
                 then
                     echo \
                         Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
@@ -92,10 +103,10 @@ if [[ "$DECRYPT" != false ]]; then
                     exit 1
                 fi
             elif ! /usr/bin/perlbin/site_perl/gpgdir \
-                --decrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
                 --overwrite-decrypted \
-                --quiet \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
+                --Symmetric \
+                --quiet
             then
                 echo \
                     Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \

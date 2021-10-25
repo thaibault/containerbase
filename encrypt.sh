@@ -30,10 +30,21 @@ done
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
+            rm \
+                --force \
+                --recursive \
+                "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    &>/dev/null
             mkdir --parents "${ENCRYPTED_PATHS_ARRAY[index]}"
             chown \
                 --recursive \
                 $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+                "${ENCRYPTED_PATHS_ARRAY[index]}"
+
+            cp \
+                --force \
+                --recursive \
+                "${DECRYPTED_PATHS_ARRAY[index]}" \
                 "${ENCRYPTED_PATHS_ARRAY[index]}"
 
             if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
@@ -46,11 +57,11 @@ if [[ "$DECRYPT" != false ]]; then
 
             if [ -s /tmp/intermediatePasswordFile ]; then
                 if ! /usr/bin/perlbin/site_perl/gpgdir \
-                    --encrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
-                    --overwrite-decrypted \
+                    --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    --overwrite-encrypted \
                     --pw-file /tmp/intermediatePasswordFile \
-                    --quiet \
-                    "${ENCRYPTED_PATHS_ARRAY[index]}"
+                    --Symmetric \
+                    --verbose
                 then
                     echo \
                         Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
@@ -59,10 +70,10 @@ if [[ "$DECRYPT" != false ]]; then
                     exit 1
                 fi
             elif ! /usr/bin/perlbin/site_perl/gpgdir \
-                --encrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
-                --overwrite-decrypted \
-                --quiet \
-                "${ENCRYPTED_PATHS_ARRAY[index]}"
+                --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                --overwrite-encrypted \
+                --Symmetric \
+                --verbose
             then
                 echo \
                     Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
