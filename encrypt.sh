@@ -26,6 +26,7 @@ do
     fi
 done
 # endregion
+ls test -lha
 # region encrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do

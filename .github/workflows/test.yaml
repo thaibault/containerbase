@@ -9,8 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
@@ -21,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: ./encrypt.sh ./test/plain
+      - run: ./encrypt.sh
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
