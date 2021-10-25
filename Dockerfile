@@ -147,8 +147,9 @@ RUN         configure-user && \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
                 >>/etc/sudoers
             # endregion
-            # region install and configure yay
+
 USER        $INSTALLER_USER_NAME
+            # region install and configure yay
 RUN         pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
@@ -156,10 +157,8 @@ RUN         pushd /tmp && \
             popd && \
             rm --force --recursive yay && \
             popd
-USER        root
             # endregion
             # region install "gpgdir"
-USER        $INSTALLER_USER_NAME
 RUN         yay \
                 --needed \
                 --noconfirm \
@@ -167,8 +166,9 @@ RUN         yay \
                 --noprogressbar \
                 gpgdir && \
             sudo rm /var/cache/* --recursive --force
-USER        root
             # endregion
+USER        root
+
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
