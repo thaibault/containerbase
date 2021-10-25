@@ -16,10 +16,10 @@ Conflicts=shutdown.target reboot.target halt.target
 
 [Service]
 Environment=hostname=%H
-ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/base.yaml kill $APP
-ExecStartPre=-/usr/bin/env docker-compose --file serviceHandler/base.yaml rm --force $APP
-ExecStart=/usr/bin/env docker-compose --file serviceHandler/base.yaml up --force-recreate --no-build --no-deps $APP
-ExecStop=/usr/bin/env docker-compose --file serviceHandler/base.yaml stop $APP
+ExecStartPre=-/usr/bin/env docker compose --file serviceHandler/base.yaml kill $APP
+ExecStartPre=-/usr/bin/env docker compose --file serviceHandler/base.yaml rm --force $APP
+ExecStart=/usr/bin/env docker compose --file serviceHandler/base.yaml up --force-recreate --no-build --no-deps $APP
+ExecStop=/usr/bin/env docker compose --file serviceHandler/base.yaml stop $APP
 NotifyAccess=all
 # NOTE: Will be handled by docker.
 #Restart=always

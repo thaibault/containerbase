@@ -25,7 +25,7 @@
 # region start container commands
 # Run the following command in the directory where this file lives to start:
 # - podman pod rm --force base_pod; podman play kube kubernetes.yaml
-# - docker rm --force base; docker-compose up
+# - docker rm --force base; docker compose up
 # endregion
             # region configuration
 FROM        archlinux
@@ -58,8 +58,7 @@ ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
             # endregion
-            # region retrieve wget
-            # Install needed base packages
+            # region install needed base packages
 RUN         pacman \
                 --needed \
                 --noconfirm \
@@ -67,7 +66,6 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 base \
-                gnupg \
                 nawk && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
@@ -103,19 +101,19 @@ RUN         pacman \
                 --needed \
                 --noconfirm \
                 --sync \
+                --noprogressbar \
                 neovim \
                 openssh && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # endregion
-            # region install needed packages
+            # region install packages to build other packages
 RUN         pacman \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
                 --sync \
                 base-devel \
-                gocryptfs \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
@@ -132,6 +130,7 @@ RUN         git \
             pushd /tmp/containerbase && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
+            cp ./encrypt.sh /usr/bin/encrypt && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
             popd && \
@@ -148,8 +147,9 @@ RUN         configure-user && \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
                 >>/etc/sudoers
             # endregion
-            # region install and configure yay
+
 USER        $INSTALLER_USER_NAME
+            # region install and configure yay
 RUN         pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
@@ -157,8 +157,18 @@ RUN         pushd /tmp && \
             popd && \
             rm --force --recursive yay && \
             popd
-USER        root
             # endregion
+            # region install "gpgdir"
+RUN         yay \
+                --needed \
+                --noconfirm \
+                --sync \
+                --noprogressbar \
+                gpgdir && \
+            sudo rm /var/cache/* --recursive --force
+            # endregion
+USER        root
+
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
