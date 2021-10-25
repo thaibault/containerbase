@@ -13,7 +13,7 @@ jobs:
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
     env:
-      DECRYPTED_PATHS: ./test/plain
+      DECRYPTED_PATHS: ./test/plain/
       ENCRYPTED_PATHS: ./test/encrypted/
       PASSWORD_FILE_PATHS: ./test/.encryptionPassword
     steps:
