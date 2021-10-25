@@ -26,6 +26,19 @@ do
     fi
 done
 # endregion
+# region determine gpgdir
+for gpgdir in \
+    /usr/bin/perlbin/site_perl/gpgdir \
+    /tmp/gpgdir-nodeps-*/gpgdir \
+    /tmp/gpgdir \
+    /usr/bin/gpgdir
+do
+    if [ -f "$gpgdir" ]; then
+        break
+    fi
+done
+echo TODO: $gpgdir
+# endregion
 # region encrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
