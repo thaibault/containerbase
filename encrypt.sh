@@ -56,7 +56,7 @@ if [[ "$DECRYPT" != false ]]; then
             cp \
                 --force \
                 --recursive \
-                "${DECRYPTED_PATHS_ARRAY[index]}" \
+                "${DECRYPTED_PATHS_ARRAY[index]}"/* \
                 "${ENCRYPTED_PATHS_ARRAY[index]}"
 
             if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
