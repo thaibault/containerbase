@@ -16,9 +16,9 @@ jobs:
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
     env:
-      DECRYPTED_PATHS: ./test/plain/
-      ENCRYPTED_PATHS: ./test/testEncryption/
-      PASSWORD_FILE_PATHS: ./test/.encryptionPassword
+      DECRYPTED_PATHS: test/plain/
+      ENCRYPTED_PATHS: test/testEncryption/
+      PASSWORD_FILE_PATHS: test/.encryptionPassword
     steps:
       - uses: actions/checkout@v2
 
