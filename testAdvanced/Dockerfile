@@ -1,8 +1,11 @@
 FROM        ghcr.io/thaibault/containerbase
+
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="proxy" Vendor="thaibault products" Version="1.0"
 
 ENV         MAIN_USER_NAME application
+
+WORKDIR     $APPLICATION_PATH
 
 # Install custom packages (optionally from the arch user repository)
 USER        $INSTALLER_USER_NAME
@@ -10,10 +13,12 @@ USER        $INSTALLER_USER_NAME
 RUN         yay \
                 --needed \
                 --noconfirm \
+                --refresh \
                 --sync \
+                --sysupgrade \
                 tree && \
             # tidy up
-            rm /var/cache/* --recursive --force
+            sudo rm /var/cache/* --recursive --force
 USER        root
 
 # Configure runtime user.
