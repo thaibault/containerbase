@@ -17,14 +17,14 @@ jobs:
     # script.
     env:
       DECRYPTED_PATHS: ./test/plain/
-      ENCRYPTED_PATHS: ./test/encrypted/
+      ENCRYPTED_PATHS: ./test/testEncryption/
       PASSWORD_FILE_PATHS: ./test/.encryptionPassword
     steps:
       - uses: actions/checkout@v2
 
       - run: ./encrypt.sh
 
-      - run: rm --force --recursive test/encrypted
+      - run: rm --force --recursive test/testEncryption
   build:
     runs-on: ubuntu-latest
     permissions:
