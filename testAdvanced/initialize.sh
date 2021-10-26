@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 set -e
 
-echo TODO GIVEN ARGS are "$@" end
-
 source prepare-initializer "$@"
 
 echo Application started.
