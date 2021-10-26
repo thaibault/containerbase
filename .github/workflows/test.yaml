@@ -39,11 +39,11 @@ jobs:
         with:
           context: ./testSimple
           push: false
-          tags: testSimple:latest
+          tags: test-simple:latest
 
       - uses: addnab/docker-run-action@v3
         with:
-          image: testAdvanced:latest
+          image: test-simple:latest
   buildAndRunAdvanced:
     runs-on: ubuntu-latest
     permissions:
@@ -58,8 +58,8 @@ jobs:
         with:
           context: ./testAdvanced
           push: false
-          tags: testAdvanced:latest
+          tags: test-advanced:latest
 
       - uses: addnab/docker-run-action@v3
         with:
-          image: testAdvanced:latest
+          image: test-advanced:latest
