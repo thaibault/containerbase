@@ -41,7 +41,6 @@ do
     fi
 done
 # endregion
-echo TODO: $gpgdir
 # region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
@@ -63,10 +62,7 @@ if [[ "$DECRYPT" != false ]]; then
                 "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
                 "${DECRYPTED_PATHS_ARRAY[index]}"
 
-            echo TODO2: $1 l $DECRYPTIONPASSWORD l
-
             if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
-                echo joaa
                 cp \
                     ${PASSWORD_FILE_PATHS_ARRAY[index]} \
                     /tmp/intermediatePasswordFile
@@ -90,7 +86,7 @@ if [[ "$DECRYPT" != false ]]; then
 
                     exit 1
                 fi
-            elif ! echo "$gpgdir \
+            elif ! "$gpgdir" \
                 --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
                 --overwrite-decrypted \
                 --Symmetric \
