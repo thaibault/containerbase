@@ -133,6 +133,7 @@ RUN         git \
             cp ./encrypt.sh /usr/bin/encrypt && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
+            cp ./run-command.sh /usr/bin/run-command && \
             popd && \
             rm --recursive /tmp/containerbase
             # endregion
@@ -172,7 +173,7 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nsource configure-runtime-user /' \
+RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nsource configure-runtime-user && \\\nrun-command/' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
 CMD         /usr/bin/initialize

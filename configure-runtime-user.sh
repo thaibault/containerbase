@@ -292,15 +292,6 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     fi
 fi
 set +x
-command="$(eval "echo $COMMAND")"
-if [[ "$command" != '' ]] && [[ "$command" != UNKNOWN ]]; then
-    echo Run command \"$command\"
-    if (( HOST_USER_ID == 0 )); then
-        exec $command
-    else
-        exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$command"
-    fi
-fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
