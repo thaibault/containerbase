@@ -22,10 +22,18 @@
 for name in \
     DECRYPTED_PATHS \
     ENCRYPTED_PATHS \
+    ENVIRONMENT_FILE_PATHS \
     PASSWORD_FILE_PATHS
 do
     if ! [[ "$(declare -p "$name" 2>/dev/null)" =~ 'declare -a' ]]; then
         eval "declare -a ${name}_ARRAY=(\$${name})"
+    fi
+done
+# endregion
+# region load dynamic environment variables
+for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
+    if [ -f "$file_path" ]; then
+        source "$file_path"
     fi
 done
 # endregion
