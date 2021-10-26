@@ -4,6 +4,8 @@ set -e
 
 source prepare-initializer "$@"
 
+source configure-runtime-user
+
 echo \
     Application started: Decrypted content of encrypted folder \
     \"$ENCRYPTED_PATHS\" located at \"$DECRYPTED_PATHS\" is \
