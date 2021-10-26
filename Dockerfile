@@ -174,10 +174,12 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nsource configure-runtime-user\nrun-command' \
+RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer "$@" && \\\nset -e\nsource configure-runtime-user\nrun-command "$@"' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
-ENTRYPOINT  /usr/bin/initialize
+# NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
+# ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
+ENTRYPOINT ["/usr/bin/initialize"]
             # endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:
