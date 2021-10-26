@@ -11,5 +11,8 @@ WORKDIR     $APPLICATION_PATH
 
 USER        root
 
+# TODO
+COPY        ./decrypt.sh /usr/bin/decrypt
+
 COPY        ./encrypted ./encrypted
 COPY        ./environment.sh ./etc/containerBase/environment.sh

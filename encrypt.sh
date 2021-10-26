@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 # -*- coding: utf-8 -*-
+# region header
 # [Project page](https://torben.website/containerbase)
 
 # Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
@@ -8,12 +9,9 @@
 # -------
 
 # This library written by Torben Sickert stand under a creative commons naming
-# 3.0 unported license.
-# See https://creativecommons.org/licenses/by/3.0/deed.de
-
-# Basic ArchLinux with user-mapping, AUR integration and support for decryption
-# of security related files.
-
+# 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
+# endregion
+# shellcheck disable=SC2016,SC2034,SC2155
 # region convert environment variables given as string into local arrays
 for name in \
     DECRYPTED_PATHS \

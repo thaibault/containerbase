@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 # -*- coding: utf-8 -*-
+# region header
 # [Project page](https://torben.website/containerbase)
 
 # Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
@@ -13,11 +14,12 @@
 
 # Basic ArchLinux with user-mapping, AUR integration and support for decryption
 # of security related files.
-
+# endregion
 # 1. Checks if newer initializer is bind into container and exec into to if
 #    present.
 # 2. Loads environment files if existing.
 # 3. Decrypt configured locations if specified.
+# shellcheck disable=SC2016,SC2034,SC2155
 # region convert environment variables given as string into local arrays
 for name in \
     ENVIRONMENT_FILE_PATHS
