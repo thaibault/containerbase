@@ -56,4 +56,4 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/thaibault/containerbase:test
     steps:
-      run: echo TODO Test run.
+      - run: echo TODO Test run.
