@@ -15,7 +15,7 @@
 # of security related files.
 
 # 1. Checks if newer initializer is bind into container and exec into to if
-# present.
+#    present.
 # 2. Loads environment files if existing.
 # 3. Decrypt configured locations if specified.
 # region convert environment variables given as string into local arrays
