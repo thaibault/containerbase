@@ -23,6 +23,8 @@ jobs:
 
       - run: rm --force --recursive test/encrypted
   build:
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
 
