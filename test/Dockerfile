@@ -12,6 +12,6 @@ RUN         yay \
             # tidy up
             rm /var/cache/* --recursive --force
             # endregion
-RUN         configure-user && \
+RUN         configure-user
 RUN         pushd "$(retrieve-application)"
 COPY        initialize.sh "$INITIALIZING_FILE_PATH"
