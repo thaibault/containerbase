@@ -69,10 +69,11 @@ jobs:
           run: /usr/bin/initialize
 
       # Decrypt with password provided as command line argument
-      - uses: addnab/docker-run-action@v3
-        with:
-          image: test-advanced:latest
-          run: /usr/bin/initialize test
+      # TODO
+      #- uses: addnab/docker-run-action@v3
+      #  with:
+      #    image: test-advanced:latest
+      #    run: /usr/bin/initialize test
 
       # Decrypt with password provided as environment variable.
       - uses: addnab/docker-run-action@v3
