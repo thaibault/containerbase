@@ -68,12 +68,6 @@ if [[ "$DECRYPT" != false ]]; then
             fi
 
             if [ -s /tmp/intermediatePasswordFile ]; then
-    echo "$gpgdir" \
-                    --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    --overwrite-encrypted \
-                    --pw-file /tmp/intermediatePasswordFile \
-                    --Symmetric \
-                    --verbose
                 if ! "$gpgdir" \
                     --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
                     --overwrite-encrypted \
