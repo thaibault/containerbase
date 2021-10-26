@@ -61,7 +61,22 @@ jobs:
           push: false
           tags: test-advanced:latest
 
+      # Decrypt with hidden mounted password file.
       - uses: addnab/docker-run-action@v3
         with:
           image: test-advanced:latest
+          options: --mount type=bind,source=$(pwd)/.encryptedPassword,target/application/.encryptedPassword
+          run: /usr/bin/initialize
+
+      # Decrypt with password provided as command line argument
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-advanced:latest
+          run: /usr/bin/initialize test
+
+      # Decrypt with password provided as environment variable.
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-advanced:latest
+          options: --env DECRYPTION_PASSWORD=test
           run: /usr/bin/initialize

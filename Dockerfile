@@ -130,6 +130,7 @@ RUN         git \
             pushd /tmp/containerbase && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
+            cp ./decrypt.sh /usr/bin/decrypt && \
             cp ./encrypt.sh /usr/bin/encrypt && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \

@@ -20,10 +20,7 @@
 # 3. Decrypt configured locations if specified.
 # region convert environment variables given as string into local arrays
 for name in \
-    DECRYPTED_PATHS \
-    ENCRYPTED_PATHS \
-    ENVIRONMENT_FILE_PATHS \
-    PASSWORD_FILE_PATHS
+    ENVIRONMENT_FILE_PATHS
 do
     if ! [[ "$(declare -p "$name" 2>/dev/null)" =~ 'declare -a' ]]; then
         eval "declare -a ${name}_ARRAY=(\$${name})"
@@ -59,65 +56,7 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     fi
 done
 # endregion
-# region decrypt security related artefacts needed at runtime
-if [[ "$DECRYPT" != false ]]; then
-    for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
-        if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
-            rm \
-                --force \
-                --recursive \
-                "${DECRYPTED_PATHS_ARRAY[index]}" \
-                &>/dev/null
-            mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
-            chown \
-                --recursive \
-                $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
-
-            cp \
-                --force \
-                --recursive \
-                "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
-
-            if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
-                cp \
-                    ${PASSWORD_FILE_PATHS_ARRAY[index]} \
-                    /tmp/intermediatePasswordFile
-            elif [[ "$1" != '' ]]; then
-                echo -n "$1" >/tmp/intermediatePasswordFile
-            fi
-
-            if [ -s /tmp/intermediatePasswordFile ]; then
-                if ! /usr/bin/perlbin/site_perl/gpgdir \
-                    --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
-                    --overwrite-decrypted \
-                    --pw-file /tmp/intermediatePasswordFile \
-                    --Symmetric \
-                    --quiet
-                then
-                    echo \
-                        Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                        \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
-
-                    exit 1
-                fi
-            elif ! /usr/bin/perlbin/site_perl/gpgdir \
-                --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
-                --overwrite-decrypted \
-                --Symmetric \
-                --quiet
-            then
-                echo \
-                    Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                    \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
-
-                exit 1
-            fi
-        fi
-    done
-fi
-# endregion
+decrypt
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:

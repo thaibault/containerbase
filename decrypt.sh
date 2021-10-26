@@ -14,6 +14,10 @@
 # Basic ArchLinux with user-mapping, AUR integration and support for decryption
 # of security related files.
 
+# 1. Checks if newer initializer is bind into container and exec into to if
+#    present.
+# 2. Loads environment files if existing.
+# 3. Decrypt configured locations if specified.
 # region convert environment variables given as string into local arrays
 for name in \
     DECRYPTED_PATHS \
@@ -37,28 +41,32 @@ do
     fi
 done
 # endregion
-# region encrypt security related artefacts needed at runtime
+echo TODO: $gpgdir
+# region decrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
-        if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
+        if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
             rm \
                 --force \
                 --recursive \
-                "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    &>/dev/null
-            mkdir --parents "${ENCRYPTED_PATHS_ARRAY[index]}"
+                "${DECRYPTED_PATHS_ARRAY[index]}" \
+                &>/dev/null
+            mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
             chown \
                 --recursive \
                 $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
-                "${ENCRYPTED_PATHS_ARRAY[index]}"
+                "${DECRYPTED_PATHS_ARRAY[index]}"
 
             cp \
                 --force \
                 --recursive \
-                "${DECRYPTED_PATHS_ARRAY[index]}"/* \
-                "${ENCRYPTED_PATHS_ARRAY[index]}"
+                "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
+                "${DECRYPTED_PATHS_ARRAY[index]}"
+
+            echo TODO2: $1 l $DECRYPTIONPASSWORD l
 
             if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
+                echo joaa
                 cp \
                     ${PASSWORD_FILE_PATHS_ARRAY[index]} \
                     /tmp/intermediatePasswordFile
@@ -69,35 +77,31 @@ if [[ "$DECRYPT" != false ]]; then
             fi
 
             if [ -s /tmp/intermediatePasswordFile ]; then
-                if ! "$gpgdir" \
-                    --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    --overwrite-encrypted \
+                if ! echo "$gpgdir" \
+                    --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
+                    --overwrite-decrypted \
                     --pw-file /tmp/intermediatePasswordFile \
                     --Symmetric \
-                    --verbose
+                    --quiet
                 then
                     echo \
-                        Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-                        \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
+                        Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+                        \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
 
                     exit 1
                 fi
-            elif ! "$gpgdir" \
-                --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                --overwrite-encrypted \
+            elif ! echo "$gpgdir \
+                --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
+                --overwrite-decrypted \
                 --Symmetric \
-                --verbose
+                --quiet
             then
                 echo \
-                    Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-                    \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
+                    Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+                    \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
 
                 exit 1
             fi
-
-            echo \
-                Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-                \"${ENCRYPTED_PATHS_ARRAY[index]}\" successfully finished.
         fi
     done
 fi
