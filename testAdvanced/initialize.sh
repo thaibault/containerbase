@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 set -e
 
-echo Application started.
 source prepare-initializer "$@"
+
+echo Application started.
 
 source configure-runtime-user
 

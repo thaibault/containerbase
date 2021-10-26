@@ -1,2 +1,4 @@
 encrypted/*
 !encrypted/.gitkeep
+
+!.encryptionPassword

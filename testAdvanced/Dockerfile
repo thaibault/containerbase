@@ -3,6 +3,8 @@ FROM        ghcr.io/thaibault/containerbase
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="proxy" Vendor="thaibault products" Version="1.0"
 
+# This file is used to retrieve hosts application user and group id.
+ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH /application/initialize.sh
 ENV         MAIN_USER_NAME application
 
 WORKDIR     $APPLICATION_PATH
