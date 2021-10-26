@@ -17,15 +17,15 @@ jobs:
     # script.
     env:
       DECRYPTED_PATHS: test/plain/
-      ENCRYPTED_PATHS: test/testEncryption/
-      PASSWORD_FILE_PATHS: test/.encryptionPassword
+      ENCRYPTED_PATHS: testAdvanced/testEncryption/
+      PASSWORD_FILE_PATHS: testAdvanced/.encryptionPassword
     steps:
       - uses: actions/checkout@v2
 
       - run: ./encrypt.sh
 
-      - run: rm --force --recursive test/testEncryption
-  build:
+      - run: rm --force --recursive testAdvanced/testEncryption
+  buildAndRunSimple:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,30 +34,32 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          # NOTE: If not set branch name will be used.
-          tags: test
-
-      - name: Build and push image
+      - name: Build image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./test
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-  run:
+          context: ./testSimple
+          push: false
+          tags: testSimple:latest
+
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: testAdvanced:latest
+  buildAndRunAdvanced:
     runs-on: ubuntu-latest
-    container: ghcr.io/thaibault/containerbase:test
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - run: /usr/bin/initialize
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./testAdvanced
+          push: false
+          tags: testAdvanced:latest
+
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: testAdvanced:latest

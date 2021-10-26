@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+# -*- coding: utf-8 -*-
+set -e
+# 1. Checks if newer initialier is bind into container and exec into to if
+# present.
+# 2. Loads environment files if existing.
+# 3. Decrypt configured locations if specified.
+source prepare-initializer "$@"
+echo \
+    Application started: echo Content of encrypted folder \
+    \"$ENCRYPTED_PATHS\" located at \"$DECRYPTED_PATHS\". Example file \
+    content of \"${DECRYPTED_PATHS}secret-configuration.txt\" is \
+    "$(cat "${DECRYPTED_PATHS}secret-configuration.txt")".
+sleep 3
