@@ -12,4 +12,4 @@ echo \
     Decrypted content of encrypted folder \"$ENCRYPTED_PATHS\" located at \
     \"$DECRYPTED_PATHS\" is \"$(tree $DECRYPTED_PATHS)\". Example file \
     content of \"${DECRYPTED_PATHS}secret-configuration.txt\" is \
-    "$(cat "${DECRYPTED_PATHS}secret-configuration.txt")".
+    \"$(cat "${DECRYPTED_PATHS}secret-configuration.txt")\".
