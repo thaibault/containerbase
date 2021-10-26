@@ -30,5 +30,7 @@ RUN         configure-user
 # Provide local files at runtime.
 RUN         pushd "$(retrieve-application)"
 
+COPY        ./encrypted ./encrypted
+
 # Enable custom initializer script.
 COPY        initialize.sh "$INITIALIZING_FILE_PATH"
