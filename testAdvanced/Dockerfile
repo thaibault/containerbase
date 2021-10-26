@@ -13,7 +13,7 @@ RUN         yay \
                 --needed \
                 --noconfirm \
                 --sync \
-                neovim && \
+                tree && \
             # tidy up
             rm /var/cache/* --recursive --force
 

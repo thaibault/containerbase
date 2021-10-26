@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 set -e
 
+echo Application started.
 source prepare-initializer "$@"
 
 source configure-runtime-user
 
 echo \
-    Application started: Decrypted content of encrypted folder \
-    \"$ENCRYPTED_PATHS\" located at \"$DECRYPTED_PATHS\" is \
-    \"$(tree $DECRYPTED_PATHS)\". Example file content of \
-    \"${DECRYPTED_PATHS}secret-configuration.txt\" is \
+    Decrypted content of encrypted folder \"$ENCRYPTED_PATHS\" located at \
+    \"$DECRYPTED_PATHS\" is \"$(tree $DECRYPTED_PATHS)\". Example file \
+    content of \"${DECRYPTED_PATHS}secret-configuration.txt\" is \
     "$(cat "${DECRYPTED_PATHS}secret-configuration.txt")".
