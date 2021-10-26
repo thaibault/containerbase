@@ -24,7 +24,9 @@ jobs:
       - run: rm --force --recursive test/encrypted
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v2
 
@@ -47,5 +49,9 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./test
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  run:
+    runs-on: ubuntu-latest
+    container: ghcr.io/thaibault/containerbase:test
