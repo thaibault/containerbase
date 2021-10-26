@@ -84,7 +84,7 @@ if [[ "$DECRYPT" != false ]]; then
                     --quiet
                 then
                     echo \
-                        Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+                        Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
                         \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
 
                     exit 1
@@ -96,7 +96,7 @@ if [[ "$DECRYPT" != false ]]; then
                 --quiet
             then
                 echo \
-                    Mounting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+                    Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
                     \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
 
                 exit 1
