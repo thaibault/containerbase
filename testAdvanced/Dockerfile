@@ -12,7 +12,6 @@ WORKDIR     $APPLICATION_PATH
 
 # Install custom packages (optionally from the arch user repository)
 USER        $INSTALLER_USER_NAME
-            # NOTE: "neovim" is only needed for debugging scenarios.
 RUN         yay \
                 --needed \
                 --noconfirm \

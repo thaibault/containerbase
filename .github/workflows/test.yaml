@@ -45,6 +45,27 @@ jobs:
         with:
           image: test-simple:latest
           run: /usr/bin/initialize
+  buildAndRunEnvironment:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./testSimple
+          push: false
+          tags: test-environment:latest
+
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-environment:latest
+          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/var/run/credentials/password
+          run: /usr/bin/initialize
   buildAndRunAdvanced:
     runs-on: ubuntu-latest
     permissions:
