@@ -65,7 +65,7 @@ jobs:
       - uses: addnab/docker-run-action@v3
         with:
           image: test-advanced:latest
-          options: --mount "type=bind,source=$(pwd)/.encryptedPassword,target=/application/.encryptedPassword"
+          options: --mount type=bind,source=$(pwd)/.encryptedPassword,target=/application/.encryptedPassword
           run: /usr/bin/initialize
 
       # Decrypt with password provided as command line argument
