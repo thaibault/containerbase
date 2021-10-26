@@ -177,7 +177,7 @@ RUN         env >/etc/default_environment
 RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nsource configure-runtime-user\nrun-command' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
-CMD         /usr/bin/initialize
+ENTRYPOINT  /usr/bin/initialize
             # endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:
