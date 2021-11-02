@@ -32,19 +32,42 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     fi
 done
 # endregion
-# region determine gpgdir
-for gpgdir in \
+# region determine decrypter
+# determine gpgdir binary location
+for decrypter in \
     /tmp/gpgdir \
     /usr/bin/gpgdir \
     /usr/bin/perlbin/site_perl/gpgdir \
     /tmp/gpgdir-nodeps-*/gpgdir
 do
-    if [ -f "$gpgdir" ]; then
+    if [ -f "$decrypter" ]; then
         break
     fi
 done
+raw_decrypt() {
+    local password_file_parameter=''
+    if [[ "$2" != '' ]]; then
+        password_file_parameter="--pw-file '$2'"
+    fi
+
+    "$decrypter" \
+        --decrypt "$1" \
+        --overwrite-decrypted \
+        --Symmetric \
+        --quiet \
+        "$password_file_parameter"
+
+    return $?
+}
+decrypt() {
+    if (( HOST_USER_ID == 0 )); then
+        raw_decrypt "$@"
+    else
+        su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "raw_decrypt $@"
+    fi
+}
 # endregion
-# region decrypt security related artefacts needed at runtime
+# region decrypt security related  artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
@@ -76,12 +99,9 @@ if [[ "$DECRYPT" != false ]]; then
             fi
 
             if [ -s /tmp/intermediatePasswordFile ]; then
-                if ! "$gpgdir" \
-                    --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
-                    --overwrite-decrypted \
-                    --pw-file /tmp/intermediatePasswordFile \
-                    --Symmetric \
-                    --quiet
+                if ! decrypt \
+                    "${DECRYPTED_PATHS_ARRAY[index]}" \
+                    /tmp/intermediatePasswordFile
                 then
                     echo \
                         Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
@@ -89,12 +109,7 @@ if [[ "$DECRYPT" != false ]]; then
 
                     exit 1
                 fi
-            elif ! "$gpgdir" \
-                --decrypt "${DECRYPTED_PATHS_ARRAY[index]}" \
-                --overwrite-decrypted \
-                --Symmetric \
-                --quiet
-            then
+            elif ! decrypt "${DECRYPTED_PATHS_ARRAY[index]}"; then
                 echo \
                     Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
                     \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.

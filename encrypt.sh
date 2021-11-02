@@ -31,17 +31,39 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     fi
 done
 # endregion
-# region determine gpgdir
-for gpgdir in \
+# region determine encrypter
+for encrypter in \
     /tmp/gpgdir \
     /usr/bin/gpgdir \
     /usr/bin/perlbin/site_perl/gpgdir \
     /tmp/gpgdir-nodeps-*/gpgdir
 do
-    if [ -f "$gpgdir" ]; then
+    if [ -f "$encrypter" ]; then
         break
     fi
 done
+raw_encrypt() {
+    local password_file_parameter=''
+    if [[ "$2" != '' ]]; then
+        password_file_parameter="--pw-file '$2'"
+    fi
+
+    "$encrypter" \
+        --encrypt "$1" \
+        --overwrite-encrypted \
+        --Symmetric \
+        --verbose \
+        "$password_file_parameter"
+
+    return $?
+}
+encrypt() {
+    if (( HOST_USER_ID == 0 )); then
+        raw_encrypt "$@"
+    else
+        su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "raw_encrypt $@"
+    fi
+}
 # endregion
 # region encrypt security related artefacts needed at runtime
 if [[ "$DECRYPT" != false ]]; then
@@ -75,12 +97,9 @@ if [[ "$DECRYPT" != false ]]; then
             fi
 
             if [ -s /tmp/intermediatePasswordFile ]; then
-                if ! "$gpgdir" \
-                    --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                    --overwrite-encrypted \
-                    --pw-file /tmp/intermediatePasswordFile \
-                    --Symmetric \
-                    --verbose
+                if ! encrypt \
+                    "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    /tmp/intermediatePasswordFile
                 then
                     echo \
                         Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
@@ -88,12 +107,7 @@ if [[ "$DECRYPT" != false ]]; then
 
                     exit 1
                 fi
-            elif ! "$gpgdir" \
-                --encrypt "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                --overwrite-encrypted \
-                --Symmetric \
-                --verbose
-            then
+            elif ! encrypt "${ENCRYPTED_PATHS_ARRAY[index]}"; then
                 echo \
                     Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
                     \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
