@@ -9,7 +9,8 @@
 # -------
 
 # This library written by Torben Sickert stand under a creative commons naming
-# 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
+# 3.0 unported license.
+# See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
 # region convert environment variables given as string into local arrays
@@ -42,13 +43,20 @@ do
         break
     fi
 done
+run() {
+    if (( HOST_USER_ID == 0 )) || [ "$USER" = "$MAIN_USER_NAME" ]; then
+        "$@"
+    else
+        su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
+    fi
+}
 encrypt() {
     local password_file_parameters=()
     if [[ "$2" != '' ]]; then
         password_file_parameters=('--pw-file' "$2")
     fi
 
-    "$encrypter" \
+    run "$encrypter" \
         --encrypt "$1" \
         --overwrite-encrypted \
         --Symmetric \
@@ -59,70 +67,65 @@ encrypt() {
 }
 # endregion
 # region encrypt security related artefacts needed at runtime
-main() {
-    if [[ "$DECRYPT" != false ]]; then
-        for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
-            if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
-                rm \
-                    --force \
-                    --recursive \
+if [[ "$DECRYPT" != false ]]; then
+    for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
+        if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
+            rm \
+                --force \
+                --recursive \
+                "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    &>/dev/null
+            mkdir --parents "${ENCRYPTED_PATHS_ARRAY[index]}"
+            chown \
+                --recursive \
+                $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+                "${ENCRYPTED_PATHS_ARRAY[index]}"
+
+            run cp \
+                --force \
+                --preserve=all \
+                --recursive \
+                "${DECRYPTED_PATHS_ARRAY[index]}"/* \
+                "${ENCRYPTED_PATHS_ARRAY[index]}"
+
+            if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
+                run cp \
+                    --preserve=all \
+                    ${PASSWORD_FILE_PATHS_ARRAY[index]} \
+                    /tmp/intermediatePasswordFile
+            elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
+                run echo -n "$DECRYPTION_PASSWORD" \
+                    >/tmp/intermediatePasswordFile
+            elif [[ "$1" != '' ]]; then
+                run echo -n "$1" >/tmp/intermediatePasswordFile
+            fi
+
+            if [ -s /tmp/intermediatePasswordFile ]; then
+                if ! encrypt \
                     "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                        &>/dev/null
-                mkdir --parents "${ENCRYPTED_PATHS_ARRAY[index]}"
-                chown \
-                    --recursive \
-                    $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
-                    "${ENCRYPTED_PATHS_ARRAY[index]}"
-
-                cp \
-                    --force \
-                    --recursive \
-                    "${DECRYPTED_PATHS_ARRAY[index]}"/* \
-                    "${ENCRYPTED_PATHS_ARRAY[index]}"
-
-                if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
-                    cp \
-                        ${PASSWORD_FILE_PATHS_ARRAY[index]} \
-                        /tmp/intermediatePasswordFile
-                elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
-                    echo -n "$DECRYPTION_PASSWORD" \
-                        >/tmp/intermediatePasswordFile
-                elif [[ "$1" != '' ]]; then
-                    echo -n "$1" >/tmp/intermediatePasswordFile
-                fi
-
-                if [ -s /tmp/intermediatePasswordFile ]; then
-                    if ! encrypt \
-                        "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                        /tmp/intermediatePasswordFile
-                    then
-                        echo \
-                            Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-                            \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
-
-                        exit 1
-                    fi
-                elif ! encrypt "${ENCRYPTED_PATHS_ARRAY[index]}"; then
+                    /tmp/intermediatePasswordFile
+                then
                     echo \
                         Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
                         \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
 
                     exit 1
                 fi
-
+            elif ! encrypt "${ENCRYPTED_PATHS_ARRAY[index]}"; then
                 echo \
                     Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-                    \"${ENCRYPTED_PATHS_ARRAY[index]}\" successfully finished.
+                    \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
+
+                exit 1
             fi
-        done
-    fi
-}
-# endregion
-if (( HOST_USER_ID == 0 )); then
-    main "$@"
-else
-    su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "main $@"
+
+            echo \
+                Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
+                \"${ENCRYPTED_PATHS_ARRAY[index]}\" successfully finished.
+        fi
+    done
 fi
+# endregion
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
