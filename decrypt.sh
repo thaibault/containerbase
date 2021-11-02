@@ -44,7 +44,7 @@ do
         break
     fi
 done
-raw_decrypt() {
+decrypt() {
     local password_file_parameters=()
     if [[ "$2" != '' ]]; then
         password_file_parameters=('--pw-file' "$2")
@@ -59,67 +59,68 @@ raw_decrypt() {
 
     return $?
 }
-decrypt() {
-    if (( HOST_USER_ID == 0 )); then
-        raw_decrypt "$@"
-    else
-        su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "raw_decrypt $@"
-    fi
-}
 # endregion
 # region decrypt security related  artefacts needed at runtime
-if [[ "$DECRYPT" != false ]]; then
-    for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
-        if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
-            rm \
-                --force \
-                --recursive \
-                "${DECRYPTED_PATHS_ARRAY[index]}" \
-                &>/dev/null
-            mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
-            chown \
-                --recursive \
-                $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
-
-            cp \
-                --force \
-                --recursive \
-                "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
-
-            if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
-                cp \
-                    ${PASSWORD_FILE_PATHS_ARRAY[index]} \
-                    /tmp/intermediatePasswordFile
-            elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
-                echo -n "$DECRYPTION_PASSWORD" >/tmp/intermediatePasswordFile
-            elif [[ "$1" != '' ]]; then
-                echo -n "$1" >/tmp/intermediatePasswordFile
-            fi
-
-            if [ -s /tmp/intermediatePasswordFile ]; then
-                if ! decrypt \
+main() {
+    if [[ "$DECRYPT" != false ]]; then
+        for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
+            if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
+                rm \
+                    --force \
+                    --recursive \
                     "${DECRYPTED_PATHS_ARRAY[index]}" \
-                    /tmp/intermediatePasswordFile
-                then
+                    &>/dev/null
+                mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
+                chown \
+                    --recursive \
+                    $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+                    "${DECRYPTED_PATHS_ARRAY[index]}"
+
+                cp \
+                    --force \
+                    --recursive \
+                    "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
+                    "${DECRYPTED_PATHS_ARRAY[index]}"
+
+                if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
+                    cp \
+                        ${PASSWORD_FILE_PATHS_ARRAY[index]} \
+                        /tmp/intermediatePasswordFile
+                elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
+                    echo -n "$DECRYPTION_PASSWORD" \
+                        >/tmp/intermediatePasswordFile
+                elif [[ "$1" != '' ]]; then
+                    echo -n "$1" >/tmp/intermediatePasswordFile
+                fi
+
+                if [ -s /tmp/intermediatePasswordFile ]; then
+                    if ! decrypt \
+                        "${DECRYPTED_PATHS_ARRAY[index]}" \
+                        /tmp/intermediatePasswordFile
+                    then
+                        echo \
+                            Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+                            \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
+
+                        exit 1
+                    fi
+                elif ! decrypt "${DECRYPTED_PATHS_ARRAY[index]}"; then
                     echo \
                         Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
                         \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
 
                     exit 1
                 fi
-            elif ! decrypt "${DECRYPTED_PATHS_ARRAY[index]}"; then
-                echo \
-                    Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                    \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
-
-                exit 1
             fi
-        fi
-    done
-fi
+        done
+    fi
+}
 # endregion
+if (( HOST_USER_ID == 0 )); then
+    main "$@"
+else
+    su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "main $@"
+fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
