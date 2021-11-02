@@ -119,7 +119,7 @@ main() {
 }
 # endregion
 if (( HOST_USER_ID == 0 )); then
-    raw_encrypt "$@"
+    main "$@"
 else
     su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "main $@"
 fi
