@@ -47,7 +47,7 @@ done
 raw_decrypt() {
     local password_file_parameters=()
     if [[ "$2" != '' ]]; then
-        password_file_parameters=('--pw-file' "'$2'")
+        password_file_parameters=('--pw-file' "$2")
     fi
 
     "$decrypter" \

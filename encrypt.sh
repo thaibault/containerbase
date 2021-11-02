@@ -43,9 +43,9 @@ do
     fi
 done
 raw_encrypt() {
-    local password_file_parameter=''
+    local password_file_parameters=()
     if [[ "$2" != '' ]]; then
-        password_file_parameter="--pw-file '$2'"
+        password_file_parameters=('--pw-file' "'$2'")
     fi
 
     "$encrypter" \
@@ -53,7 +53,7 @@ raw_encrypt() {
         --overwrite-encrypted \
         --Symmetric \
         --verbose \
-        "$password_file_parameter"
+        ${password_file_parameters[@]}
 
     return $?
 }
