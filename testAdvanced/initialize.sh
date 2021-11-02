@@ -14,5 +14,6 @@ echo \
 
 tree "$DECRYPTED_PATHS"
 
-echo Example file content of \"${DECRYPTED_PATHS}secret-configuration.txt\" \
-    is \"$(cat "${DECRYPTED_PATHS}secret-configuration.txt")\".
+echo \
+    Example file content of \"${DECRYPTED_PATHS}secret-configuration.txt\" is \
+    \"$(cat "${DECRYPTED_PATHS}secret-configuration.txt")\".
