@@ -8,6 +8,8 @@ echo Application started.
 
 source configure-runtime-user
 
+source decrypt "$@"
+
 echo \
     Decrypted content of encrypted folder \"$ENCRYPTED_PATHS\" located at \
     \"$DECRYPTED_PATHS\" is:

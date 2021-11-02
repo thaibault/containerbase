@@ -58,7 +58,6 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     fi
 done
 # endregion
-decrypt "$@"
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
