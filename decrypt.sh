@@ -55,7 +55,7 @@ raw_decrypt() {
         --overwrite-decrypted \
         --Symmetric \
         --quiet \
-        ${password_file_parameters[@]}
+        "${password_file_parameters[@]}"
 
     return $?
 }
