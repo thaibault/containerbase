@@ -17,3 +17,7 @@ tree "$DECRYPTED_PATHS"
 echo \
     Example file content of \"${DECRYPTED_PATHS}secret-configuration.txt\" is \
     \"$(cat "${DECRYPTED_PATHS}secret-configuration.txt")\".
+
+echo First level meta file data are:
+
+ls --all --human-readable -l "$DECRYPTED_PATHS"
