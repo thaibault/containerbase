@@ -30,8 +30,6 @@ RUN         configure-user
 RUN         pushd "$(retrieve-application)"
 
 COPY        ./encrypted ./encrypted
-# TODO
-COPY        ./decrypt.sh /usr/bin/decrypt
 
 # Enable custom initializer script.
 COPY        initialize.sh "$INITIALIZING_FILE_PATH"
