@@ -17,15 +17,15 @@ jobs:
     # script.
     env:
       DECRYPTED_PATHS: testSimple/
-      ENCRYPTED_PATHS: testSimple/testEncryption/
+      ENCRYPTED_PATHS: testEncryption/
       PASSWORD_FILE_PATHS: testAdvanced/.encryptionPassword
     steps:
       - uses: actions/checkout@v2
 
       - run: ./encrypt.sh
-      - run: ls --all --human-readable -l testSimple/testEncryption
+      - run: ls --all --human-readable -l testEncryption
 
-      - run: rm --force --recursive testSimple/testEncryption
+      - run: rm --force --recursive testEncryption
   buildAndRunSimple:
     runs-on: ubuntu-latest
     permissions:
