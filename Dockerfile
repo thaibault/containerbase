@@ -49,6 +49,7 @@ ENV         KNOWN_HOSTS ''
 ENV         MAIN_USER_GROUP_NAME users
 ENV         MAIN_USER_NAME application
 ENV         MIRROR_AREA_PATTERN Germany
+ENV         PASSWORD_SECRET_NAMES encryption_password
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''

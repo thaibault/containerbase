@@ -89,22 +89,22 @@ if [[ "$DECRYPT" != false ]]; then
                 "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
                 "${DECRYPTED_PATHS_ARRAY[index]}"
 
-            if [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
-                run cp \
-                    --preserve=all \
-                    ${PASSWORD_FILE_PATHS_ARRAY[index]} \
-                    /tmp/intermediatePasswordFile
+            local password_file_path=/tmp/intermediatePasswordFile
+
+            if [ -s "/run/secrets/${PASSWORD_SECRET_NAMES[index]}" ]; then
+                password_file_path="/run/secrets/${PASSWORD_SECRET_NAMES[index]}"
+            elif [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
+                password_file_path="${PASSWORD_FILE_PATHS_ARRAY[index]}"
             elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
-                run echo -n "$DECRYPTION_PASSWORD" \
-                    >/tmp/intermediatePasswordFile
+                run echo -n "$DECRYPTION_PASSWORD" >"$password_file_path"
             elif [[ "$1" != '' ]]; then
-                run echo -n "$1" >/tmp/intermediatePasswordFile
+                run echo -n "$1" >"$password_file_path"
             fi
 
-            if [ -s /tmp/intermediatePasswordFile ]; then
+            if [ -s "$password_file_path" ]; then
                 if ! decrypt \
                     "${DECRYPTED_PATHS_ARRAY[index]}" \
-                    /tmp/intermediatePasswordFile
+                    "$password_file_path"
                 then
                     echo \
                         Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
