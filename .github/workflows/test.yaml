@@ -102,3 +102,10 @@ jobs:
           image: test-advanced:latest
           options: --env DECRYPTION_PASSWORD=test
           run: /usr/bin/initialize
+
+      # Decrypt with password provided as secret.
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-advanced:latest
+          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/run/secrets/encryption_password
+          run: /usr/bin/initialize
