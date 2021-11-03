@@ -16,15 +16,16 @@ jobs:
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
     env:
-      DECRYPTED_PATHS: test/plain/
-      ENCRYPTED_PATHS: testAdvanced/testEncryption/
+      DECRYPTED_PATHS: testSimple/
+      ENCRYPTED_PATHS: testSimple/testEncryption/
       PASSWORD_FILE_PATHS: testAdvanced/.encryptionPassword
     steps:
       - uses: actions/checkout@v2
 
       - run: ./encrypt.sh
+      - run: ls --all --human-readable -l testSimple/testEncryption
 
-      - run: rm --force --recursive testAdvanced/testEncryption
+      - run: rm --force --recursive testSimple/testEncryption
   buildAndRunSimple:
     runs-on: ubuntu-latest
     permissions:
