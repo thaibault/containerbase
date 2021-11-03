@@ -81,7 +81,7 @@ if [[ "$DECRYPT" != false ]]; then
                 $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
                 "${ENCRYPTED_PATHS_ARRAY[index]}"
 
-            local password_file_path=/tmp/intermediatePasswordFile
+            declare password_file_path=/tmp/intermediatePasswordFile
 
             run cp \
                 --force \

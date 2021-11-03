@@ -89,7 +89,7 @@ if [[ "$DECRYPT" != false ]]; then
                 "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
                 "${DECRYPTED_PATHS_ARRAY[index]}"
 
-            local password_file_path=/tmp/intermediatePasswordFile
+            declare password_file_path=/tmp/intermediatePasswordFile
 
             if [ -s "/run/secrets/${PASSWORD_SECRET_NAMES[index]}" ]; then
                 password_file_path="/run/secrets/${PASSWORD_SECRET_NAMES[index]}"
