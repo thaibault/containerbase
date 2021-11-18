@@ -32,6 +32,9 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     fi
 done
 # endregion
+if [ "$DECRYPT" = false ]; then
+    exit 0
+fi
 # region determine decrypter
 # determine gpgdir binary location
 for decrypter in \
@@ -68,64 +71,62 @@ decrypt() {
 }
 # endregion
 # region decrypt security related artefacts needed at runtime
-if [[ "$DECRYPT" != false ]]; then
-    for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
-        if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
-            rm \
-                --force \
-                --recursive \
+for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
+    if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
+        rm \
+            --force \
+            --recursive \
+            "${DECRYPTED_PATHS_ARRAY[index]}" \
+            &>/dev/null
+        mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
+        chown \
+            --recursive \
+            $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+            "${DECRYPTED_PATHS_ARRAY[index]}"
+
+        run cp \
+            --force \
+            --preserve=all \
+            --recursive \
+            "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
+            "${DECRYPTED_PATHS_ARRAY[index]}"
+
+        declare password_file_path=/tmp/intermediatePasswordFile
+
+        if [ -s "/run/secrets/${PASSWORD_SECRET_NAMES[index]}" ]; then
+            password_file_path="/run/secrets/${PASSWORD_SECRET_NAMES[index]}"
+        elif [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
+            password_file_path="${PASSWORD_FILE_PATHS_ARRAY[index]}"
+        elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
+            run echo -n "$DECRYPTION_PASSWORD" >"$password_file_path"
+        elif [[ "$1" != '' ]]; then
+            run echo -n "$1" >"$password_file_path"
+        fi
+
+        if [ -s "$password_file_path" ]; then
+            if ! decrypt \
                 "${DECRYPTED_PATHS_ARRAY[index]}" \
-                &>/dev/null
-            mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
-            chown \
-                --recursive \
-                $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
-
-            run cp \
-                --force \
-                --preserve=all \
-                --recursive \
-                "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
-
-            declare password_file_path=/tmp/intermediatePasswordFile
-
-            if [ -s "/run/secrets/${PASSWORD_SECRET_NAMES[index]}" ]; then
-                password_file_path="/run/secrets/${PASSWORD_SECRET_NAMES[index]}"
-            elif [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
-                password_file_path="${PASSWORD_FILE_PATHS_ARRAY[index]}"
-            elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
-                run echo -n "$DECRYPTION_PASSWORD" >"$password_file_path"
-            elif [[ "$1" != '' ]]; then
-                run echo -n "$1" >"$password_file_path"
-            fi
-
-            if [ -s "$password_file_path" ]; then
-                if ! decrypt \
-                    "${DECRYPTED_PATHS_ARRAY[index]}" \
-                    "$password_file_path"
-                then
-                    echo \
-                        Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                        \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
-
-                    exit 1
-                fi
-            elif ! decrypt "${DECRYPTED_PATHS_ARRAY[index]}"; then
+                "$password_file_path"
+            then
                 echo \
                     Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
                     \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
 
                 exit 1
             fi
-
+        elif ! decrypt "${DECRYPTED_PATHS_ARRAY[index]}"; then
             echo \
                 Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                \"${DECRYPTED_PATHS_ARRAY[index]}\" successfully finished.
+                \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
+
+            exit 1
         fi
-    done
-fi
+
+        echo \
+            Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
+            \"${DECRYPTED_PATHS_ARRAY[index]}\" successfully finished.
+    fi
+done
 # endregion
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
