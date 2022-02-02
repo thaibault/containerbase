@@ -31,33 +31,42 @@
 FROM        archlinux
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
+
 ENV         APPLICATION_PATH /application/
-ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH /application/package.json
-ENV         BRANCH master
-ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
-ENV         DECRYPT false
-ENV         DECRYPTED_PATHS "/tmp/plain/"
-ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
-ENV         DEFAULT_MAIN_USER_GROUP_ID 100
-ENV         DEFAULT_MAIN_USER_ID 1000
 ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
+
+ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
-ENV         INSTALLER_USER_NAME installer
-ENV         KNOWN_HOSTS ''
-ENV         MAIN_USER_GROUP_NAME users
-ENV         MAIN_USER_NAME application
-ENV         MIRROR_AREA_PATTERN Germany
+
+ENV         DECRYPT false
+ENV         DECRYPTED_PATHS "/tmp/plain/"
+ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
 ENV         PASSWORD_SECRET_NAMES encryption_password
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
+
+ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH /application/package.json
+ENV         DEFAULT_MAIN_USER_GROUP_ID 100
+ENV         DEFAULT_MAIN_USER_ID 1000
+ENV         INSTALLER_USER_NAME installer
+ENV         MAIN_USER_GROUP_NAME users
+ENV         MAIN_USER_NAME application
+
+ENV         KNOWN_HOSTS ''
+
+ENV         MIRROR_AREA_PATTERN Germany
+
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
             # git@github.com:thaibault/containerbase
 ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
 ENV         BRANCH_NAME master
+
 ENV         STANDALONE true
+
 WORKDIR     $APPLICATION_PATH
+
 USER        root
             # endregion
             # region install needed base packages
@@ -130,7 +139,6 @@ RUN         git \
                 "$REPOSITORY_URL" \
                 /tmp/containerbase && \
             pushd /tmp/containerbase && \
-            git checkout "$BRANCH_NAME" && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./decrypt.sh /usr/bin/decrypt && \

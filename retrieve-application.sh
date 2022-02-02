@@ -43,7 +43,7 @@ then
         "$APPLICATION_PATH" \
             >/dev/null && \
     cd "$APPLICATION_PATH" >/dev/null && \
-    git checkout "$([ "$BRANCH" = '' ] && echo master || echo "$BRANCH")" >/dev/null && \
+    git checkout "$([ "$BRANCH_NAME" = '' ] && echo master || echo "$BRANCH_NAME")" >/dev/null && \
     touch "$APPLICATION_USER_ID_INDICATOR_FILE_PATH" >/dev/null && \
     git submodule init >/dev/null && \
     git submodule foreach \
