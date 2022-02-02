@@ -55,6 +55,7 @@ ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
             # git@github.com:thaibault/containerbase
 ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
+ENV         BRANCH_NAME master
 ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 USER        root
@@ -128,6 +129,7 @@ RUN         git \
                 --no-single-branch \
                 "$REPOSITORY_URL" \
                 /tmp/containerbase && \
+            git checkout "$BRANCH_NAME" && \
             pushd /tmp/containerbase && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
