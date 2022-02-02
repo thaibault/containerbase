@@ -129,8 +129,8 @@ RUN         git \
                 --no-single-branch \
                 "$REPOSITORY_URL" \
                 /tmp/containerbase && \
-            git checkout "$BRANCH_NAME" && \
             pushd /tmp/containerbase && \
+            git checkout "$BRANCH_NAME" && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./decrypt.sh /usr/bin/decrypt && \
@@ -152,7 +152,6 @@ RUN         configure-user && \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
                 >>/etc/sudoers
             # endregion
-
 USER        $INSTALLER_USER_NAME
             # region install and configure yay
 RUN         pushd /tmp && \
