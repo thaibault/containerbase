@@ -17,6 +17,7 @@ if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
     export HOST_USER_GROUP_ID="$(
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
+
 if (( HOST_USER_GROUP_ID == 0 )); then
     echo Host user group id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
@@ -29,9 +30,11 @@ else
         \(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user \
         \"$MAIN_USER_NAME\" to host\'s group id $HOST_USER_GROUP_ID \
         \(\"$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
+
     declare -r existing_user_group_name="$(
         getent group "$HOST_USER_GROUP_ID" | \
             cut --delimiter : --fields 1)"
+
     export USER_GROUP_ID_CHANGED=true
     if [ "$existing_user_group_name" = '' ]; then
         if \
@@ -61,6 +64,7 @@ else
             Current application user \"$MAIN_USER_NAME\" has no corresponding \
             group and hosts one exists in container \
             \"$existing_user_group_name\": assign it to them.
+
         usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         groupmod --new-name "$MAIN_USER_NAME" "$existing_user_group_name"
     else
@@ -69,14 +73,18 @@ else
             container since this group id is already used by application user \
             group \"$existing_user_group_name\". &>/dev/stderr
         sync
+
         exit 1
     fi
 fi
+
 if [ "$HOST_USER_ID" = '' ] || [ "$HOST_USER_ID" = UNKNOWN ]; then
     export HOST_USER_ID="$(
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
+
 export USER_ID_CHANGED=false
+
 if (( HOST_USER_ID == 0 )); then
     echo Host user id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_ID == HOST_USER_ID )); then
@@ -88,10 +96,13 @@ else
         Map container\'s existing application user id $EXISTING_USER_ID \
         \(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID \
         \(\"$(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
+
     declare -r existing_user_name="$(
         getent passwd "$HOST_USER_ID" | \
             cut --delimiter : --fields 1)"
+
     export USER_ID_CHANGED=true
+
     if [ "$existing_user_name" = '' ]; then
         if \
             [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]
@@ -131,10 +142,12 @@ else
         exit 1
     fi
 fi
+
 # Disable user account expiration.
 for user_name in root "$MAIN_USER_NAME"; do
     chage --expiredate -1 "$user_name"
 done
+
 for path in "$@"; do
     all=false
     follow=false
@@ -151,6 +164,7 @@ for path in "$@"; do
         follow=true
         path=${path%:follow}
     fi
+
     if $all; then
         find \
             "$path" \
@@ -162,6 +176,7 @@ for path in "$@"; do
                     "$MAIN_USER_GROUP_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -193,6 +208,7 @@ for path in "$@"; do
                     "$MAIN_USER_GROUP_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -220,6 +236,7 @@ for path in "$@"; do
                     "$MAIN_USER_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -250,6 +267,7 @@ for path in "$@"; do
                     "$MAIN_USER_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -267,6 +285,7 @@ for path in "$@"; do
         fi
     fi
 done
+
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
     # NOTE: If you redirect the output of this "chown" command to "/dev/null"
@@ -291,6 +310,7 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
             not work.
     fi
 fi
+
 set +x
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
