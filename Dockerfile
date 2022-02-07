@@ -184,7 +184,7 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-RUN         echo -e '#!/usr/bin/bash\n\nsource prepare-initializer "$@" && \\\nset -e\nsource configure-runtime-user\nsource decrypt "$@"\nsource run-command "$@"' \
+RUN         echo -e '#!/usr/bin/bash\n\nsource prepare-initializer "$@" && \\\nset -e\nsource decrypt "$@"\nsource configure-runtime-user\nsource run-command "$@"' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
