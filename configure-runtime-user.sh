@@ -46,6 +46,7 @@ else
                 does not have any application user group \
                 \"$MAIN_USER_GROUP_NAME\". Creating corresponding user group \
                 and assign to the application user \"$MAIN_USER_NAME\".
+
             groupadd --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
             usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         else
@@ -54,6 +55,7 @@ else
                 has already an application user group \
                 \"$MAIN_USER_GROUP_NAME\". Changing corresponding user group \
                 id and assign to the application user \"$MAIN_USER_NAME\".
+
             groupmod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
         fi
     elif \
@@ -111,6 +113,7 @@ else
                 Host user id does not exist in container and container does \
                 not have any application user \"$MAIN_USER_NAME\". Creating \
                 corresponding user and assign id to them.
+
             useradd \
                 --create-home \
                 --gid "$HOST_USER_GROUP_ID" \
@@ -122,6 +125,7 @@ else
                 Host user group id does not exist in container and container \
                 has already an application user \"$MAIN_USER_NAME\". \
                 Changing corresponding user id.
+
             usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
         fi
     elif [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]; then
@@ -129,6 +133,7 @@ else
             Current application user \"$MAIN_USER_NAME\" does not exist but \
             hosts one \"$existing_user_name\". Change corresponding user id \
             to hosts one.
+
         usermod \
             --login "$MAIN_USER_NAME" \
             --uid "$HOST_USER_ID" \
@@ -139,6 +144,7 @@ else
             Host user id $HOST_USER_ID could not be mapped into container \
             since this user id is already used by application user \
             \"$existing_user_name\". &>/dev/stderr
+
         exit 1
     fi
 fi
