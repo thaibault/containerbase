@@ -7,7 +7,7 @@ License
 -------
 
 This library written by Torben Sickert stand under a creative commons naming
-3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 endregion -->
 
 Project status
@@ -17,6 +17,7 @@ Project status
 [![npm downloads](https://img.shields.io/npm/dy/containerbase.svg)](https://www.npmjs.com/package/containerbase)
 
 [![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/build:image:push.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/build:image:push.yaml)
+[![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/test.yaml)
 
 [![dependencies](https://img.shields.io/david/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase)
 [![development dependencies](https://img.shields.io/david/dev/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase?type=dev)

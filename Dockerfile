@@ -31,31 +31,43 @@
 FROM        archlinux
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
+
 ENV         APPLICATION_PATH /application/
-ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH /application/package.json
-ENV         BRANCH master
-ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
-ENV         DECRYPT false
-ENV         DECRYPTED_PATHS "/tmp/plain/"
-ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
-ENV         DEFAULT_MAIN_USER_GROUP_ID 100
-ENV         DEFAULT_MAIN_USER_ID 1000
 ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
+
+ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
+
+ENV         DECRYPT false
+ENV         DECRYPT_AS_USER true
+ENV         DECRYPTED_PATHS "/tmp/plain/"
+ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
+ENV         PASSWORD_SECRET_NAMES encryption_password
+ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
+
+ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH /application/package.json
+ENV         DEFAULT_MAIN_USER_GROUP_ID 100
+ENV         DEFAULT_MAIN_USER_ID 1000
 ENV         INSTALLER_USER_NAME installer
-ENV         KNOWN_HOSTS ''
 ENV         MAIN_USER_GROUP_NAME users
 ENV         MAIN_USER_NAME application
+
+ENV         KNOWN_HOSTS ''
+
 ENV         MIRROR_AREA_PATTERN Germany
-ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
+
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
             # git@github.com:thaibault/containerbase
 ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
+ENV         BRANCH_NAME master
+
 ENV         STANDALONE true
+
 WORKDIR     $APPLICATION_PATH
+
 USER        root
             # endregion
             # region install needed base packages
@@ -130,9 +142,11 @@ RUN         git \
             pushd /tmp/containerbase && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
+            cp ./decrypt.sh /usr/bin/decrypt && \
             cp ./encrypt.sh /usr/bin/encrypt && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
+            cp ./run-command.sh /usr/bin/run-command && \
             popd && \
             rm --recursive /tmp/containerbase
             # endregion
@@ -147,7 +161,6 @@ RUN         configure-user && \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
                 >>/etc/sudoers
             # endregion
-
 USER        $INSTALLER_USER_NAME
             # region install and configure yay
 RUN         pushd /tmp && \
@@ -172,10 +185,12 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-RUN         echo -e '#!/usr/bin/bash\n\nprepare-initializer && \\\nset -e\nsource configure-runtime-user /' \
+RUN         echo -e '#!/usr/bin/bash\n\nsource prepare-initializer "$@" && \\\nset -e\nsource decrypt "$@"\nsource configure-runtime-user\nsource run-command "$@"' \
                 >"$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
-CMD         /usr/bin/initialize
+# NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
+# ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
+ENTRYPOINT ["/usr/bin/initialize"]
             # endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:

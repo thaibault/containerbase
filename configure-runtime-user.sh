@@ -17,6 +17,7 @@ if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
     export HOST_USER_GROUP_ID="$(
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
+
 if (( HOST_USER_GROUP_ID == 0 )); then
     echo Host user group id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
@@ -29,9 +30,11 @@ else
         \(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user \
         \"$MAIN_USER_NAME\" to host\'s group id $HOST_USER_GROUP_ID \
         \(\"$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
+
     declare -r existing_user_group_name="$(
         getent group "$HOST_USER_GROUP_ID" | \
             cut --delimiter : --fields 1)"
+
     export USER_GROUP_ID_CHANGED=true
     if [ "$existing_user_group_name" = '' ]; then
         if \
@@ -43,6 +46,7 @@ else
                 does not have any application user group \
                 \"$MAIN_USER_GROUP_NAME\". Creating corresponding user group \
                 and assign to the application user \"$MAIN_USER_NAME\".
+
             groupadd --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
             usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         else
@@ -51,6 +55,7 @@ else
                 has already an application user group \
                 \"$MAIN_USER_GROUP_NAME\". Changing corresponding user group \
                 id and assign to the application user \"$MAIN_USER_NAME\".
+
             groupmod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
         fi
     elif \
@@ -61,6 +66,7 @@ else
             Current application user \"$MAIN_USER_NAME\" has no corresponding \
             group and hosts one exists in container \
             \"$existing_user_group_name\": assign it to them.
+
         usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         groupmod --new-name "$MAIN_USER_NAME" "$existing_user_group_name"
     else
@@ -69,14 +75,18 @@ else
             container since this group id is already used by application user \
             group \"$existing_user_group_name\". &>/dev/stderr
         sync
+
         exit 1
     fi
 fi
+
 if [ "$HOST_USER_ID" = '' ] || [ "$HOST_USER_ID" = UNKNOWN ]; then
     export HOST_USER_ID="$(
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
+
 export USER_ID_CHANGED=false
+
 if (( HOST_USER_ID == 0 )); then
     echo Host user id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_ID == HOST_USER_ID )); then
@@ -88,10 +98,13 @@ else
         Map container\'s existing application user id $EXISTING_USER_ID \
         \(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID \
         \(\"$(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
+
     declare -r existing_user_name="$(
         getent passwd "$HOST_USER_ID" | \
             cut --delimiter : --fields 1)"
+
     export USER_ID_CHANGED=true
+
     if [ "$existing_user_name" = '' ]; then
         if \
             [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]
@@ -100,6 +113,7 @@ else
                 Host user id does not exist in container and container does \
                 not have any application user \"$MAIN_USER_NAME\". Creating \
                 corresponding user and assign id to them.
+
             useradd \
                 --create-home \
                 --gid "$HOST_USER_GROUP_ID" \
@@ -111,6 +125,7 @@ else
                 Host user group id does not exist in container and container \
                 has already an application user \"$MAIN_USER_NAME\". \
                 Changing corresponding user id.
+
             usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
         fi
     elif [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]; then
@@ -118,6 +133,7 @@ else
             Current application user \"$MAIN_USER_NAME\" does not exist but \
             hosts one \"$existing_user_name\". Change corresponding user id \
             to hosts one.
+
         usermod \
             --login "$MAIN_USER_NAME" \
             --uid "$HOST_USER_ID" \
@@ -128,13 +144,16 @@ else
             Host user id $HOST_USER_ID could not be mapped into container \
             since this user id is already used by application user \
             \"$existing_user_name\". &>/dev/stderr
+
         exit 1
     fi
 fi
+
 # Disable user account expiration.
 for user_name in root "$MAIN_USER_NAME"; do
     chage --expiredate -1 "$user_name"
 done
+
 for path in "$@"; do
     all=false
     follow=false
@@ -151,6 +170,7 @@ for path in "$@"; do
         follow=true
         path=${path%:follow}
     fi
+
     if $all; then
         find \
             "$path" \
@@ -162,6 +182,7 @@ for path in "$@"; do
                     "$MAIN_USER_GROUP_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -193,6 +214,7 @@ for path in "$@"; do
                     "$MAIN_USER_GROUP_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -220,6 +242,7 @@ for path in "$@"; do
                     "$MAIN_USER_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -250,6 +273,7 @@ for path in "$@"; do
                     "$MAIN_USER_NAME" \
                     {} \
                     \;
+
         if $follow; then
             find \
                 "$path" \
@@ -267,6 +291,7 @@ for path in "$@"; do
         fi
     fi
 done
+
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
     # NOTE: If you redirect the output of this "chown" command to "/dev/null"
@@ -291,16 +316,8 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
             not work.
     fi
 fi
+
 set +x
-command="$(eval "echo $COMMAND")"
-if [[ "$command" != '' ]] && [[ "$command" != UNKNOWN ]]; then
-    echo Run command \"$command\"
-    if (( HOST_USER_ID == 0 )); then
-        exec $command
-    else
-        exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$command"
-    fi
-fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:

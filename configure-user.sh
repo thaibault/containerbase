@@ -29,6 +29,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
             &>/dev/stderr
         exit 1
     fi
+
     # NOTE: We have to create or modify existing user group depending on user
     # group names or ids which have been assigned already.
     declare -r existing_user_group_id="$(
@@ -37,6 +38,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
     declare -r existing_user_group_name="$(
         getent group "$DEFAULT_MAIN_USER_GROUP_ID" | \
             cut --delimiter : --fields 1)"
+
     if [[
         (
             "$existing_user_group_id" = '' ||
@@ -85,12 +87,14 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         fi
     # else -> A user group already exist with specified user group id.
     fi
+
     # NOTE: We have to create or modify existing user depending on user names
     # or ids which have been assigned already.
     declare -r existing_user_id="$(id --user "$MAIN_USER_NAME" 2>/dev/null)"
     declare -r existing_user_name="$(
         getent passwd "$DEFAULT_MAIN_USER_ID" | \
             cut --delimiter : --fields 1)"
+
     if [[
         (
             "$existing_user_id" = '' ||
@@ -145,6 +149,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         fi
     # else -> A user already exist with specified user and group id.
     fi
+
     # Disable user account expiration.
     chage --expiredate -1 "$MAIN_USER_NAME" && \
     chown \
@@ -154,6 +159,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
     echo /usr/bin/bash>>/etc/shells && \
     chsh --shell /usr/bin/bash "$MAIN_USER_NAME" && \
     usermod --home "$(pwd)" "$MAIN_USER_NAME" && \
+
     pwd
 fi
 # region vim modline

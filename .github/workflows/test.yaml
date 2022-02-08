@@ -1,4 +1,4 @@
-name: Build image and push
+name: Test encrypted build
 on:
   push:
     branches: [ master ]
@@ -6,38 +6,106 @@ on:
     branches: [ master ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 jobs:
-  test:
+  encrypt:
     runs-on: ubuntu-latest
+    container: ghcr.io/thaibault/containerbase:latest
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
     env:
-      DECRYPTED_PATHS: ./test/plain
-      ENCRYPTED_PATHS: ./test/encrypted/
-      PASSWORD_FILE_PATHS: ./test/.encryptionPassword
+      DECRYPTED_PATHS: testSimple/
+      ENCRYPTED_PATHS: testEncryption/
+      PASSWORD_FILE_PATHS: testAdvanced/.encryptionPassword
     steps:
-      - run: ./encrypt.sh ./test/plain
-
       - uses: actions/checkout@v2
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: ./encrypt.sh
+      - run: ls --all --human-readable -l testEncryption
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          # NOTE: If not set branch name will be used.
-          tags: test
+      - run: rm --force --recursive testEncryption
+  buildAndRunSimple:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
-      - name: Build and push image
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./test
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          context: ./testSimple
+          push: false
+          tags: test-simple:latest
+
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-simple:latest
+          run: /usr/bin/initialize
+  buildAndRunEnvironment:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./testSimple
+          push: false
+          tags: test-environment:latest
+
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-environment:latest
+          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/var/run/credentials/password
+          run: /usr/bin/initialize
+  buildAndRunAdvanced:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./testAdvanced
+          push: false
+          tags: test-advanced:latest
+
+      # Decrypt with hidden mounted password file.
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-advanced:latest
+          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/application/.encryptionPassword
+          run: /usr/bin/initialize
+
+      # Decrypt with password provided as command line argument
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-advanced:latest
+          run: /usr/bin/initialize test
+
+      # Decrypt with password provided as environment variable.
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-advanced:latest
+          options: --env DECRYPTION_PASSWORD=test
+          run: /usr/bin/initialize
+
+      # Decrypt with password provided as secret.
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: test-advanced:latest
+          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/run/secrets/encryption_password
+          run: /usr/bin/initialize
