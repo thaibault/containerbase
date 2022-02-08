@@ -48,7 +48,11 @@ do
     fi
 done
 run() {
-    if (( HOST_USER_ID == 0 )) || [ "$USER" = "$MAIN_USER_NAME" ]; then
+    if \
+        ! "$DECRYPT_AS_USER" || \
+        (( HOST_USER_ID == 0 )) || \
+        [ "$USER" = "$MAIN_USER_NAME" ]
+    then
         "$@"
     else
         su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
