@@ -186,7 +186,7 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" && \
+RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
 # ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
