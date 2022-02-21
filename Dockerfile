@@ -144,6 +144,7 @@ RUN         git \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./decrypt.sh /usr/bin/decrypt && \
             cp ./encrypt.sh /usr/bin/encrypt && \
+            cp ./initialize.sh /usr/bin/initialize && \
             cp ./retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
             cp ./run-command.sh /usr/bin/run-command && \
@@ -185,8 +186,7 @@ USER        root
 RUN         retrieve-application
 RUN         env >/etc/default_environment
             # region bootstrap application
-RUN         echo -e '#!/usr/bin/bash\n\nsource prepare-initializer "$@" && \\\nset -e\nsource decrypt "$@"\nsource configure-runtime-user\nsource run-command "$@"' \
-                >"$INITIALIZING_FILE_PATH" && \
+RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" && \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
 # ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
