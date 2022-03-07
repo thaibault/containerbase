@@ -19,7 +19,7 @@
 # - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase .
 # - podman push ghcr.io/thaibault/containerbase:latest --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull archlinux && docker build --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest
 # endregion
 # region start container commands
@@ -63,7 +63,6 @@ ENV         PUBLIC_SSH_KEY ''
             # git@github.com:thaibault/containerbase
 ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
 ARG         BRANCH_NAME
-ENV         BRANCH_NAME=${BRANCH_NAME:-''}
 
 ENV         STANDALONE true
 
@@ -140,6 +139,7 @@ RUN         git \
                 --no-single-branch \
                 "$REPOSITORY_URL" \
                 /tmp/containerbase && \
+            git checkout "${BRANCH_NAME:-master}" && \
             pushd /tmp/containerbase && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
