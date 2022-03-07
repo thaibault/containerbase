@@ -141,8 +141,8 @@ RUN         git \
                 --no-single-branch \
                 "$REPOSITORY_URL" \
                 /tmp/containerbase && \
-            git checkout "${BRANCH_NAME:-master}" && \
             pushd /tmp/containerbase && \
+            git checkout "${BRANCH_NAME:-master}" && \
             cp ./configure-user.sh /usr/bin/configure-user && \
             cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./decrypt.sh /usr/bin/decrypt && \
