@@ -62,7 +62,8 @@ ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
             # git@github.com:thaibault/containerbase
 ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
-ENV         BRANCH_NAME master
+ARG         BASE_BRANCH_NAME
+ENV         BRANCH_NAME=${BASE_BRANCH_NAME:-master}
 
 ENV         STANDALONE true
 
