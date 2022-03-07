@@ -62,6 +62,8 @@ ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
             # git@github.com:thaibault/containerbase
 ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
+            # NOTE: Do not set as environment variable to avoid shadowing this
+            # argument in inherited image builds.
 ARG         BRANCH_NAME
 
 ENV         STANDALONE true
