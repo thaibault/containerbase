@@ -17,7 +17,7 @@ if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
     export HOST_USER_GROUP_ID="$(
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
 fi
-
+# region configure group
 if (( HOST_USER_GROUP_ID == 0 )); then
     echo Host user group id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
@@ -79,7 +79,8 @@ else
         exit 1
     fi
 fi
-
+# endregion
+# region configure user
 if [ "$HOST_USER_ID" = '' ] || [ "$HOST_USER_ID" = UNKNOWN ]; then
     export HOST_USER_ID="$(
         stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
@@ -153,7 +154,8 @@ fi
 for user_name in root "$MAIN_USER_NAME"; do
     chage --expiredate -1 "$user_name"
 done
-
+# endregion
+# region hand over configured folder und files to configured user and group
 for path in "$@"; do
     all=false
     follow=false
@@ -171,6 +173,7 @@ for path in "$@"; do
         path=${path%:follow}
     fi
 
+    # region handle group
     if $all; then
         find \
             "$path" \
@@ -198,7 +201,6 @@ for path in "$@"; do
                         \;
         fi
     elif \
-        ! $all && \
         $USER_GROUP_ID_CHANGED && \
         [[ "$EXISTING_USER_GROUP_ID" != '' ]] && \
         [[ "$EXISTING_USER_GROUP_ID" != UNKNOWN ]]
@@ -231,6 +233,8 @@ for path in "$@"; do
                         \;
         fi
     fi
+    # endregion
+    # region handle user
     if $all; then
         find \
             "$path" \
@@ -290,8 +294,10 @@ for path in "$@"; do
                         \;
         fi
     fi
+    # endregion
 done
-
+# endregion
+# region hand over common special files to configured user and group
 if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     chmod +x /dev/
     # NOTE: If you redirect the output of this "chown" command to "/dev/null"
@@ -316,7 +322,7 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
             not work.
     fi
 fi
-
+# endregion
 set +x
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
