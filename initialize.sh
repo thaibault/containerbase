@@ -19,8 +19,8 @@ set -e
 
 source decrypt "$@"
 
-"$DECRYPT" && \
-    source configure-runtime-user "${DECRYPTED_PATHS[@]}:all:follow" ||
+[ -d "${DECRYPTED_PATHS[0]}" ] && \
+    source configure-runtime-user "${DECRYPTED_PATHS[0]}:all:follow" ||
     source configure-runtime-user
 
 source run-command "$@"
