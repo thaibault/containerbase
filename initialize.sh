@@ -19,7 +19,9 @@ set -e
 
 source decrypt "$@"
 
-source configure-runtime-user "${DECRYPTED_PATHS[@]}:all:follow"
+"$DECRYPT" && \
+    source configure-runtime-user "${DECRYPTED_PATHS[@]}:all:follow" ||
+    source configure-runtime-user
 
 source run-command "$@"
 # region vim modline
