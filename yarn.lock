@@ -12,9 +12,9 @@ boostnode@*:
   integrity sha512-DuiczS5c6kXuEPU4aDXhoNXZq+8azV+fADI26R/MLl7iZM77myqsAjuxsHb4xM08J3tBL/yW7Z5kndgY1QQdDQ==
 
 documentation-website@*:
-  version "1.0.241"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.241.tgz#d7117151c614dbe543b86208d610cda14c6dc910"
-  integrity sha512-e7PuVITOxr5mhXekjELpPLXoM6OyXYqvkdu6IIjvbhPpQC1m3+rulQThWipcJiJMYbyR0Vq/sXgniojsUfh5Ow==
+  version "1.0.243"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.243.tgz#882f11ef44164c79f88b2441691edfef1992ab6f"
+  integrity sha512-FgIcp/d8lPTlholQYgEKjGQRjlBg0DzxqUZclFTWYmkXaf6nHk+UIBlG774u0cTQvlE3y7ByaRK5onwsgHknXw==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
     boostnode "*"
