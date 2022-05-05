@@ -9,5 +9,5 @@ ENV         MAIN_USER_NAME application
 
 WORKDIR     $APPLICATION_PATH
 
-COPY        ./encrypted ./encrypted
-COPY        ./environment.sh /etc/containerBase/environment.sh
+COPY        ./scripts/encrypted ./encrypted
+COPY        ./scripts/environment.sh /etc/containerBase/environment.sh
