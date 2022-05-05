@@ -143,14 +143,14 @@ RUN         git \
                 /tmp/containerbase && \
             pushd /tmp/containerbase && \
             git checkout "${BRANCH_NAME:-master}" && \
-            cp ./configure-user.sh /usr/bin/configure-user && \
-            cp ./configure-runtime-user.sh /usr/bin/configure-runtime-user && \
-            cp ./decrypt.sh /usr/bin/decrypt && \
-            cp ./encrypt.sh /usr/bin/encrypt && \
-            cp ./initialize.sh /usr/bin/initialize && \
-            cp ./retrieve-application.sh /usr/bin/retrieve-application && \
-            cp ./prepare-initializer.sh /usr/bin/prepare-initializer && \
-            cp ./run-command.sh /usr/bin/run-command && \
+            cp ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user && \
+            cp ./scripts/configure-user.sh /usr/bin/configure-user && \
+            cp ./scripts/decrypt.sh /usr/bin/decrypt && \
+            cp ./scripts/encrypt.sh /usr/bin/encrypt && \
+            cp ./scripts/initialize.sh /usr/bin/initialize && \
+            cp ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer && \
+            cp ./scripts/retrieve-application.sh /usr/bin/retrieve-application && \
+            cp ./scripts/run-command.sh /usr/bin/run-command && \
             popd && \
             rm --recursive /tmp/containerbase
             # endregion

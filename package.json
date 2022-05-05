@@ -22,11 +22,9 @@
     "url": "https://torben.website"
   },
   "files": [
-    "base.yaml",
-    "application.yaml",
     "Dockerfile",
-    "configure_user.sh",
-    "retrieve_application.sh"
+    "scripts",
+    "service"
   ],
   "main": "base.yaml",
   "repository": {
