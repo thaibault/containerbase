@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: ./encrypt.sh
+      - run: ./scripts/encrypt.sh
       - run: ls --all --human-readable -l testEncryption
 
       - run: rm --force --recursive testEncryption
