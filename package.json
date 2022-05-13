@@ -40,7 +40,7 @@
     "documentation-website": "*"
   },
   "documentationWebsite": {
-    "name": "containerBase",
+    "name": "containerbase",
     "tagline": "containerize your application",
     "trackingCode": "UA-40192634-TODO"
   }
