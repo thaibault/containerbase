@@ -19,16 +19,20 @@ Project status
 [![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/build:image:push.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/build:image:push.yaml)
 [![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/test.yaml)
 
+<!-- Too unstable yet
 [![dependencies](https://img.shields.io/david/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase)
 [![development dependencies](https://img.shields.io/david/dev/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase?type=dev)
 [![peer dependencies](https://img.shields.io/david/peer/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase?type=peer)
+-->
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/containerbase.svg?label=documentation-website)](https://torben.website/containerbase)
 
 <!--|deDE:Einsatz-->
 Use case
 --------
 
-TODO
+
+A basic ArchLinux based docker configuration with configured and ready to use
+git and yay.
 
 <!-- region modline
 vim: set tabstop=4 shiftwidth=4 expandtab:
