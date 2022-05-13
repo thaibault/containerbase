@@ -30,7 +30,6 @@ Project status
 Use case
 --------
 
-
 A basic ArchLinux based docker configuration with configured and ready to use
 git and yay.
 
