@@ -26,7 +26,7 @@
     "scripts",
     "service"
   ],
-  "main": "base.yaml",
+  "main": "scripts/initialize.sh",
   "repository": {
     "type": "git",
     "url": "https://github.com/thaibault/containerbase"
