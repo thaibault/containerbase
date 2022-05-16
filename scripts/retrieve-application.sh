@@ -35,6 +35,7 @@ then
     chmod 600 .ssh/known_hosts && \
     mkdir --parents "$(dirname "$APPLICATION_PATH")" &>/dev/null && \
     rm --force --recursive "$APPLICATION_PATH" &>/dev/null
+
     git \
         clone \
         --depth 1 \
