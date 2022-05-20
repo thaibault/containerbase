@@ -45,6 +45,7 @@ if [[ "$DECRYPT" != false ]]; then
             break
         fi
     done
+
     run() {
         if \
             ! "$DECRYPT_AS_USER" || \
@@ -56,6 +57,7 @@ if [[ "$DECRYPT" != false ]]; then
             su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
         fi
     }
+
     decrypt() {
         local password_file_parameters=()
         if [[ "$2" != '' ]]; then
@@ -107,8 +109,7 @@ if [[ "$DECRYPT" != false ]]; then
 
             if [ -s "$password_file_path" ]; then
                 if ! decrypt \
-                    "${DECRYPTED_PATHS_ARRAY[index]}" \
-                    "$password_file_path"
+                    "${DECRYPTED_PATHS_ARRAY[index]}" "$password_file_path"
                 then
                     echo \
                         Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
