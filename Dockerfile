@@ -19,7 +19,7 @@
 # - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase .
 # - podman push ghcr.io/thaibault/containerbase:latest --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull archlinux && docker build --build-arg BASE_IMAGE=agners/archlinuxarm --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest
 # endregion
 # region start container commands
@@ -28,7 +28,10 @@
 # - docker rm --force base; docker compose up
 # endregion
             # region configuration
-FROM        archlinux
+ARG         BASE_IMAGE=archlinux
+
+FROM        $BASE_IMAGE
+
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 
