@@ -10,5 +10,5 @@ spec:
   - env:
     - name: container
       value: podman
-    image: ghcr.io/thaibault/containerbase:latest
+    image: ghcr.io/thaibault/containerbase:latest-x86-64
     name: base
