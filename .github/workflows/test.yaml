@@ -12,7 +12,7 @@ env:
 jobs:
   encrypt:
     runs-on: ubuntu-latest
-    container: ghcr.io/thaibault/containerbase:latest
+    container: ghcr.io/thaibault/containerbase:latest-x86-64
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
     env:
