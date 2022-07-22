@@ -147,7 +147,6 @@ RUN         pacman \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
-            echo user_allow_other >> /etc/fuse.conf && \
             mkdir --parents /etc/containerBase
             # endregion
             # region retrieve artefacts
