@@ -105,7 +105,7 @@ RUN         [[ "$MIRROR_AREA_PATTERN" != default ]] && \
             [[ "$MIRROR_AREA_PATTERN" != default ]] && \
             cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
             awk \
-                '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
+                '/^## '"${MIRROR_AREA_PATTERN}"'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
                 /etc/pacman.d/mirrorlist.orig \
                 >/etc/pacman.d/mirrorlist || \
                 true
