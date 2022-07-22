@@ -37,7 +37,6 @@
 # endregion
             # region configuration
 ARG         BASE_IMAGE
-ARG         MIRROR_AREA_PATTERN
 
 FROM        ${BASE_IMAGE:-archlinux}
 
@@ -68,7 +67,7 @@ ENV         MAIN_USER_NAME application
 
 ENV         KNOWN_HOSTS ''
 
-ENV         MIRROR_AREA_PATTERN ${MIRROR_AREA_PATTERN:-'United States'}
+ARG         MIRROR_AREA_PATTERN='United States'
 
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
