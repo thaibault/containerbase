@@ -17,7 +17,7 @@
 # Run the following command in the directory where this file lives to build a
 # new docker image:
 
-# x86_64
+# x86-64
 
 # - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 .
 # - podman push ghcr.io/thaibault/containerbase:latest-x86-64 --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
@@ -25,7 +25,7 @@
 # - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 https:/github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-x86-64
 
-# arm_64
+# arm-64
 
 # - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg MIRROR_AREA_PATTERN=default --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https:/github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-arm-64
