@@ -107,12 +107,15 @@ RUN         [[ "$MIRROR_AREA_PATTERN" != default ]] && \
             awk \
                 '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
                 /etc/pacman.d/mirrorlist.orig \
-                >/etc/pacman.d/mirrorlist && \
+                >/etc/pacman.d/mirrorlist || \
+                true
+            # && \
             # Update pacman keys (is optional and sometimes not working)
             #rm --force --recursive /etc/pacman.d/gnupg && \
             #pacman-key --init && \
             #pacman-key --populate archlinux && \
-            #pacman-key --refresh-keys
+            #pacman-key --refresh-keys || \
+            #true
             # Update package database to retrieve newest package versions
 RUN         pacman \
                 --needed \
