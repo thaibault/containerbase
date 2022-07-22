@@ -22,12 +22,12 @@
 # - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 .
 # - podman push ghcr.io/thaibault/containerbase:latest-x86-64 --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86_64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86_64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-x86-64
 
 # arm_64
 
-# - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg MIRROR_AREA_PATTERN=default --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-arm-64
 # endregion
 # region start container commands
@@ -36,9 +36,10 @@
 # - docker rm --force base; docker compose up
 # endregion
             # region configuration
-ARG         BASE_IMAGE=archlinux
+ARG         BASE_IMAGE
+ARG         MIRROR_AREA_PATTERN
 
-FROM        $BASE_IMAGE
+FROM        ${BASE_IMAGE:-archlinux}
 
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
@@ -67,7 +68,7 @@ ENV         MAIN_USER_NAME application
 
 ENV         KNOWN_HOSTS ''
 
-ENV         MIRROR_AREA_PATTERN Germany
+ENV         MIRROR_AREA_PATTERN ${MIRROR_AREA_PATTERN:-'United States'}
 
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
@@ -95,18 +96,20 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # Update mirrorlist if existing
-RUN         mv \
+RUN         [[ "$MIRROR_AREA_PATTERN" != default ]] && \
+            [ -f /etc/pacman.d/mirrorlist.pacnew] && \
+            mv \
                 /etc/pacman.d/mirrorlist.pacnew \
                 /etc/pacman.d/mirrorlist \
                 &>/dev/null || \
                 true; \
+            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
             cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
             awk \
                 '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
                 /etc/pacman.d/mirrorlist.orig \
                 >/etc/pacman.d/mirrorlist && \
-            # Update pacman keys (sometime not working)
-            echo
+            # Update pacman keys (is optional and sometimes not working)
             #rm --force --recursive /etc/pacman.d/gnupg && \
             #pacman-key --init && \
             #pacman-key --populate archlinux && \
