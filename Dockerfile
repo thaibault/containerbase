@@ -96,7 +96,7 @@ RUN         pacman \
             rm /var/cache/* --recursive --force
             # Update mirrorlist if existing
 RUN         [[ "$MIRROR_AREA_PATTERN" != default ]] && \
-            [ -f /etc/pacman.d/mirrorlist.pacnew] && \
+            [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
             mv \
                 /etc/pacman.d/mirrorlist.pacnew \
                 /etc/pacman.d/mirrorlist \
