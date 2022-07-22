@@ -22,7 +22,7 @@
 # - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 .
 # - podman push ghcr.io/thaibault/containerbase:latest-x86-64 --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86_64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-x86-64
 
 # arm_64
