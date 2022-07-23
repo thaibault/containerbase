@@ -22,7 +22,7 @@
 # - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 .
 # - podman push ghcr.io/thaibault/containerbase:latest-x86-64 --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 https:/github.com/thaibault/containerbase.git
+# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 https://github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-x86-64
 
 # arm-64
@@ -208,7 +208,7 @@ RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
 # ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
-ENTRYPOINT ["/usr/bin/initialize"]
+ENTRYPOINT ["$INITIALIZING_FILE_PATH"]
             # endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:
