@@ -11,6 +11,6 @@ services:
                 window: 120s
         environment:
             COMMAND: "${COMMAND:-'echo You have to set the \"COMMAND\" environment variale.'}"
-        image: "ghcr.io/thaibault/containerbase:${IMAGE_TAG:-latest-x86-64}"
+        image: "ghcr.io/thaibault/containerbase:${IMAGE_TAG:-'latest-x86-64'}"
         # NOTE: Only for "docker compose" (not "docker stack deploy").
         restart: on-failure
