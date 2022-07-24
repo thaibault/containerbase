@@ -208,7 +208,7 @@ RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
 # ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
-ENTRYPOINT ["$INITIALIZING_FILE_PATH"]
+ENTRYPOINT ["/usr/bin/initialize"]
             # endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:
