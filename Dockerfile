@@ -124,6 +124,13 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 --sysupgrade && \
+            # Configure locale.
+            sed \
+                --regexp-extended \
+                --expression 's/#(en_US.UTF-8 UTF-8)/\1/' \
+                --in-place \
+                /etc/locale.gen && \
+            locale-gen && \
             # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
