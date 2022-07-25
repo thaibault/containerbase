@@ -27,7 +27,7 @@
 
 # arm-64
 
-# - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg MIRROR_AREA_PATTERN=default --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https:/github.com/thaibault/containerbase.git
+# - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg MIRROR_AREA_PATTERN=default --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https://github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-arm-64
 # endregion
 # region start container commands
