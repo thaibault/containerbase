@@ -159,7 +159,10 @@ done
 # endregion
 # region hand over configured folder und files to configured user and group
 for path in "$@"; do
+    # If "true" we change ownership of all files. No matter who is currently
+    # the owner.
     all=false
+    # Change ownership of symbolically referenced source files also.
     follow=false
     # NOTE: This case has to be handled before the other to avoid shadowing.
     if [[ "$path" == *:all:follow ]] || [[ $path == *:follow:all ]]; then
