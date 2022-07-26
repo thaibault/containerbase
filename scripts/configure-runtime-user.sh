@@ -13,11 +13,13 @@
 export EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 export EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 export USER_GROUP_ID_CHANGED=false
+
 if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
     export HOST_USER_GROUP_ID="$(
-        stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
+        stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH"
+    )"
 fi
-# region configure group
+ # region configure group
 if (( HOST_USER_GROUP_ID == 0 )); then
     echo Host user group id is \"0\" \(root\), ignoring user mapping.
 elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
