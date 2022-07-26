@@ -10,18 +10,19 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2016,SC2034,SC2155
-command="$(eval "echo $COMMAND")"
-if [[ "$command" != '' ]] && [[ "$command" != UNKNOWN ]]; then
-    if (( HOST_USER_ID == 0 )); then
-        echo Run command \"$command\" as root user.
 
-        exec $command
+if [[ "$*" != '' ]] && [[ "$*" != UNKNOWN ]]; then
+    if (( HOST_USER_ID == 0 )); then
+        echo Run command \"$*\" as root user.
+
+        eval "$*"
+        exit $?
     else
         echo \
-            Run command \"$command\" as user \"$MAIN_USER_NAME\" in group \
+            Run command \"$*\" as user \"$MAIN_USER_NAME\" in group \
             \"$MAIN_USER_GROUP_NAME\".
 
-        exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$command"
+        exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
     fi
 fi
 # region vim modline

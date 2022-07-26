@@ -23,7 +23,7 @@ source decrypt "$@"
     source configure-runtime-user "${DECRYPTED_PATHS[0]}:all:follow" ||
     source configure-runtime-user
 
-source execute-command "$@"
+source execute-command "$(eval "$COMMAND $*")"
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
