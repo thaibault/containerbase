@@ -12,10 +12,15 @@
 # shellcheck disable=SC2016,SC2034,SC2155
 command="$(eval "echo $COMMAND")"
 if [[ "$command" != '' ]] && [[ "$command" != UNKNOWN ]]; then
-    echo Run command \"$command\"
     if (( HOST_USER_ID == 0 )); then
+        echo Run command \"$command\" as root user.
+
         exec $command
     else
+        echo \
+            Run command \"$command\" as user \"$MAIN_USER_NAME\" in group \
+            \"$MAIN_USER_GROUP_NAME\".
+
         exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$command"
     fi
 fi
