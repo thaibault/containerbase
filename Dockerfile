@@ -173,6 +173,7 @@ RUN         git \
             cp ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer && \
             cp ./scripts/retrieve-application.sh /usr/bin/retrieve-application && \
             cp ./scripts/execute-command.sh /usr/bin/execute-command && \
+            cp ./scripts/run-command.sh /usr/bin/run-command && \
             popd && \
             rm --recursive /tmp/containerbase
             # endregion
