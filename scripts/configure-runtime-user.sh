@@ -36,7 +36,7 @@ else
         Map container\'s existing user group id $EXISTING_USER_GROUP_ID \
         \(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user \
         \"$MAIN_USER_NAME\" to host\'s group id $HOST_USER_GROUP_ID \
-        \(\"\$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH") \
+        \(\"$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH") \
         \"\).
 
     declare -r existing_user_group_name="$(
