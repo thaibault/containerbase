@@ -17,13 +17,13 @@ if [[ "$*" != '' ]] && [[ "$*" != UNKNOWN ]]; then
 
         eval "$*"
         exit $?
-    else
-        echo \
-            Run command \"$*\" as user \"$MAIN_USER_NAME\" in group \
-            \"$MAIN_USER_GROUP_NAME\".
-
-        exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
     fi
+
+    echo \
+        Run command \"$*\" as user \"$MAIN_USER_NAME\" in group \
+        \"$MAIN_USER_GROUP_NAME\".
+
+    exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
 fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
