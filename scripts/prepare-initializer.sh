@@ -21,11 +21,9 @@
 # 3. Decrypt configured locations if specified.
 # shellcheck disable=SC2016,SC2034,SC2155
 # region convert environment variables given as string into local arrays
-for name in \
-    ENVIRONMENT_FILE_PATHS
-do
-    if ! [[ "$(declare -p "$name" 2>/dev/null)" =~ 'declare -a' ]]; then
-        eval "declare -a ${name}_ARRAY=(\$${name})"
+for file_path in "${ENVIRONMENT_FILE_PATHS[@]}"; do
+    if ! [[ "$(declare -p "$file_path" 2>/dev/null)" =~ 'declare -a' ]]; then
+        eval "declare -a ${file_path}_ARRAY=(\$${file_path})"
     fi
 done
 # endregion
@@ -54,6 +52,7 @@ fi
 # region load dynamic environment variables
 for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     if [ -f "$file_path" ]; then
+        # shellcheck disable=SC1090
         source "$file_path"
     fi
 done

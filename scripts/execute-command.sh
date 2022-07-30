@@ -13,15 +13,15 @@
 
 if [[ "$*" != '' ]] && [[ "$*" != UNKNOWN ]]; then
     if (( HOST_USER_ID == 0 )); then
-        echo Run command \"$*\" as root user.
+        echo "Run command \"$*\" as root user."
 
         eval "$*"
         exit $?
     fi
 
     echo \
-        Run command \"$*\" as user \"$MAIN_USER_NAME\" in group \
-        \"$MAIN_USER_GROUP_NAME\".
+        "Run command \"$*\" as user \"$MAIN_USER_NAME\" in group" \
+        "\"$MAIN_USER_GROUP_NAME\"."
 
     exec su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
 fi

@@ -33,6 +33,8 @@
   },
   "scripts": {
     "clear": "echo clear",
+    "lint": "hash shellcheck && shellcheck -x **/*.sh || echo Please install \"shellcheck\". || true",
+    "lint:given": "shellcheck -x",
     "update": "yarn version --patch && yarn publish",
     "update:documentation": "documentation-website"
   },
