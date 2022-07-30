@@ -19,11 +19,13 @@ set -e
 
 source decrypt "$@"
 
-[ -d "${DECRYPTED_PATHS[0]}" ] && \
-    source configure-runtime-user "${DECRYPTED_PATHS[0]}:all:follow" ||
+if [ -d "${DECRYPTED_PATHS[0]}" ]; then
+    source configure-runtime-user "${DECRYPTED_PATHS[0]}:all:follow"
+else
     source configure-runtime-user
+fi
 
-source run-command "$@"
+source execute-command "$(eval "$COMMAND $*")"
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:

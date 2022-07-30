@@ -17,17 +17,17 @@
 # Run the following command in the directory where this file lives to build a
 # new docker image:
 
-# x86_64
+# x86-64
 
 # - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 .
 # - podman push ghcr.io/thaibault/containerbase:latest-x86-64 --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86_64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 https://github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-x86-64
 
-# arm_64
+# arm-64
 
-# - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg MIRROR_AREA_PATTERN=default --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https://github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-arm-64
 # endregion
 # region start container commands
@@ -36,9 +36,9 @@
 # - docker rm --force base; docker compose up
 # endregion
             # region configuration
-ARG         BASE_IMAGE=archlinux
+ARG         BASE_IMAGE
 
-FROM        $BASE_IMAGE
+FROM        ${BASE_IMAGE:-archlinux}
 
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
@@ -67,7 +67,7 @@ ENV         MAIN_USER_NAME application
 
 ENV         KNOWN_HOSTS ''
 
-ENV         MIRROR_AREA_PATTERN Germany
+ARG         MIRROR_AREA_PATTERN='United States'
 
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
@@ -95,22 +95,27 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # Update mirrorlist if existing
-RUN         mv \
+RUN         [[ "$MIRROR_AREA_PATTERN" != default ]] && \
+            [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
+            mv \
                 /etc/pacman.d/mirrorlist.pacnew \
                 /etc/pacman.d/mirrorlist \
                 &>/dev/null || \
                 true; \
+            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
             cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
             awk \
-                '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
+                '/^## '"${MIRROR_AREA_PATTERN}"'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
                 /etc/pacman.d/mirrorlist.orig \
-                >/etc/pacman.d/mirrorlist && \
-            # Update pacman keys (sometime not working)
-            echo
+                >/etc/pacman.d/mirrorlist || \
+                true
+            # && \
+            # Update pacman keys (is optional and sometimes not working)
             #rm --force --recursive /etc/pacman.d/gnupg && \
             #pacman-key --init && \
             #pacman-key --populate archlinux && \
-            #pacman-key --refresh-keys
+            #pacman-key --refresh-keys || \
+            #true
             # Update package database to retrieve newest package versions
 RUN         pacman \
                 --needed \
@@ -119,6 +124,13 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 --sysupgrade && \
+            # Configure locale.
+            sed \
+                --regexp-extended \
+                --expression 's/#(en_US.UTF-8 UTF-8)/\1/' \
+                --in-place \
+                /etc/locale.gen && \
+            locale-gen && \
             # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
@@ -142,7 +154,6 @@ RUN         pacman \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
-            echo user_allow_other >> /etc/fuse.conf && \
             mkdir --parents /etc/containerBase
             # endregion
             # region retrieve artefacts
@@ -161,6 +172,7 @@ RUN         git \
             cp ./scripts/initialize.sh /usr/bin/initialize && \
             cp ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer && \
             cp ./scripts/retrieve-application.sh /usr/bin/retrieve-application && \
+            cp ./scripts/execute-command.sh /usr/bin/execute-command && \
             cp ./scripts/run-command.sh /usr/bin/run-command && \
             popd && \
             rm --recursive /tmp/containerbase
