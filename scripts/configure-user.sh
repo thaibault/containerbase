@@ -17,16 +17,18 @@ chage --expiredate -1 root && \
 if [[ "$MAIN_USER_NAME" != root ]]; then
     if (( DEFAULT_MAIN_USER_GROUP_ID == 0 )); then
         echo \
-            If you define \"0\" as default main user group id \
+            If you define 0 as default main user group id \
             \"MAIN_USER_GROUP_NAME\" has to be configured as \"root\". \
             &>/dev/stderr
+
         exit 1
     fi
     if (( DEFAULT_MAIN_USER_ID == 0 )); then
         echo \
-            If you define \"0\" as default main user id \"MAIN_USER_NAME\" \
-            has to be configured as \"root\". \
+            If you define 0 as default main user id \"MAIN_USER_NAME\" has \
+            to be configured as \"root\". \
             &>/dev/stderr
+
         exit 1
     fi
 
@@ -34,10 +36,12 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
     # group names or ids which have been assigned already.
     declare -r existing_user_group_id="$(
         getent group "$MAIN_USER_GROUP_NAME" | \
-            cut --delimiter : --fields 3)"
+            cut --delimiter : --fields 3
+    )"
     declare -r existing_user_group_name="$(
         getent group "$DEFAULT_MAIN_USER_GROUP_ID" | \
-            cut --delimiter : --fields 1)"
+            cut --delimiter : --fields 1
+    )"
 
     if [[
         (
@@ -158,7 +162,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         "$(pwd)" && \
     echo /usr/bin/bash>>/etc/shells && \
     chsh --shell /usr/bin/bash "$MAIN_USER_NAME" && \
-    usermod --home "$(pwd)" "$MAIN_USER_NAME" && \
+    usermod --home "/home/${MAIN_USER_NAME}" "$MAIN_USER_NAME" && \
 
     pwd
 fi
