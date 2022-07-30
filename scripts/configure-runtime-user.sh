@@ -19,9 +19,14 @@ if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
         stat --format '%g' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH"
     )"
 fi
- # region configure group
+# region configure group
 if (( HOST_USER_GROUP_ID == 0 )); then
-    echo Host user group id is \"0\" \(root\), ignoring user mapping.
+    echo \
+        Host user group id is \"0\" \(root\), ignoring user mapping and use \
+        root as application group.
+
+    export USER_GROUP_ID_CHANGED=true
+    export MAIN_USER_GROUP_NAME=root
 elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
     echo \
         Existing user group id \"$EXISTING_USER_GROUP_ID\" already matching \
@@ -31,11 +36,13 @@ else
         Map container\'s existing user group id $EXISTING_USER_GROUP_ID \
         \(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user \
         \"$MAIN_USER_NAME\" to host\'s group id $HOST_USER_GROUP_ID \
-        \(\"$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
+        \(\"\$(stat --format '%G' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH") \
+        \"\).
 
     declare -r existing_user_group_name="$(
         getent group "$HOST_USER_GROUP_ID" | \
-            cut --delimiter : --fields 1)"
+            cut --delimiter : --fields 1
+    )"
 
     export USER_GROUP_ID_CHANGED=true
     if [ "$existing_user_group_name" = '' ]; then
@@ -85,13 +92,19 @@ fi
 # region configure user
 if [ "$HOST_USER_ID" = '' ] || [ "$HOST_USER_ID" = UNKNOWN ]; then
     export HOST_USER_ID="$(
-        stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")"
+        stat --format '%u' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH"
+    )"
 fi
 
 export USER_ID_CHANGED=false
 
 if (( HOST_USER_ID == 0 )); then
-    echo Host user id is \"0\" \(root\), ignoring user mapping.
+    echo \
+        Host user id is \"0\" \(root\), ignoring user mapping and use root as \
+        application user.
+
+    export USER_ID_CHANGED=true
+    export MAIN_USER_NAME=root
 elif (( EXISTING_USER_ID == HOST_USER_ID )); then
     echo \
         Existing user id \"$EXISTING_USER_ID\" already matching the \
@@ -100,11 +113,13 @@ else
     echo \
         Map container\'s existing application user id $EXISTING_USER_ID \
         \(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID \
-        \(\"$(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH")\"\).
+        \(\"$(stat --format '%U' "$APPLICATION_USER_ID_INDICATOR_FILE_PATH") \
+        \"\).
 
     declare -r existing_user_name="$(
         getent passwd "$HOST_USER_ID" | \
-            cut --delimiter : --fields 1)"
+            cut --delimiter : --fields 1
+    )"
 
     export USER_ID_CHANGED=true
 
@@ -178,11 +193,11 @@ for path in "$@"; do
         path=${path%:follow}
     fi
 
+    find_command="find ${path} -xdev"
+
     # region handle group
     if $all; then
-        find \
-            "$path" \
-            -xdev \
+        $find_command \
             -exec \
                 chgrp \
                     --no-dereference \
@@ -192,9 +207,7 @@ for path in "$@"; do
                     \;
 
         if $follow; then
-            find \
-                "$path" \
-                -xdev \
+            $find_command \
                 -exec \
                     chgrp \
                         --dereference \
@@ -210,10 +223,8 @@ for path in "$@"; do
         [[ "$EXISTING_USER_GROUP_ID" != '' ]] && \
         [[ "$EXISTING_USER_GROUP_ID" != UNKNOWN ]]
     then
-        find \
-            "$path" \
+        $find_command \
             -group $EXISTING_USER_GROUP_ID \
-            -xdev \
             -exec \
                 chgrp \
                     --no-dereference \
@@ -223,10 +234,8 @@ for path in "$@"; do
                     \;
 
         if $follow; then
-            find \
-                "$path" \
+            $find_command \
                 -group $EXISTING_USER_GROUP_ID \
-                -xdev \
                 -exec \
                     chgrp \
                         --dereference \
@@ -241,9 +250,7 @@ for path in "$@"; do
     # endregion
     # region handle user
     if $all; then
-        find \
-            "$path" \
-            -xdev \
+        $find_command \
             -exec \
                 chown \
                     --no-dereference \
@@ -253,9 +260,7 @@ for path in "$@"; do
                     \;
 
         if $follow; then
-            find \
-                "$path" \
-                -xdev \
+            $find_command \
                 -exec \
                     chown \
                         --dereference \
@@ -271,10 +276,8 @@ for path in "$@"; do
         [[ "$EXISTING_USER_ID" != '' ]] && \
         [[ "$EXISTING_USER_ID" != UNKNOWN ]]
     then
-        find \
-            "$path" \
+        $find_command \
             -user $EXISTING_USER_ID \
-            -xdev \
             -exec \
                 chown \
                     --no-dereference \
@@ -284,10 +287,8 @@ for path in "$@"; do
                     \;
 
         if $follow; then
-            find \
-                "$path" \
+            $find_command \
                 -user $EXISTING_USER_ID \
-                -xdev \
                 -exec \
                     chown \
                         --dereference \
