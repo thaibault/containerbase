@@ -160,8 +160,13 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         --recursive \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
         "$(pwd)" && \
-    echo /usr/bin/bash>>/etc/shells && \
+    echo /usr/bin/bash >>/etc/shells && \
     chsh --shell /usr/bin/bash "$MAIN_USER_NAME" && \
+    mkdir --parents "/home/${MAIN_USER_NAME}" && \
+    chown \
+        --recursive \
+        "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
+        "/home/${MAIN_USER_NAME}" && \
     usermod --home "/home/${MAIN_USER_NAME}" "$MAIN_USER_NAME" && \
 
     pwd
