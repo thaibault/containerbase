@@ -53,7 +53,7 @@ ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
 
 ENV         DECRYPT false
 ENV         DECRYPT_AS_USER true
-ENV         DECRYPTED_PATHS "/tmp/plain/"
+ENV         DECRYPTED_PATHS /tmp/plain/
 ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
 ENV         PASSWORD_SECRET_NAMES encryption_password
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
