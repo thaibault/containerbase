@@ -1,0 +1,60 @@
+name: Build x86-64 image and push
+on:
+  # NOTE: Runs on branch to tag creation.
+  create:
+    branches: [ master ]
+  schedule:
+    # Run every Sunday at 1am o'clock.
+    - cron: '0 1 * * 0'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+jobs:
+  build-image-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v2
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # NOTE: If not set branch name will be used.
+          tags: latest
+
+      - uses: pguyot/arm-runner-action@v2
+        id: build_image
+        with:
+          cpu: cortex-a72
+          base_image: raspios_lite_arm64:latest
+          commands: |
+            docker build \
+              --build-arg BASE_IMAGE=heywoodlh/archlinux \
+              --build-arg MIRROR_AREA_PATTERN=default \
+              --tag ghcr.io/thaibault/containerbase:latest-arm-64 \
+              https://github.com/thaibault/containerbase.git
+
+      - name: Compress the release image
+        run: |
+          mv ${{ steps.build_image.outputs.image }} ${{ steps.meta.outputs.tags }}-arm-64.img
+          xz -0 --threads 0 --verbose ${{ steps.meta.outputs.tags }}-arm-64.img
+
+      - name: Push image
+        uses: actions/upload-artifact@v2
+        with:
+          name: Push ${{ steps.meta.outputs.tags }}-arm-64.img.xz
+          path: ${{ steps.meta.outputs.tags }}-arm-64.img.xz
