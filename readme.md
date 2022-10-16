@@ -17,6 +17,7 @@ Project status
 [![npm downloads](https://img.shields.io/npm/dy/containerbase.svg)](https://www.npmjs.com/package/containerbase)
 
 [![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/build:image:x86-64:periodically:1:branches.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/build:image:x86-64:periodically:1:branches.yaml)
+[![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/build:image:arm-64:periodically:1:branches.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/build:image:arm-64:periodically:1:branches.yaml)
 [![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/test.yaml)
 
 <!-- Too unstable yet
