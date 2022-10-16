@@ -48,8 +48,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           build-args:
-            BASE_IMAGE: 'heywoodlh/archlinux'
-            MIRROR_AREA_PATTERN: default
+            - BASE_IMAGE=heywoodlh/archlinux
+            - MIRROR_AREA_PATTERN=default
           context: .
           platforms: linux/arm64/v8
           push: true
