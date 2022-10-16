@@ -19,6 +19,22 @@ jobs:
       packages: write
 
     steps:
+      - name: Set up QEMU for emulating arm architecture on amd or intel.
+        if: ${{ runner.arch == 'X86' || runner.arch == 'X64' }}
+        id: qemu-arm64
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: arm64
+
+      - name: Set up QEMU for emulating x86 architecture on arm.
+        if: ${{ runner.arch == 'ARM64'  }}
+        id: qemu-x86_64
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: x86_64
+
       - uses: actions/checkout@v2
 
       - name: Log in to the Container registry
@@ -36,25 +52,10 @@ jobs:
           # NOTE: If not set branch name will be used.
           tags: latest
 
-      - uses: pguyot/arm-runner-action@v2
-        id: build_image
+      - name: Build x86-64 and push image
+        uses: docker/build-push-action@v2
         with:
-          cpu: cortex-a72
-          base_image: raspios_lite_arm64:latest
-          commands: |
-            docker build \
-              --build-arg BASE_IMAGE=heywoodlh/archlinux \
-              --build-arg MIRROR_AREA_PATTERN=default \
-              --tag ghcr.io/thaibault/containerbase:latest-arm-64 \
-              https://github.com/thaibault/containerbase.git
-
-      - name: Compress the release image
-        run: |
-          mv ${{ steps.build_image.outputs.image }} ${{ steps.meta.outputs.tags }}-arm-64.img
-          xz -0 --threads 0 --verbose ${{ steps.meta.outputs.tags }}-arm-64.img
-
-      - name: Push image
-        uses: actions/upload-artifact@v2
-        with:
-          name: Push ${{ steps.meta.outputs.tags }}-arm-64.img.xz
-          path: ${{ steps.meta.outputs.tags }}-arm-64.img.xz
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}-x86-64
+          labels: ${{ steps.meta.outputs.labels }}
