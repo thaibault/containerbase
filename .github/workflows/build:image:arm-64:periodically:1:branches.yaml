@@ -47,7 +47,11 @@ jobs:
       - name: Build arm-64 and push image
         uses: docker/build-push-action@v2
         with:
+          build-args:
+            - BASE_IMAGE=heywoodlh/archlinux
+            - MIRROR_AREA_PATTERN=default
           context: .
+          platforms: linux/arm64/v8
           push: true
           tags: ${{ steps.meta.outputs.tags }}-arm-64
           labels: ${{ steps.meta.outputs.labels }}
