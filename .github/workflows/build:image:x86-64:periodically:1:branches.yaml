@@ -1,6 +1,6 @@
 name: Build x86-64 image and push
 on:
-  # NOTE: Runs on branch to tag creation.
+  # NOTE: Runs on branch or tag creation.
   create:
     branches: [ master ]
   schedule:
@@ -19,6 +19,14 @@ jobs:
       packages: write
 
     steps:
+      - name: Set up QEMU for x86 architecture on arm.
+        if: ${{ runner.arch == 'ARM64'  }}
+        id: qemu-x86_64
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: x86_64
+
       - uses: actions/checkout@v2
 
       - name: Log in to the Container registry
