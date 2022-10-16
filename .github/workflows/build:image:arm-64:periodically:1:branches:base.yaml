@@ -25,7 +25,7 @@ jobs:
           build-args: |
             BASE_IMAGE=heywoodlh/archlinux
             MIRROR_AREA_PATTERN=default
-          name: env.IMAGE_NAME
+          name: ${{ env.IMAGE_NAME }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
