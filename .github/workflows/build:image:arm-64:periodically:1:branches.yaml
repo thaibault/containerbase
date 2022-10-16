@@ -27,14 +27,6 @@ jobs:
           image: tonistiigi/binfmt:latest
           platforms: arm64
 
-      #- name: Set up QEMU for emulating x86 architecture on arm.
-      #  if: ${{ runner.arch == 'ARM64'  }}
-      #  id: qemu-x86_64
-      #  uses: docker/setup-qemu-action@v1
-      #  with:
-      #    image: tonistiigi/binfmt:latest
-      #    platforms: x86_64
-
       - uses: actions/checkout@v2
 
       - name: Log in to the Container registry
