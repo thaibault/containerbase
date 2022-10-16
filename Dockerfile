@@ -46,7 +46,7 @@ LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application/
 ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
 
-ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
+ENV         COMMAND 'echo "echo You have to set the \"COMMAND\" environment variale."'
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
@@ -211,7 +211,7 @@ USER        root
 
 RUN         retrieve-application
 RUN         env >/etc/default_environment
-            # region bootstrap application
+            # region boot strap application
 RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
