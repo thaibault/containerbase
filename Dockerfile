@@ -46,7 +46,7 @@ LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 ENV         APPLICATION_PATH /application/
 ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
 
-ENV         COMMAND 'echo "echo You have to set the \"COMMAND\" environment variale."'
+ENV         COMMAND 'echo "echo You have to set the \"COMMAND\" environment variable."'
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
