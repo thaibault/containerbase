@@ -17,18 +17,18 @@
 # Run the following command in the directory where this file lives to build a
 # new docker image:
 
-# x86-64
+# x86-64 only
 
-# - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 .
+# - podman pull archlinux && podman build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 .
 # - podman push ghcr.io/thaibault/containerbase:latest-x86-64 --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 https://github.com/thaibault/containerbase.git
+# - docker pull archlinux && docker build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest-x86-64 https://github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-x86-64
 
-# arm-64
+# Multi architecture
 
-# - docker pull heywoodlh/archlinux && docker build --build-arg BASE_IMAGE=heywoodlh/archlinux --build-arg MIRROR_AREA_PATTERN=default --no-cache --tag ghcr.io/thaibault/containerbase:latest-arm-64 https://github.com/thaibault/containerbase.git
-# - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest-arm-64
+# - docker pull heywoodlh/archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git
+# - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
@@ -37,9 +37,12 @@
 # endregion
             # region configuration
 ARG         BASE_IMAGE
-ARG         IS_ARM
+            # NOTE: Disabling "MULTI" via "--build-arg MULTI=''" will use
+            # official arch image wich only has "x86-64" architecture support
+            # yet.
+ARG         MULTI=true
 
-FROM        ${BASE_IMAGE:-${IS_ARM:+'heywoodlh/'}}archlinux
+FROM        ${BASE_IMAGE:-${MULTI:-'heywoodlh/'}}archlinux
 
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
