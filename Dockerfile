@@ -71,7 +71,7 @@ ENV         MAIN_USER_NAME application
 
 ENV         KNOWN_HOSTS ''
 
-ARG         MIRROR_AREA_PATTERN='United States'
+ARG         MIRROR_AREA_PATTERN='default'
 
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
