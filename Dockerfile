@@ -42,7 +42,7 @@ ARG         BASE_IMAGE
             # yet.
 ARG         MULTI=true
 
-FROM        ${BASE_IMAGE:-${MULTI:-'heywoodlh/'}}archlinux
+FROM        ${BASE_IMAGE:-${MULTI:+'heywoodlh/'}}archlinux
 
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
