@@ -37,8 +37,9 @@
 # endregion
             # region configuration
 ARG         BASE_IMAGE
+ARG         IS_ARM
 
-FROM        ${BASE_IMAGE:-$([ $TARGETARCH = arm64 ] && echo 'heywoodlh/' || echo '')}archlinux
+FROM        ${BASE_IMAGE:-${IS_ARM:+'heywoodlh/'}}archlinux
 
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
