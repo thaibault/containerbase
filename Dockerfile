@@ -38,7 +38,7 @@
             # region configuration
 ARG         BASE_IMAGE
 
-FROM        ${BASE_IMAGE:-archlinux}
+FROM        ${BASE_IMAGE:-$([ $TARGETARCH = arm64 ] && echo 'heywoodlh/' || echo '')}archlinux
 
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
@@ -82,6 +82,8 @@ ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 
 USER        root
+
+RUN         echo JAU $TARGETARCH
             # endregion
             # region install needed base packages
 RUN         pacman \
