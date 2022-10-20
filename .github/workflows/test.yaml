@@ -1,25 +1,30 @@
 name: Test encrypted build
+
 on:
   # NOTE: Runs on branch to tag creation.
   create:
     branches: [ master ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   encrypt:
     runs-on: ubuntu-latest
-    container: ghcr.io/thaibault/containerbase:latest-x86-64
+    container: ghcr.io/thaibault/containerbase:latest
+
     # NOTE: Theses environment variables are only needed to test the encrypt
     # script.
     env:
       DECRYPTED_PATHS: testSimple/
       ENCRYPTED_PATHS: testEncryption/
       PASSWORD_FILE_PATHS: testAdvanced/.encryptionPassword
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
       - run: ./scripts/encrypt.sh
       - run: ls --all --human-readable -l testEncryption
@@ -32,10 +37,10 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
       - name: Build image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./testSimple
           push: false
@@ -52,10 +57,10 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
       - name: Build image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./testSimple
           push: false
@@ -73,10 +78,10 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
       - name: Build image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./testAdvanced
           push: false
