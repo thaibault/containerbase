@@ -86,8 +86,6 @@ ENV         STANDALONE true
 WORKDIR     $APPLICATION_PATH
 
 USER        root
-
-RUN         echo JAU $TARGETARCH
             # endregion
             # region install needed base packages
 RUN         pacman \
