@@ -28,6 +28,7 @@ done
 # region load dynamic environment variables
 for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     if [ -f "$file_path" ]; then
+        # shellcheck disable=SC1090
         source "$file_path"
     fi
 done
@@ -77,7 +78,7 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         mkdir --parents "${ENCRYPTED_PATHS_ARRAY[index]}"
         chown \
             --recursive \
-            $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+            "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
             "${ENCRYPTED_PATHS_ARRAY[index]}"
 
         declare password_file_path=/tmp/intermediatePasswordFile
@@ -105,22 +106,22 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
                 "$password_file_path"
             then
                 echo \
-                    Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-                    \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
+                    "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
+                    "\"${ENCRYPTED_PATHS_ARRAY[index]}\" failed."
 
                 exit 1
             fi
         elif ! encrypt "${ENCRYPTED_PATHS_ARRAY[index]}"; then
             echo \
-                Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-                \"${ENCRYPTED_PATHS_ARRAY[index]}\" failed.
+                "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
+                "\"${ENCRYPTED_PATHS_ARRAY[index]}\" failed."
 
             exit 1
         fi
 
         echo \
-            Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to \
-            \"${ENCRYPTED_PATHS_ARRAY[index]}\" successfully finished.
+            "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
+            "\"${ENCRYPTED_PATHS_ARRAY[index]}\" successfully finished."
     fi
 done
 # endregion
