@@ -16,10 +16,18 @@
 # region create image commands
 # Run the following command in the directory where this file lives to build a
 # new docker image:
-# - podman pull archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase .
+
+# x86-64 only
+
+# - docker pull archlinux && docker build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git
+# - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest
+
+# Multi architecture
+
+# - podman pull heywoodlh/archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 # - podman push ghcr.io/thaibault/containerbase:latest --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt")"
 
-# - docker pull archlinux && docker build --build-arg BRANCH_NAME=master --no-cache --tag ghcr.io/thaibault/containerbase:latest https://raw.githubusercontent.com/thaibault/containerbase/master/Dockerfile
+# - docker pull heywoodlh/archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git
 # - cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}masterToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker push ghcr.io/thaibault/containerbase:latest
 # endregion
 # region start container commands
@@ -28,21 +36,28 @@
 # - docker rm --force base; docker compose up
 # endregion
             # region configuration
-FROM        archlinux
+ARG         BASE_IMAGE
+            # NOTE: Disabling "MULTI" via "--build-arg MULTI=''" will use
+            # official arch image wich only has "x86-64" architecture support
+            # yet.
+ARG         MULTI=true
+
+FROM        ${BASE_IMAGE:-${MULTI:+'heywoodlh/'}}archlinux
+
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 
 ENV         APPLICATION_PATH /application/
 ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
 
-ENV         COMMAND 'echo You have to set the \"COMMAND\" environment variale.'
+ENV         COMMAND 'echo "echo You have to set the \"COMMAND\" environment variable."'
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
 
 ENV         DECRYPT false
 ENV         DECRYPT_AS_USER true
-ENV         DECRYPTED_PATHS "/tmp/plain/"
+ENV         DECRYPTED_PATHS /tmp/plain/
 ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
 ENV         PASSWORD_SECRET_NAMES encryption_password
 ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
@@ -56,7 +71,7 @@ ENV         MAIN_USER_NAME application
 
 ENV         KNOWN_HOSTS ''
 
-ENV         MIRROR_AREA_PATTERN Germany
+ARG         MIRROR_AREA_PATTERN='default'
 
 ENV         PRIVATE_SSH_KEY ''
 ENV         PUBLIC_SSH_KEY ''
@@ -84,22 +99,27 @@ RUN         pacman \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # Update mirrorlist if existing
-RUN         mv \
+RUN         [[ "$MIRROR_AREA_PATTERN" != default ]] && \
+            [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
+            mv \
                 /etc/pacman.d/mirrorlist.pacnew \
                 /etc/pacman.d/mirrorlist \
                 &>/dev/null || \
                 true; \
+            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
             cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
             awk \
-                '/^## '$MIRROR_AREA_PATTERN'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
+                '/^## '"${MIRROR_AREA_PATTERN}"'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
                 /etc/pacman.d/mirrorlist.orig \
-                >/etc/pacman.d/mirrorlist && \
-            # Update pacman keys (sometime not working)
-            echo
+                >/etc/pacman.d/mirrorlist || \
+                true
+            # && \
+            # Update pacman keys (is optional and sometimes not working)
             #rm --force --recursive /etc/pacman.d/gnupg && \
             #pacman-key --init && \
             #pacman-key --populate archlinux && \
-            #pacman-key --refresh-keys
+            #pacman-key --refresh-keys || \
+            #true
             # Update package database to retrieve newest package versions
 RUN         pacman \
                 --needed \
@@ -108,6 +128,13 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 --sysupgrade && \
+            # Configure locale.
+            sed \
+                --regexp-extended \
+                --expression 's/#(en_US.UTF-8 UTF-8)/\1/' \
+                --in-place \
+                /etc/locale.gen && \
+            locale-gen && \
             # endregion
             # region install needed packages
             # NOTE: "neovim" is only needed for debugging scenarios.
@@ -131,7 +158,6 @@ RUN         pacman \
                 git && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
-            echo user_allow_other >> /etc/fuse.conf && \
             mkdir --parents /etc/containerBase
             # endregion
             # region retrieve artefacts
@@ -150,6 +176,7 @@ RUN         git \
             cp ./scripts/initialize.sh /usr/bin/initialize && \
             cp ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer && \
             cp ./scripts/retrieve-application.sh /usr/bin/retrieve-application && \
+            cp ./scripts/execute-command.sh /usr/bin/execute-command && \
             cp ./scripts/run-command.sh /usr/bin/run-command && \
             popd && \
             rm --recursive /tmp/containerbase
@@ -188,7 +215,7 @@ USER        root
 
 RUN         retrieve-application
 RUN         env >/etc/default_environment
-            # region bootstrap application
+            # region boot strap application
 RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or

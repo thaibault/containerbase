@@ -28,6 +28,7 @@ done
 # region load dynamic environment variables
 for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     if [ -f "$file_path" ]; then
+        # shellcheck disable=SC1090
         source "$file_path"
     fi
 done
@@ -85,7 +86,7 @@ if [[ "$DECRYPT" != false ]]; then
             mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
             chown \
                 --recursive \
-                $MAIN_USER_NAME:$MAIN_USER_GROUP_NAME \
+                "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
                 "${DECRYPTED_PATHS_ARRAY[index]}"
 
             run cp \
@@ -112,22 +113,22 @@ if [[ "$DECRYPT" != false ]]; then
                     "${DECRYPTED_PATHS_ARRAY[index]}" "$password_file_path"
                 then
                     echo \
-                        Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                        \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
+                        "Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to" \
+                        "\"${DECRYPTED_PATHS_ARRAY[index]}\" failed."
 
                     exit 1
                 fi
             elif ! decrypt "${DECRYPTED_PATHS_ARRAY[index]}"; then
                 echo \
-                    Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                    \"${DECRYPTED_PATHS_ARRAY[index]}\" failed.
+                    "Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to" \
+                    "\"${DECRYPTED_PATHS_ARRAY[index]}\" failed."
 
                 exit 1
             fi
 
             echo \
-                Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to \
-                \"${DECRYPTED_PATHS_ARRAY[index]}\" successfully finished.
+                "Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to" \
+                "\"${DECRYPTED_PATHS_ARRAY[index]}\" successfully finished."
         fi
     done
     # endregion
