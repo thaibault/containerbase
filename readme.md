@@ -16,14 +16,9 @@ Project status
 [![npm](https://img.shields.io/npm/v/containerbase?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d)](https://www.npmjs.com/package/containerbase)
 [![npm downloads](https://img.shields.io/npm/dy/containerbase.svg)](https://www.npmjs.com/package/containerbase)
 
-[![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/build:image:periodically:1:branches.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/build:image:periodically:1:branches.yaml)
+[![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/build-image:periodically:1:branches.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/build-image:periodically:1:branches.yaml)
 [![<LABEL>](https://github.com/thaibault/containerbase/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/containerbase/actions/workflows/test.yaml)
 
-<!-- Too unstable yet
-[![dependencies](https://img.shields.io/david/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase)
-[![development dependencies](https://img.shields.io/david/dev/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase?type=dev)
-[![peer dependencies](https://img.shields.io/david/peer/thaibault/containerbase.svg)](https://david-dm.org/thaibault/containerbase?type=peer)
--->
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/containerbase.svg?label=documentation-website)](https://torben.website/containerbase)
 
 <!--|deDE:Einsatz-->
