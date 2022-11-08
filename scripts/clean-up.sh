@@ -18,8 +18,8 @@ if hash yay &>/dev/null; then
     bin=yay
 fi
 
-if [ "$($bin --query --deps --unrequired --quiet)" = '' ]; then
-   $bin --remove --sync --nosave $($bin --query --deps --unrequired --quit)
+if ! $bin --query --deps --unrequired --quiet; then
+   $bin --remove --sync --nosave $($bin --query --deps --unrequired --quiet)
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
