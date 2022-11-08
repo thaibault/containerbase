@@ -25,7 +25,7 @@ if $bin --query --deps --unrequired --quiet; then
             sed --regexp-extended 's/.*->.+\. (.+)/\1/'
     )"
     echo Remove unneeded packages: "$orphans".
-    $bin --remove --recursive --nosave $orphans
+    $bin --remove --noconfirm --recursive --nosave $orphans
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
