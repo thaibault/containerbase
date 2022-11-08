@@ -87,6 +87,7 @@ WORKDIR     $APPLICATION_PATH
 
 USER        root
             # endregion
+COPY        ./scripts/clean-up.sh /usr/bin/clean-up
             # region install needed base packages
 RUN         pacman \
                 --needed \
@@ -96,13 +97,7 @@ RUN         pacman \
                 --sync \
                 base \
                 nawk && \
-            pacman \
-                --remove \
-                --sync \
-                --nosave \
-                $(pacman --query --deps --unrequired --quit) && \
-            # NOTE: We should avoid leaving unnecessary data in that layer.
-            rm /var/cache/* --recursive --force
+            clean-up
             # Update mirrorlist if existing
 RUN         [[ "$MIRROR_AREA_PATTERN" != default ]] && \
             [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
@@ -133,6 +128,7 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 --sysupgrade && \
+            clean-up && \
             # Configure locale.
             sed \
                 --regexp-extended \
@@ -150,13 +146,7 @@ RUN         pacman \
                 --noprogressbar \
                 neovim \
                 openssh && \
-            pacman \
-                --remove \
-                --sync \
-                --nosave \
-                $(pacman --query --deps --unrequired --quit) && \
-            # NOTE: We should avoid leaving unnecessary data in that layer.
-            rm /var/cache/* --recursive --force
+            clean-up
             # endregion
             # region install packages to build other packages
 RUN         pacman \
@@ -166,13 +156,7 @@ RUN         pacman \
                 --sync \
                 base-devel \
                 git && \
-            pacman \
-                --remove \
-                --sync \
-                --nosave \
-                $(pacman --query --deps --unrequired --quit) && \
-            # NOTE: We should avoid leaving unnecessary data in that layer.
-            rm /var/cache/* --recursive --force && \
+            clean-up && \
             mkdir --parents /etc/containerBase
             # endregion
             # region retrieve artefacts
@@ -184,6 +168,7 @@ RUN         git \
                 /tmp/containerbase && \
             pushd /tmp/containerbase && \
             git checkout "${BRANCH_NAME:-main}" && \
+            cp ./scripts/clean-up.sh /usr/bin/clean-up && \
             cp ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./scripts/configure-user.sh /usr/bin/configure-user && \
             cp ./scripts/decrypt.sh /usr/bin/decrypt && \
@@ -215,7 +200,8 @@ RUN         pushd /tmp && \
             /usr/bin/makepkg --install --needed --noconfirm --syncdeps && \
             popd && \
             rm --force --recursive yay && \
-            popd
+            popd && \
+            clean-up
             # endregion
             # region install "gpgdir"
 RUN         yay \
@@ -224,18 +210,13 @@ RUN         yay \
                 --sync \
                 --noprogressbar \
                 gpgdir && \
-            yay \
-                --remove \
-                --sync \
-                --nosave \
-                $(yay --query --deps --unrequired --quit) && \
-            sudo rm /var/cache/* --recursive --force
+            clean-up
             # endregion
 USER        root
 
 RUN         retrieve-application
 RUN         env >/etc/default_environment
-            # region boot strap application
+            # region bootstrap application
 RUN         mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
