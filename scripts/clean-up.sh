@@ -18,8 +18,9 @@ if hash yay &>/dev/null; then
     bin=yay
 fi
 
-if ! $bin --query --deps --unrequired --quiet; then
-   $bin --remove --sync --nosave $($bin --query --deps --unrequired --quiet)
+if $bin --query --deps --unrequired --quiet; then
+    orphans="$($bin --query --deps --unrequired --quiet)"
+    $bin --remove --sync --nosave $orphans
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
