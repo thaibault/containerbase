@@ -19,7 +19,11 @@ if hash yay &>/dev/null; then
 fi
 
 if $bin --query --deps --unrequired --quiet; then
-    orphans="$($bin --query --deps --unrequired --quiet)"
+    orphans="$(
+        $bin --query --deps --unrequired --quiet | \
+            tr '\n' ' ' | \
+            sed --regexp-extended 's/.*->.+\. (.+)/\1/'
+    )"
     $bin --remove --sync --nosave $orphans
 fi
 
