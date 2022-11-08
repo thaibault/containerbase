@@ -23,7 +23,11 @@ if ! $bin --query --deps --unrequired --quiet; then
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
-rm /var/cache/* --recursive --force
+if (( UID == 0 )); then
+    rm /var/cache/* --recursive --force
+else
+    sudo rm /var/cache/* --recursive --force
+fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
