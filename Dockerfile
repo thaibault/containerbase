@@ -96,6 +96,11 @@ RUN         pacman \
                 --sync \
                 base \
                 nawk && \
+            pacman \
+                --remove \
+                --sync \
+                --nosave \
+                $(pacman --query --deps --unrequired --quit) && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # Update mirrorlist if existing
@@ -145,6 +150,11 @@ RUN         pacman \
                 --noprogressbar \
                 neovim \
                 openssh && \
+            pacman \
+                --remove \
+                --sync \
+                --nosave \
+                $(pacman --query --deps --unrequired --quit) && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force
             # endregion
@@ -156,6 +166,11 @@ RUN         pacman \
                 --sync \
                 base-devel \
                 git && \
+            pacman \
+                --remove \
+                --sync \
+                --nosave \
+                $(pacman --query --deps --unrequired --quit) && \
             # NOTE: We should avoid leaving unnecessary data in that layer.
             rm /var/cache/* --recursive --force && \
             mkdir --parents /etc/containerBase
@@ -209,6 +224,11 @@ RUN         yay \
                 --sync \
                 --noprogressbar \
                 gpgdir && \
+            yay \
+                --remove \
+                --sync \
+                --nosave \
+                $(yay --query --deps --unrequired --quit) && \
             sudo rm /var/cache/* --recursive --force
             # endregion
 USER        root
