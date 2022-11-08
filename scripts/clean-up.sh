@@ -19,8 +19,13 @@ if hash yay &>/dev/null; then
 fi
 
 if $bin --query --deps --unrequired --quiet; then
-    orphans="$($bin --query --deps --unrequired --quiet)"
-    $bin --remove --sync --nosave $orphans
+    orphans="$(
+        $bin --query --deps --unrequired --quiet | \
+            tr '\n' ' ' | \
+            sed --regexp-extended 's/.*->.+\. (.+)/\1/'
+    )"
+    echo Remove unneeded packages: "$orphans".
+    $bin --remove --recursive --nosave $orphans
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
