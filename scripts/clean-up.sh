@@ -24,7 +24,8 @@ if $bin --query --deps --unrequired --quiet; then
             tr '\n' ' ' | \
             sed --regexp-extended 's/.*->.+\. (.+)/\1/'
     )"
-    $bin --remove --sync --nosave $orphans
+    echo Remove unneeded packages: "$orphans".
+    $bin --remove --recursive --nosave $orphans
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
