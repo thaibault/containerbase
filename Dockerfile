@@ -201,6 +201,7 @@ RUN         pushd /tmp && \
             popd && \
             rm --force --recursive yay && \
             popd && \
+            rm --force --recursive ~/.cache/go-build && \
             clean-up
             # endregion
             # region install "gpgdir"
