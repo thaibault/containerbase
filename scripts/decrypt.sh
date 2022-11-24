@@ -35,10 +35,7 @@ done
 # endregion
 if [[ "$DECRYPT" != false ]]; then
     # region determine encrypter
-    for encrypter in \
-        ./crypt.sh \
-        /usr/bin/crypt
-    do
+    for encrypter in ./crypt.sh ./scripts/crypt.sh /usr/bin/crypt; do
         if [ -f "$encrypter" ]; then
             break
         fi
