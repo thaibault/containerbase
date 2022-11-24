@@ -174,6 +174,7 @@ RUN         git \
             cp ./scripts/clean-up.sh /usr/bin/clean-up && \
             cp ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user && \
             cp ./scripts/configure-user.sh /usr/bin/configure-user && \
+            cp ./scripts/crypt.sh /usr/bin/crypt && \
             cp ./scripts/decrypt.sh /usr/bin/decrypt && \
             cp ./scripts/encrypt.sh /usr/bin/encrypt && \
             cp ./scripts/initialize.sh /usr/bin/initialize && \
@@ -205,15 +206,6 @@ RUN         pushd /tmp && \
             rm --force --recursive yay && \
             popd && \
             rm --force --recursive ~/.cache/go-build && \
-            clean-up
-            # endregion
-            # region install "gpgdir"
-RUN         yay \
-                --needed \
-                --noconfirm \
-                --sync \
-                --noprogressbar \
-                gpgdir && \
             clean-up
             # endregion
 USER        root
