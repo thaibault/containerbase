@@ -1,10 +1,50 @@
 #!/usr/bin/bash
 
-# crypt /from /to PASSWORD --decrypt
+# crypt -d -p PASSWORD /from /to
+# crypt --decrypt --password PASSWORD /from /to
 
-GPG_ARGS=(--batch --passphrase "$3")
+decrypt=false
+password=''
+source_path=''
+target_path=''
+while true; do
+    case "$1" in
+        -d|--decrypt)
+            shift
+            decrypt=true
+            ;;
 
-FILES=$(find "$1" -type f)
+        -p|--password)
+            shift
+            password="$1"
+            shift
+            ;;
+
+        '')
+            shift ||  true
+            break
+            ;;
+        *)
+            if [[ "$target_path" != '' ]]; then
+                echo "Given argument: \"$1\" is not available."
+            elif [ "$source_path" = '' ]; then
+                source_path="$1"
+                shift
+            elif [ "$target_path" = '' ]; then
+                source_path="$1"
+                shift
+            fi
+
+            exit 1
+    esac
+done
+
+GPG_ARGUMENTS=(--batch)
+if [[ "$password" != '' ]]; then
+    GPG_ARGUMENTS+=(--passphrase "$password")
+fi
+
+FILES=$(find "$source_path" -type f)
 
 # NOTE: Set internal field seperator to the newline character to handle paths
 # with whitespaces.
@@ -14,7 +54,7 @@ set -f
 for file_path in $FILES; do
     echo "Process \"$file_path\"."
 
-    outfile="${file_path/$1/$2}"
+    outfile="${file_path/$source_path/$target_path}"
     directory_path="$(dirname "$outfile")"
     if [ ! -d "$directory_path" ]; then
         echo "Create directory \"$directory_path\"."
@@ -22,10 +62,20 @@ for file_path in $FILES; do
         mkdir --parents "$directory_path"
     fi
 
-    if [ "$4" == '--decrypt' ]; then
-        gpg --decrypt --output "${outfile/.gpg/}" "${GPG_ARGS[@]}" "$file_path"
+    if "$decrypt"; then
+        gpg \
+            --decrypt \
+            --output "${outfile/.gpg/}" \
+            --verbose \
+            "${GPG_ARGUMENTS[@]}" \
+            "$file_path"
     else
-        gpg --symmetric --output "${outfile}.gpg" "${GPG_ARGS[@]}" "$file_path"
+        gpg \
+            --symmetric \
+            --output "${outfile}.gpg" \
+            --verbose \
+            "${GPG_ARGUMENTS[@]}" \
+            "$file_path"
     fi
 done
 

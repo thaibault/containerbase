@@ -33,17 +33,6 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     fi
 done
 # endregion
-# region determine encrypter
-for encrypter in \
-    /tmp/gpgdir \
-    /usr/bin/gpgdir \
-    /usr/bin/perlbin/site_perl/gpgdir \
-    /tmp/gpgdir-nodeps-*/gpgdir
-do
-    if [ -f "$encrypter" ]; then
-        break
-    fi
-done
 run() {
     if (( HOST_USER_ID == 0 )) || [ "$USER" = "$MAIN_USER_NAME" ]; then
         "$@"
@@ -51,23 +40,7 @@ run() {
         su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
     fi
 }
-encrypt() {
-    local password_file_parameters=()
-    if [[ "$2" != '' ]]; then
-        password_file_parameters=('--pw-file' "$2")
-    fi
-
-    run "$encrypter" \
-        --encrypt "$1" \
-        --overwrite-encrypted \
-        --Symmetric \
-        --verbose \
-        "${password_file_parameters[@]}"
-
-    return $?
-}
-# endregion
-# region encrypt security related artefacts needed at runtime
+# region encrypt security related artefacts needed at runti me
 for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
     if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
         rm \
@@ -75,20 +48,8 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
             --recursive \
             "${ENCRYPTED_PATHS_ARRAY[index]}" \
                 &>/dev/null
-        mkdir --parents "${ENCRYPTED_PATHS_ARRAY[index]}"
-        chown \
-            --recursive \
-            "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
-            "${ENCRYPTED_PATHS_ARRAY[index]}"
 
         declare password_file_path=/tmp/intermediatePasswordFile
-
-        run cp \
-            --force \
-            --preserve=all \
-            --recursive \
-            "${DECRYPTED_PATHS_ARRAY[index]}"/* \
-            "${ENCRYPTED_PATHS_ARRAY[index]}"
 
         if [ -s "/run/secrets/${PASSWORD_SECRET_NAMES[index]}" ]; then
             password_file_path="/run/secrets/${PASSWORD_SECRET_NAMES[index]}"
@@ -101,9 +62,10 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         fi
 
         if [ -s "$password_file_path" ]; then
-            if ! encrypt \
+            if ! crypt \
+                "${DECRYPTED_PATHS_ARRAY[index]}" \
                 "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                "$password_file_path"
+                --password "$(cat "$password_file_path")"
             then
                 echo \
                     "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
@@ -111,7 +73,10 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
 
                 exit 1
             fi
-        elif ! encrypt "${ENCRYPTED_PATHS_ARRAY[index]}"; then
+        elif ! crypt \
+            "${DECRYPTED_PATHS_ARRAY[index]}" \
+            "${ENCRYPTED_PATHS_ARRAY[index]}"
+        then
             echo \
                 "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
                 "\"${ENCRYPTED_PATHS_ARRAY[index]}\" failed."
