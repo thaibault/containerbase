@@ -27,15 +27,14 @@ while true; do
         *)
             if [[ "$target_path" != '' ]]; then
                 echo "Given argument: \"$1\" is not available."
+                exit 1
             elif [ "$source_path" = '' ]; then
                 source_path="$1"
-                shift
             elif [ "$target_path" = '' ]; then
-                source_path="$1"
-                shift
+                target_path="$1"
             fi
 
-            exit 1
+            shift
     esac
 done
 
