@@ -63,9 +63,9 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
 
         if [ -s "$password_file_path" ]; then
             if ! crypt \
+                --password "$(cat "$password_file_path")" \
                 "${DECRYPTED_PATHS_ARRAY[index]}" \
-                "${ENCRYPTED_PATHS_ARRAY[index]}" \
-                --password "$(cat "$password_file_path")"
+                "${ENCRYPTED_PATHS_ARRAY[index]}"
             then
                 echo \
                     "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
