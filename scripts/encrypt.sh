@@ -33,6 +33,13 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
     fi
 done
 # endregion
+# region determine encrypter
+for encrypter in ./crypt.sh ./scripts/crypt.sh /usr/bin/crypt; do
+    if [ -f "$encrypter" ]; then
+        break
+    fi
+done
+# endregion
 run() {
     if (( HOST_USER_ID == 0 )) || [ "$USER" = "$MAIN_USER_NAME" ]; then
         "$@"
@@ -62,7 +69,7 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         fi
 
         if [ -s "$password_file_path" ]; then
-            if ! crypt \
+            if ! "$encrypter" \
                 --password "$(cat "$password_file_path")" \
                 "${DECRYPTED_PATHS_ARRAY[index]}" \
                 "${ENCRYPTED_PATHS_ARRAY[index]}"
@@ -73,7 +80,7 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
 
                 exit 1
             fi
-        elif ! crypt \
+        elif ! "$encrypter" \
             "${DECRYPTED_PATHS_ARRAY[index]}" \
             "${ENCRYPTED_PATHS_ARRAY[index]}"
         then

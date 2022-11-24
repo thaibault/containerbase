@@ -34,6 +34,13 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
 done
 # endregion
 if [[ "$DECRYPT" != false ]]; then
+    # region determine encrypter
+    for encrypter in ./crypt.sh ./scripts/crypt.sh /usr/bin/crypt; do
+        if [ -f "$encrypter" ]; then
+            break
+        fi
+    done
+    # endregion
     run() {
         if \
             ! "$DECRYPT_AS_USER" || \
@@ -67,7 +74,7 @@ if [[ "$DECRYPT" != false ]]; then
             fi
 
             if [ -s "$password_file_path" ]; then
-                if ! crypt \
+                if ! "$encrypter" \
                     --decrypt \
                     --password "$(cat "$password_file_path")" \
                     "${ENCRYPTED_PATHS_ARRAY[index]}" \
@@ -79,7 +86,7 @@ if [[ "$DECRYPT" != false ]]; then
 
                     exit 1
                 fi
-            elif ! crypt \
+            elif ! "$encrypter" \
                 --decrypt \
                 "${DECRYPTED_PATHS_ARRAY[index]}" \
                 "${ENCRYPTED_PATHS_ARRAY[index]}"
