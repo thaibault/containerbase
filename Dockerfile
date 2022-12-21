@@ -89,7 +89,7 @@ USER        root
             # endregion
 COPY        ./scripts/clean-up.sh /usr/bin/clean-up
             # region install needed base packages
-            # NOTE: openssl-1.1 is needed by arm pacman but not preovided per
+            # NOTE: openssl-1.1 is needed by arm pacman but not provided per
             # default.
 RUN         pacman \
                 --needed \
@@ -98,7 +98,7 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 base \
-                openssl-1.1 \
+                #openssl-1.1 \
                 nawk && \
             clean-up
             # Update mirrorlist if existing
