@@ -117,7 +117,7 @@ else
     echo \
         "Map container\'s existing application user id $EXISTING_USER_ID" \
         "\(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID" \
-        "\(\"$HOST_USER_NAME \"\)."
+        "\(\"$HOST_USER_NAME\"\)."
 
     export USER_ID_CHANGED=true
 
