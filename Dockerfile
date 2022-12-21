@@ -190,7 +190,13 @@ RUN         configure-user && \
             # We cannot use yay as root user so we introduce an (unatted)
             # install user.
             # Create specified user with not yet existing name and id.
-            useradd --create-home --no-user-group "${INSTALLER_USER_NAME}" && \
+            # NOTE: Use exotic user id reduce risk of id clashing when mapping
+            # to hosts user id at runtime.
+            useradd \
+                --create-home \
+                --no-user-group \
+                "${INSTALLER_USER_NAME}" \
+                --uid 7777 && \
             echo \
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
