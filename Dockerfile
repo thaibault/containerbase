@@ -91,6 +91,7 @@ COPY        ./scripts/clean-up.sh /usr/bin/clean-up
             # region install needed base packages
             # NOTE: openssl-1.1 is needed by arm pacman but not provided per
             # default.
+            #openssl-1.1 \
 RUN         pacman \
                 --needed \
                 --noconfirm \
@@ -98,7 +99,6 @@ RUN         pacman \
                 --refresh \
                 --sync \
                 base \
-                #openssl-1.1 \
                 nawk && \
             clean-up
             # Update mirrorlist if existing
