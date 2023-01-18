@@ -19,14 +19,17 @@
 
 # x86-64 only
 
-# - docker pull archlinux && cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}mainToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --push --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git#main
+# - docker pull archlinux && docker build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git#main
 
 # Multi architecture
 
 # - podman pull heywoodlh/archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/main/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest .
-# - podman push ghcr.io/thaibault/containerbase:latest --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}mainToken.txt")"
+# - docker pull heywoodlh/archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git#main
 
-# - docker pull heywoodlh/archlinux && cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}mainToken.txt" | docker login ghcr.io --username thaibault --password-stdin && docker build --no-cache --push --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git#main
+# Push
+
+# - podman push ghcr.io/thaibault/containerbase:latest --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}mainToken.txt")"
+# - docker push ghcr.io/thaibault/containerbase:latest
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
