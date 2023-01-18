@@ -19,12 +19,12 @@
 
 # x86-64 only
 
-# - docker pull archlinux && docker build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git#main
+# - docker pull archlinux && docker build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 
 # Multi architecture
 
 # - podman pull heywoodlh/archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/main/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest .
-# - docker pull heywoodlh/archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git#main
+# - docker pull heywoodlh/archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
@@ -159,27 +159,17 @@ RUN         pacman \
             mkdir --parents /etc/containerBase
             # endregion
             # region retrieve artefacts
-RUN         git \
-                clone \
-                --depth 1 \
-                --no-single-branch \
-                "$REPOSITORY_URL" \
-                /tmp/containerbase && \
-            pushd /tmp/containerbase && \
-            git checkout "${BRANCH_NAME:-main}" && \
-            cp ./scripts/clean-up.sh /usr/bin/clean-up && \
-            cp ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user && \
-            cp ./scripts/configure-user.sh /usr/bin/configure-user && \
-            cp ./scripts/crypt.sh /usr/bin/crypt && \
-            cp ./scripts/decrypt.sh /usr/bin/decrypt && \
-            cp ./scripts/encrypt.sh /usr/bin/encrypt && \
-            cp ./scripts/initialize.sh /usr/bin/initialize && \
-            cp ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer && \
-            cp ./scripts/retrieve-application.sh /usr/bin/retrieve-application && \
-            cp ./scripts/execute-command.sh /usr/bin/execute-command && \
-            cp ./scripts/run-command.sh /usr/bin/run-command && \
-            popd && \
-            rm --recursive /tmp/containerbase
+COPY        ./scripts/clean-up.sh /usr/bin/clean-up
+COPY        ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user
+COPY        ./scripts/configure-user.sh /usr/bin/configure-user
+COPY        ./scripts/crypt.sh /usr/bin/crypt
+COPY        ./scripts/decrypt.sh /usr/bin/decrypt
+COPY        ./scripts/encrypt.sh /usr/bin/encrypt
+COPY        ./scripts/initialize.sh /usr/bin/initialize
+COPY        ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer
+COPY        ./scripts/retrieve-application.sh /usr/bin/retrieve-application
+COPY        ./scripts/execute-command.sh /usr/bin/execute-command
+COPY        ./scripts/run-command.sh /usr/bin/run-command
             # endregion
             # region configure user
 RUN         configure-user && \
