@@ -25,11 +25,6 @@
 
 # - podman pull heywoodlh/archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/main/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 # - docker pull heywoodlh/archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest https://github.com/thaibault/containerbase.git#main
-
-# Push
-
-# - podman push ghcr.io/thaibault/containerbase:latest --creds "thaibault:$(cat "${ILU_GITHUB_BASE_CONFIGURATION_PATH}mainToken.txt")"
-# - docker push ghcr.io/thaibault/containerbase:latest
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
