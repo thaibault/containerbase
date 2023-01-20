@@ -83,7 +83,7 @@ WORKDIR     $APPLICATION_PATH
 
 USER        root
             # endregion
-COPY        ./scripts/clean-up.sh /usr/bin/clean-up
+COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
             # region install needed base packages
             # NOTE: openssl-1.1 is needed by arm pacman but not provided per
             # default.
@@ -159,17 +159,17 @@ RUN         pacman \
             mkdir --parents /etc/containerBase
             # endregion
             # region retrieve artefacts
-COPY        ./scripts/clean-up.sh /usr/bin/clean-up
-COPY        ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user
-COPY        ./scripts/configure-user.sh /usr/bin/configure-user
-COPY        ./scripts/crypt.sh /usr/bin/crypt
-COPY        ./scripts/decrypt.sh /usr/bin/decrypt
-COPY        ./scripts/encrypt.sh /usr/bin/encrypt
-COPY        ./scripts/initialize.sh /usr/bin/initialize
-COPY        ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer
-COPY        ./scripts/retrieve-application.sh /usr/bin/retrieve-application
-COPY        ./scripts/execute-command.sh /usr/bin/execute-command
-COPY        ./scripts/run-command.sh /usr/bin/run-command
+COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
+COPY        --link ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user
+COPY        --link ./scripts/configure-user.sh /usr/bin/configure-user
+COPY        --link ./scripts/crypt.sh /usr/bin/crypt
+COPY        --link ./scripts/decrypt.sh /usr/bin/decrypt
+COPY        --link ./scripts/encrypt.sh /usr/bin/encrypt
+COPY        --link ./scripts/initialize.sh /usr/bin/initialize
+COPY        --link ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer
+COPY        --link ./scripts/retrieve-application.sh /usr/bin/retrieve-application
+COPY        --link ./scripts/execute-command.sh /usr/bin/execute-command
+COPY        --link ./scripts/run-command.sh /usr/bin/run-command
             # endregion
             # region configure user
 RUN         configure-user && \
