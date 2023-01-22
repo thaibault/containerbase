@@ -19,6 +19,7 @@ do
     touch "$path" && \
         chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" "$path"
 done
+
 if \
     [ "$STANDALONE" = true ] && \
     [[ "$PRIVATE_SSH_KEY" != '' ]] && \
