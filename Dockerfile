@@ -20,12 +20,12 @@
 
 # x86-64 only
 
-# - docker pull archlinux && docker build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest .
+# - docker pull archlinux && docker buildx build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 
 # Multi architecture
 
 # - podman pull heywoodlh/archlinux && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/main/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest .
-# - docker pull heywoodlh/archlinux && docker build --no-cache --tag ghcr.io/thaibault/containerbase:latest .
+# - docker pull heywoodlh/archlinux && docker buildx build --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
