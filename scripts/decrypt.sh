@@ -34,8 +34,15 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
 done
 # endregion
 if [[ "$DECRYPT" != false ]]; then
+    declare current_path="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/"
     # region determine encrypter
-    for encrypter in ./crypt.sh ./scripts/crypt.sh /usr/bin/crypt; do
+    for encrypter in \
+        ./crypt.sh \
+        ./scripts/crypt.sh \
+        /usr/bin/crypt \
+        "${current_path}crypt.sh" \
+        "${current_path}scripts/crypt.sh"
+    do
         if [ -f "$encrypter" ]; then
             break
         fi
