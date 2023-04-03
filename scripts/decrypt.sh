@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 # region header
 # [Project page](https://torben.website/containerbase)
@@ -35,7 +35,7 @@ done
 # endregion
 if [[ "$DECRYPT" != false ]]; then
     # region determine encrypter
-    declare current_path="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/"
+    declare -r current_path="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/"
     for encrypter in \
         ./crypt.sh \
         ./scripts/crypt.sh \
