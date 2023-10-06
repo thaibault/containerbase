@@ -2,8 +2,10 @@ name: Test encrypted build
 
 on:
   workflow_run:
-    workflows: [ "Build image and push" ]
-    branches: [ main ]
+    workflows:
+      - "Build image and push"
+    branches:
+      - main
     types:
       - completed
   # Allows you to run this workflow manually from the Actions tab

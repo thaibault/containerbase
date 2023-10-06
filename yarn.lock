@@ -3,6 +3,6 @@
 
 
 documentation-website@*:
-  version "1.0.306"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.306.tgz#f35270e730fb69ea3cfd7678b83ba114c5715a40"
-  integrity sha512-7ZVURp/H166F0hPQ7evCT/XFltsZS9AgQm6+bW+jO8IYb36zF7yA4pS7iYHEkmnEkHasZRwTVLFj8T+DDEYFpA==
+  version "1.0.308"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.308.tgz#b7df3f084bb2d2020673f34b379f9a63124fa9f8"
+  integrity sha512-yUyw4+i1brdT8VWMDVayCJ61jEULJdKZVz05KfgdVr9rqTLMN83V37dZQWP+UWiszZLySkDG3/IivLd8bpxdkw==
