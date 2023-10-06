@@ -32,15 +32,73 @@
 # - podman pod rm --force base_pod; podman play kube kubernetes.yaml
 # - docker rm --force base; docker compose up
 # endregion
-           # region configuration
-ARG        BASE_IMAGE
+           # region base image preparation
+           # NOTE: Just remove default value "local" to use remote image.
+ARG        BASE_IMAGE=base
            # NOTE: Disabling "MULTI" via "--build-arg MULTI=''" will use
            # official arch image wich only has "x86-64" architecture support
            # yet.
 ARG        MULTI=true
+           ## region local
+FROM       alpine AS bootstrapper
+ARG        TARGETARCH
+           # NOTE: This part is currently inspired by
+           # https://github.com/Menci/docker-archlinuxarm
+           # thanks to menci!
+RUN \
+           [ "$BASE_IMAGE" = '' ] && \
+           apk add arch-install-scripts pacman-makepkg curl && \
+           curl \
+               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/repos-$TARGETARCH \
+               --output /tmp/repos && \
+           cat /tmp/repos >> /etc/pacman.conf && \
+           rm /tmp/repos && \
+           mkdir -p /etc/pacman.d && \
+           curl \
+               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/mirrorlist-$TARGETARCH \
+               --output /etc/pacman.d/mirrorlist && \
+           BOOTSTRAP_EXTRA_PACKAGES='' && \
+           if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                   curl -L https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
+                       unzip -d /tmp/archlinuxarm-keyring - && \
+                   mkdir /usr/share/pacman/keyrings && \
+                   mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
+                   BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
+           else \
+                   apk add zstd && \
+                   mkdir /tmp/archlinux-keyring && \
+                   curl -L https://archlinux.org/packages/core/any/archlinux-keyring/download | \
+                       unzstd | \
+                       tar -C /tmp/archlinux-keyring -xv && \
+                   mv /tmp/archlinux-keyring/usr/share/pacman/keyrings /usr/share/pacman/; \
+           fi && \
+           pacman-key --init && \
+           pacman-key --populate && \
+           mkdir /rootfs && \
+           mkdir -m 0755 -p /rootfs/var/{cache/pacman/pkg,lib/pacman,log} /rootfs/{dev,run,etc} && \
+           mkdir -m 1777 -p /rootfs/tmp && \
+           mkdir -m 0555 -p /rootfs/{sys,proc} && \
+           mknod /rootfs/dev/null c 1 3 && \
+           pacman -r /rootfs -Sy --noconfirm base $BOOTSTRAP_EXTRA_PACKAGES && \
+           rm /rootfs/dev/null && \
+           cp /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/mirrorlist && \
+           echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
+           echo 'LANG=en_US.UTF-8' > /rootfs/etc/locale.conf && \
+           chroot /rootfs locale-gen && \
+           rm -rf /rootfs/var/lib/pacman/sync/*
 
+FROM       scratch as base
+COPY       --from=bootstrapper /rootfs/ /
+ENV        LANG=en_US.UTF-8
+RUN \
+           ln -sf /usr/lib/os-release /etc/os-release && \
+           pacman-key --init && \
+           pacman-key --populate && \
+           rm -rf /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
+           ## endregion
+           # endregion
+           # region configuration
 FROM       ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
-
 LABEL      maintainer="Torben Sickert <info@torben.website>"
 LABEL      Description="base" Vendor="thaibault products" Version="1.0"
 
@@ -88,7 +146,8 @@ COPY       --link ./scripts/clean-up.sh /usr/bin/clean-up
            # region install needed base packages
            # NOTE: openssl-1.1 is needed by arm pacman but not provided per
            # default.
-RUN        pacman \
+RUN \
+           pacman \
                --disable-download-timeout \
                --needed \
                --noconfirm \
@@ -100,7 +159,8 @@ RUN        pacman \
                nawk && \
            clean-up
            # Update mirrorlist if existing
-RUN        [[ "$MIRROR_AREA_PATTERN" != default ]] && \
+RUN \
+           [[ "$MIRROR_AREA_PATTERN" != default ]] && \
            [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
            mv \
                /etc/pacman.d/mirrorlist.pacnew \
@@ -122,7 +182,8 @@ RUN        [[ "$MIRROR_AREA_PATTERN" != default ]] && \
            #pacman-key --refresh-keys || \
            #true
            # Update package database to retrieve newest package versions
-RUN        pacman \
+RUN \
+           pacman \
                --disable-download-timeout \
                --needed \
                --noconfirm \
@@ -152,7 +213,8 @@ RUN        pacman \
            clean-up
            # endregion
            # region install packages to build other packages
-RUN        pacman \
+RUN \
+           pacman \
                --disable-download-timeout \
                --needed \
                --noconfirm \
@@ -177,7 +239,8 @@ COPY       --link ./scripts/execute-command.sh /usr/bin/execute-command
 COPY       --link ./scripts/run-command.sh /usr/bin/run-command
            # endregion
            # region configure user
-RUN        configure-user && \
+RUN \
+           configure-user && \
            # We cannot use yay as root user so we introduce an (unatted)
            # install user.
            # Create specified user with not yet existing name and id.
@@ -195,7 +258,8 @@ RUN        configure-user && \
            # endregion
 USER       $INSTALLER_USER_NAME
            # region install and configure yay
-RUN        pushd /tmp && \
+RUN \
+           pushd /tmp && \
            git clone https://aur.archlinux.org/yay.git && \
            pushd yay && \
            /usr/bin/makepkg --install --needed --noconfirm --syncdeps && \
@@ -210,7 +274,8 @@ USER       root
 RUN        retrieve-application
 RUN        env >/etc/default_environment
            # region bootstrap application
-RUN        mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
+RUN \
+           mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
            chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
 # ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
