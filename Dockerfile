@@ -18,14 +18,14 @@
 # Run the following command in the directory where this file lives to build a
 # new docker image:
 
-# x86-64 only
+# x86-64 only with remote base image
 
-# - docker pull archlinux && docker buildx build --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest .
+# - docker buildx build --build-arg BASE_IMAGE='' --build-arg MULTI='' --build-arg MIRROR_AREA_PATTERN='United States' --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 
 # Multi architecture
 
-# - podman pull menci/archlinuxarm && podman build --file https://raw.githubusercontent.com/thaibault/containerbase/main/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest .
-# - docker pull menci/archlinuxarm && docker buildx build --no-cache --tag ghcr.io/thaibault/containerbase:latest .
+# - podman build --file https://raw.githubusercontent.com/thaibault/containerbase/main/Dockerfile --no-cache --tag ghcr.io/thaibault/containerbase:latest .
+# - docker buildx build --no-cache --tag ghcr.io/thaibault/containerbase:latest .
 # endregion
 # region start container commands
 # Run the following command in the directory where this file lives to start:
@@ -74,10 +74,20 @@ RUN \
            fi && \
            pacman-key --init && \
            pacman-key --populate && \
-           mkdir /rootfs && \
-           mkdir -m 0755 -p /rootfs/var/{cache/pacman/pkg,lib/pacman,log} /rootfs/{dev,run,etc} && \
+           mkdir \
+               -m 0755 \
+               -p \
+                   /rootfs/var/cache/pacman/pkg \
+                   /rootfs/var/lib/pacman \
+                   /rootfs/var/log \
+                   /rootfs/dev \
+                   /rootfs/run \
+                   /rootfs/etc && \
            mkdir -m 1777 -p /rootfs/tmp && \
-           mkdir -m 0555 -p /rootfs/{sys,proc} && \
+           mkdir -m 0555 \
+               -p \
+                   /rootfs/sys \
+                   /rootfs/proc && \
            mknod /rootfs/dev/null c 1 3 && \
            pacman -r /rootfs -Sy --noconfirm base $BOOTSTRAP_EXTRA_PACKAGES && \
            rm /rootfs/dev/null && \
