@@ -1,9 +1,11 @@
 name: Test encrypted build
 
 on:
-  # NOTE: Runs on branch to tag creation.
-  create:
-    branches: [ master ]
+  workflow_run:
+    workflows: [ "Build image and push" ]
+    branches: [ main ]
+    types:
+      - completed
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
