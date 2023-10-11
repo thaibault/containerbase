@@ -46,7 +46,7 @@ RUN \
            [ "$BASE_IMAGE" = '' ] && \
            apk add arch-install-scripts curl pacman-makepkg && \
            mkdir --parents /etc/pacman.d && \
-               echo '\n\
+           echo '\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
@@ -62,7 +62,7 @@ Include = /etc/pacman.d/mirrorlist' \
                    >> /etc/pacman.conf && \
                echo \
                    'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
-                   > /etc/pacman.d/mirrorlist && \
+                   > /etc/pacman.d/mirrorlist; \
            else \
                echo \
                    'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
