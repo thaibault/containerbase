@@ -42,69 +42,89 @@ ARG        MULTI=true
            ## region local
 FROM       alpine AS bootstrapper
 ARG        TARGETARCH
-           # NOTE: This part is currently inspired by
+           # NOTE: TODO This part is currently inspired by
            # https://github.com/Menci/docker-archlinuxarm
            # thanks to menci!
 RUN \
            [ "$BASE_IMAGE" = '' ] && \
-           apk add arch-install-scripts pacman-makepkg curl && \
+           apk add arch-install-scripts curl pacman-makepkg && \
            curl \
-               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/repos-$TARGETARCH \
-               --output /tmp/repos && \
+               --location \
+               --output /tmp/repos \
+               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/repos-$TARGETARCH && \
            cat /tmp/repos >> /etc/pacman.conf && \
            rm /tmp/repos && \
-           mkdir -p /etc/pacman.d && \
+           mkdir --parents /etc/pacman.d && \
            curl \
-               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/mirrorlist-$TARGETARCH \
-               --output /etc/pacman.d/mirrorlist && \
+               --location \
+               --output /etc/pacman.d/mirrorlist \
+               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/mirrorlist-$TARGETARCH && \
            BOOTSTRAP_EXTRA_PACKAGES='' && \
            if [[ "$TARGETARCH" == 'arm*' ]]; then \
-                   curl -L https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
-                       unzip -d /tmp/archlinuxarm-keyring - && \
+                   curl \
+                       --location \
+                       https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
+                           unzip -d /tmp/archlinuxarm-keyring - && \
                    mkdir /usr/share/pacman/keyrings && \
                    mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
                    BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
            else \
                    apk add zstd && \
                    mkdir /tmp/archlinux-keyring && \
-                   curl -L https://archlinux.org/packages/core/any/archlinux-keyring/download | \
-                       unzstd | \
-                       tar -C /tmp/archlinux-keyring -xv && \
-                   mv /tmp/archlinux-keyring/usr/share/pacman/keyrings /usr/share/pacman/; \
+                   curl \
+                       --location \
+                       https://archlinux.org/packages/core/any/archlinux-keyring/download | \
+                           unzstd | \
+                               tar \
+                                   -x \
+                                   --directory /tmp/archlinux-keyring \
+                                   --verbose && \
+                   mv \
+                       /tmp/archlinux-keyring/usr/share/pacman/keyrings \
+                       /usr/share/pacman/; \
            fi && \
            pacman-key --init && \
            pacman-key --populate && \
            mkdir \
-               -m 0755 \
-               -p \
+               --mode 0755 \
+               --parents \
                    /rootfs/var/cache/pacman/pkg \
                    /rootfs/var/lib/pacman \
                    /rootfs/var/log \
                    /rootfs/dev \
                    /rootfs/run \
                    /rootfs/etc && \
-           mkdir -m 1777 -p /rootfs/tmp && \
-           mkdir -m 0555 \
-               -p \
+           mkdir --mode 1777 --parents /rootfs/tmp && \
+           mkdir \
+               --mode 0555 \
+               --parents \
                    /rootfs/sys \
                    /rootfs/proc && \
            mknod /rootfs/dev/null c 1 3 && \
-           pacman -r /rootfs -Sy --noconfirm base $BOOTSTRAP_EXTRA_PACKAGES && \
+           pacman \
+               --refresh \
+               --root /rootfs \
+               --sync \
+               --noconfirm \
+               base $BOOTSTRAP_EXTRA_PACKAGES && \
            rm /rootfs/dev/null && \
            cp /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/mirrorlist && \
            echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
            echo 'LANG=en_US.UTF-8' > /rootfs/etc/locale.conf && \
            chroot /rootfs locale-gen && \
-           rm -rf /rootfs/var/lib/pacman/sync/*
+           rm --force --recursive /rootfs/var/lib/pacman/sync/*
 
 FROM       scratch as base
 COPY       --from=bootstrapper /rootfs/ /
 ENV        LANG=en_US.UTF-8
 RUN \
-           ln -sf /usr/lib/os-release /etc/os-release && \
+           ln --force --symbolic /usr/lib/os-release /etc/os-release && \
            pacman-key --init && \
            pacman-key --populate && \
-           rm -rf /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
+           rm \
+               --force \
+               --recursive \
+               /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
            ## endregion
            # endregion
            # region configuration
