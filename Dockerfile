@@ -49,27 +49,33 @@ RUN \
            [ "$BASE_IMAGE" = '' ] && \
            apk add arch-install-scripts curl pacman-makepkg && \
            curl \
-               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/repos-$TARGETARCH \
-               --output /tmp/repos && \
+               --location \
+               --output /tmp/repos \
+               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/repos-$TARGETARCH && \
            cat /tmp/repos >> /etc/pacman.conf && \
            rm /tmp/repos && \
            mkdir --parents /etc/pacman.d && \
            curl \
-               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/mirrorlist-$TARGETARCH \
-               --output /etc/pacman.d/mirrorlist && \
+               --location \
+               --output /etc/pacman.d/mirrorlist \
+               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/mirrorlist-$TARGETARCH && \
            BOOTSTRAP_EXTRA_PACKAGES='' && \
            if [[ "$TARGETARCH" == 'arm*' ]]; then \
-                   curl -L https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
-                       unzip -d /tmp/archlinuxarm-keyring - && \
+                   curl \
+                       --location \
+                       https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
+                           unzip -d /tmp/archlinuxarm-keyring - && \
                    mkdir /usr/share/pacman/keyrings && \
                    mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
                    BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
            else \
                    apk add zstd && \
                    mkdir /tmp/archlinux-keyring && \
-                   curl -L https://archlinux.org/packages/core/any/archlinux-keyring/download | \
-                       unzstd | \
-                       tar -C /tmp/archlinux-keyring -xv && \
+                   curl \
+                       --location \
+                       https://archlinux.org/packages/core/any/archlinux-keyring/download | \
+                           unzstd | \
+                               tar -C /tmp/archlinux-keyring -xv && \
                    mv /tmp/archlinux-keyring/usr/share/pacman/keyrings /usr/share/pacman/; \
            fi && \
            pacman-key --init && \
