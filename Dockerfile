@@ -66,7 +66,7 @@ Include = /etc/pacman.d/mirrorlist' \
            else \
                echo \
                    'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
-                   > /etc/pacman.d/mirrorlist && \
+                   > /etc/pacman.d/mirrorlist; \
            fi && \
            BOOTSTRAP_EXTRA_PACKAGES='' && \
            if [[ "$TARGETARCH" == 'arm*' ]]; then \
