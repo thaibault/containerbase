@@ -42,23 +42,32 @@ ARG        MULTI=true
            ## region local
 FROM       alpine AS bootstrapper
 ARG        TARGETARCH
-           # NOTE: TODO This part is currently inspired by
-           # https://github.com/Menci/docker-archlinuxarm
-           # thanks to menci!
 RUN \
            [ "$BASE_IMAGE" = '' ] && \
            apk add arch-install-scripts curl pacman-makepkg && \
-           curl \
-               --location \
-               --output /tmp/repos \
-               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/repos-$TARGETARCH && \
-           cat /tmp/repos >> /etc/pacman.conf && \
-           rm /tmp/repos && \
            mkdir --parents /etc/pacman.d && \
-           curl \
-               --location \
-               --output /etc/pacman.d/mirrorlist \
-               https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/mirrorlist-$TARGETARCH && \
+               echo '\n\
+[core]\n\
+Include = /etc/pacman.d/mirrorlist\n\
+[extra]\n\
+Include = /etc/pacman.d/mirrorlist\n\
+[community]\n\
+Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf && \
+           if [[ "$TARGETARCH" == 'arm*' ]]; then \
+               echo '\n\
+[alarm]\n\
+Include = /etc/pacman.d/mirrorlist\n\
+[aur]\n\
+Include = /etc/pacman.d/mirrorlist' \
+                   >> /etc/pacman.conf && \
+               echo \
+                   'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
+                   > /etc/pacman.d/mirrorlist && \
+           else \
+               echo \
+                   'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
+                   > /etc/pacman.d/mirrorlist && \
+           fi && \
            BOOTSTRAP_EXTRA_PACKAGES='' && \
            if [[ "$TARGETARCH" == 'arm*' ]]; then \
                    curl \
