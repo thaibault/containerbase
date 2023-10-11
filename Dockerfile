@@ -42,18 +42,18 @@ ARG        MULTI=true
            ## region local
 FROM       alpine AS bootstrapper
 ARG        TARGETARCH
-           # NOTE: This part is currently inspired by
+           # NOTE: TODO This part is currently inspired by
            # https://github.com/Menci/docker-archlinuxarm
            # thanks to menci!
 RUN \
            [ "$BASE_IMAGE" = '' ] && \
-           apk add arch-install-scripts pacman-makepkg curl && \
+           apk add arch-install-scripts curl pacman-makepkg && \
            curl \
                https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/repos-$TARGETARCH \
                --output /tmp/repos && \
            cat /tmp/repos >> /etc/pacman.conf && \
            rm /tmp/repos && \
-           mkdir -p /etc/pacman.d && \
+           mkdir --parents /etc/pacman.d && \
            curl \
                https://raw.githubusercontent.com/Menci/docker-archlinuxarm/main/files/mirrorlist-$TARGETARCH \
                --output /etc/pacman.d/mirrorlist && \
@@ -75,17 +75,18 @@ RUN \
            pacman-key --init && \
            pacman-key --populate && \
            mkdir \
-               -m 0755 \
-               -p \
+               --mode 0755 \
+               --parents \
                    /rootfs/var/cache/pacman/pkg \
                    /rootfs/var/lib/pacman \
                    /rootfs/var/log \
                    /rootfs/dev \
                    /rootfs/run \
                    /rootfs/etc && \
-           mkdir -m 1777 -p /rootfs/tmp && \
-           mkdir -m 0555 \
-               -p \
+           mkdir --mode 1777 --parents /rootfs/tmp && \
+           mkdir \
+               --mode 0555 \
+               --parents \
                    /rootfs/sys \
                    /rootfs/proc && \
            mknod /rootfs/dev/null c 1 3 && \
