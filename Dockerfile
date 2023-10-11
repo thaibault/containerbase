@@ -46,7 +46,7 @@ RUN \
            [ "$BASE_IMAGE" = '' ] && \
            apk add arch-install-scripts curl pacman-makepkg && \
            mkdir --parents /etc/pacman.d && \
-           echo '\n\
+           echo -e '\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
@@ -54,7 +54,7 @@ Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
 Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf && \
            if [[ "$TARGETARCH" == 'arm*' ]]; then \
-               echo '\n\
+               echo -e '\n\
 [alarm]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
