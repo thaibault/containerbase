@@ -75,8 +75,13 @@ RUN \
                        --location \
                        https://archlinux.org/packages/core/any/archlinux-keyring/download | \
                            unzstd | \
-                               tar -C /tmp/archlinux-keyring -xv && \
-                   mv /tmp/archlinux-keyring/usr/share/pacman/keyrings /usr/share/pacman/; \
+                               tar \
+                                   -x \
+                                   --directory /tmp/archlinux-keyring \
+                                   --verbose && \
+                   mv \
+                       /tmp/archlinux-keyring/usr/share/pacman/keyrings \
+                       /usr/share/pacman/; \
            fi && \
            pacman-key --init && \
            pacman-key --populate && \
@@ -96,22 +101,30 @@ RUN \
                    /rootfs/sys \
                    /rootfs/proc && \
            mknod /rootfs/dev/null c 1 3 && \
-           pacman -r /rootfs -Sy --noconfirm base $BOOTSTRAP_EXTRA_PACKAGES && \
+           pacman \
+               --refresh \
+               --root /rootfs \
+               --sync \
+               --noconfirm \
+               base $BOOTSTRAP_EXTRA_PACKAGES && \
            rm /rootfs/dev/null && \
            cp /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/mirrorlist && \
            echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
            echo 'LANG=en_US.UTF-8' > /rootfs/etc/locale.conf && \
            chroot /rootfs locale-gen && \
-           rm -rf /rootfs/var/lib/pacman/sync/*
+           rm --force --recursive /rootfs/var/lib/pacman/sync/*
 
 FROM       scratch as base
 COPY       --from=bootstrapper /rootfs/ /
 ENV        LANG=en_US.UTF-8
 RUN \
-           ln -sf /usr/lib/os-release /etc/os-release && \
+           ln --force --symbolic /usr/lib/os-release /etc/os-release && \
            pacman-key --init && \
            pacman-key --populate && \
-           rm -rf /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
+           rm \
+               --force \
+               --recursive \
+               /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
            ## endregion
            # endregion
            # region configuration
