@@ -13,19 +13,27 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC1091,SC2016,SC2034,SC2155
-source prepare-initializer "$@" && \
-
-set -e
-
-source decrypt "$@"
-
-if [ -d "${DECRYPTED_PATHS[0]}" ]; then
-    source configure-runtime-user "${DECRYPTED_PATHS[0]}:all:follow"
-else
-    source configure-runtime-user
+bin=pacman
+if hash yay &>/dev/null; then
+    bin=yay
 fi
 
-source execute-command "$(eval "$COMMAND $*")"
+if $bin --query --deps --unrequired --quiet; then
+    orphans="$(
+        $bin --query --deps --unrequired --quiet | \
+            tr '\n' ' ' | \
+            sed --regexp-extended 's/.*->.+\. (.+)/\1/'
+    )"
+    echo Remove unneeded packages: "$orphans".
+    $bin --remove --noconfirm --recursive --nosave $orphans
+fi
+
+# NOTE: We should avoid leaving unnecessary data in that layer.
+if (( UID == 0 )); then
+    rm /var/cache/* --recursive --force
+else
+    sudo rm /var/cache/* --recursive --force
+fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
