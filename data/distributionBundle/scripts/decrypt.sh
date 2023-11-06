@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 # region header
 # [Project page](https://torben.website/containerbase)
@@ -34,19 +34,20 @@ for file_path in "${ENVIRONMENT_FILE_PATHS_ARRAY[@]}"; do
 done
 # endregion
 if [[ "$DECRYPT" != false ]]; then
-    # region determine decrypter
-    # determine gpgdir binary location
-    for decrypter in \
-        /tmp/gpgdir \
-        /usr/bin/gpgdir \
-        /usr/bin/perlbin/site_perl/gpgdir \
-        /tmp/gpgdir-nodeps-*/gpgdir
+    # region determine encrypter
+    declare -r current_path="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/"
+    for encrypter in \
+        ./crypt.sh \
+        ./scripts/crypt.sh \
+        /usr/bin/crypt \
+        "${current_path}crypt.sh" \
+        "${current_path}scripts/crypt.sh"
     do
-        if [ -f "$decrypter" ]; then
+        if [ -f "$encrypter" ]; then
             break
         fi
     done
-
+    # endregion
     run() {
         if \
             ! "$DECRYPT_AS_USER" || \
@@ -58,23 +59,6 @@ if [[ "$DECRYPT" != false ]]; then
             su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
         fi
     }
-
-    decrypt() {
-        local password_file_parameters=()
-        if [[ "$2" != '' ]]; then
-            password_file_parameters=('--pw-file' "$2")
-        fi
-
-        run "$decrypter" \
-            --decrypt "$1" \
-            --overwrite-decrypted \
-            --Symmetric \
-            --quiet \
-            "${password_file_parameters[@]}"
-
-        return $?
-    }
-    # endregion
     # region decrypt security related artefacts needed at runtime
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
@@ -83,18 +67,6 @@ if [[ "$DECRYPT" != false ]]; then
                 --recursive \
                 "${DECRYPTED_PATHS_ARRAY[index]}" \
                 &>/dev/null
-            mkdir --parents "${DECRYPTED_PATHS_ARRAY[index]}"
-            chown \
-                --recursive \
-                "$MAIN_USER_NAME:$MAIN_USER_GROUP_NAME" \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
-
-            run cp \
-                --force \
-                --preserve=all \
-                --recursive \
-                "${ENCRYPTED_PATHS_ARRAY[index]}/"* \
-                "${DECRYPTED_PATHS_ARRAY[index]}"
 
             declare password_file_path=/tmp/intermediatePasswordFile
 
@@ -109,8 +81,11 @@ if [[ "$DECRYPT" != false ]]; then
             fi
 
             if [ -s "$password_file_path" ]; then
-                if ! decrypt \
-                    "${DECRYPTED_PATHS_ARRAY[index]}" "$password_file_path"
+                if ! "$encrypter" \
+                    --decrypt \
+                    --password "$(cat "$password_file_path")" \
+                    "${ENCRYPTED_PATHS_ARRAY[index]}" \
+                    "${DECRYPTED_PATHS_ARRAY[index]}"
                 then
                     echo \
                         "Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to" \
@@ -118,7 +93,11 @@ if [[ "$DECRYPT" != false ]]; then
 
                     exit 1
                 fi
-            elif ! decrypt "${DECRYPTED_PATHS_ARRAY[index]}"; then
+            elif ! "$encrypter" \
+                --decrypt \
+                "${DECRYPTED_PATHS_ARRAY[index]}" \
+                "${ENCRYPTED_PATHS_ARRAY[index]}"
+            then
                 echo \
                     "Decrypting \"${ENCRYPTED_PATHS_ARRAY[index]}\" to" \
                     "\"${DECRYPTED_PATHS_ARRAY[index]}\" failed."
