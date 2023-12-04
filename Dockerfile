@@ -235,7 +235,6 @@ COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
             # NOTE: openssl-1.1 is needed by arm pacman but not provided per
             # default.
 RUN \
-            cat /etc/pacman.conf && \
             pacman \
                 --disable-download-timeout \
                 --needed \
