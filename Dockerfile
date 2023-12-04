@@ -79,19 +79,19 @@ RUN \
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
 # around current key issues in the arm repositories.\n\
 [core]\n\
-#SigLevel = Optional TrustAll\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
-#SigLevel = Optional TrustAll\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
-#SigLevel = Optional TrustAll\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
-#SigLevel = Optional TrustAll\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
-#SigLevel = Optional TrustAll\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
