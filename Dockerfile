@@ -73,34 +73,30 @@ RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
             mkdir --parents /etc/pacman.d && \
-            echo -e '\n\
-[core]\n\
-Include = /etc/pacman.d/mirrorlist\n\
-[extra]\n\
-Include = /etc/pacman.d/mirrorlist\n\
-[community]\n\
-Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf && \
+            BOOTSTRAP_EXTRA_PACKAGES='' && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 echo -e '\n\
 # NOTE: "SigLevel = Never" disables signature checking and work around current\n\
 # key issues in the arm repositories.\n\
+[core]\n\
+SigLevel = Never\n\
+Include = /etc/pacman.d/mirrorlist\n\
+[extra]\n\
+SigLevel = Never\n\
+Include = /etc/pacman.d/mirrorlist\n\
+[community]\n\
+SigLevel = Never\n\
+Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
 SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
 SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist' \
-                    >> /etc/pacman.conf && \
+                    > /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
-                    > /etc/pacman.d/mirrorlist; \
-            else \
-                echo \
-                    'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
-                    > /etc/pacman.d/mirrorlist; \
-            fi && \
-            BOOTSTRAP_EXTRA_PACKAGES='' && \
-            if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                    > /etc/pacman.d/mirrorlist && \
                 curl \
                     --create-dirs \
                     --location \
@@ -122,6 +118,17 @@ Include = /etc/pacman.d/mirrorlist' \
                 rm --force --recursive /etc/pacman.d/gnupg && \
                 BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
             else \
+                echo -e '\n\
+[core]\n\
+Include = /etc/pacman.d/mirrorlist\n\
+[extra]\n\
+Include = /etc/pacman.d/mirrorlist\n\
+[community]\n\
+Include = /etc/pacman.d/mirrorlist' \
+                    > /etc/pacman.conf && \
+                echo \
+                    'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
+                    > /etc/pacman.d/mirrorlist && \
                 apk add zstd && \
                 mkdir /tmp/archlinux-keyring && \
                 curl \
