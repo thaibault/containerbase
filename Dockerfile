@@ -76,22 +76,22 @@ RUN \
             BOOTSTRAP_EXTRA_PACKAGES='' && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 echo -e '\n\
-# NOTE: "SigLevel = Never" disables signature checking and work around current\n\
-# key issues in the arm repositories.\n\
+# NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
+# around current key issues in the arm repositories.\n\
 [core]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
