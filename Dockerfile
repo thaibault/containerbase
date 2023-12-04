@@ -43,16 +43,22 @@ ARG        MULTI=true
 FROM       alpine AS bootstrapper
 ARG        TARGETARCH
 
-           # To be able to download "ca-certificates" with "apk add" command.
+           # To be able to download "ca-certificates" with "apk add" command we
+           # we need to manually add the certificate in the first place.
+           # Afterwards we update with the official tool
+           # "update-ca-certificates".
            # NOTE: We need to copy .gitignore to workaround an unavailable
            # copy certificate file if it exists mechanism.
+           # NOTE: We
 COPY       .gitignore custom-root-ca.cr[t] /root/
 RUN        rm /root/.gitignore && \
-           cat /root/custom-root-ca.crt >> /etc/ssl/certs/ca-certificates.crt
-           # Add again root CA with "update-ca-certificates" tool.
-RUN        apk --no-cache add ca-certificates && rm -rf /var/cache/apk/*
-RUN        mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
-           update-ca-certificates
+           if [ -f /root/custom-root-ca.crt ]; then \
+               cat /root/custom-root-ca.crt >> /etc/ssl/certs/ca-certificates.crt && \
+               apk --no-cache add ca-certificates && \
+               rm -rf /var/cache/apk/* && \
+               mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
+               update-ca-certificates \
+           fi
 
 RUN \
            [ "$BASE_IMAGE" = '' ] && \
