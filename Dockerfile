@@ -93,7 +93,7 @@ Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
 SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist' \
-                    > /etc/pacman.conf && \
+                    >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
                     > /etc/pacman.d/mirrorlist && \
@@ -125,7 +125,7 @@ Include = /etc/pacman.d/mirrorlist\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
 Include = /etc/pacman.d/mirrorlist' \
-                    > /etc/pacman.conf && \
+                    >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist && \
