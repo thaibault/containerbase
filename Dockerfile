@@ -94,7 +94,6 @@ Include = /etc/pacman.d/mirrorlist\n\
 SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
-cat /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
                     > /etc/pacman.d/mirrorlist && \
@@ -180,12 +179,9 @@ COPY        --from=bootstrapper /rootfs/ /
 ENV         LANG=en_US.UTF-8
 RUN \
             ln --force --symbolic /usr/lib/os-release /etc/os-release && \
+            rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
-            pacman-key --populate && \
-            rm \
-                --force \
-                --recursive \
-                /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
+            pacman-key --populate
             ## endregion
             # endregion
             # region configuration
@@ -238,6 +234,7 @@ COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
             # NOTE: openssl-1.1 is needed by arm pacman but not provided per
             # default.
 RUN \
+            cat /etc/pacman.conf && \
             pacman \
                 --disable-download-timeout \
                 --needed \
