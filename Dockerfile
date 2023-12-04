@@ -61,6 +61,14 @@ RUN \
                 update-ca-certificates; \
             fi
 
+# NOTE: Initial version for initializing arch arm keyring:
+#            curl \
+#                    --location \
+#                    https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
+#                        unzip -d /tmp/archlinuxarm-keyring - && \
+#                rm /usr/share/pacman/keyrings/* && \
+#                mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
+
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
@@ -107,12 +115,6 @@ Include = /etc/pacman.d/mirrorlist' \
                     --output-dir /usr/share/pacman/keyrings/ \
                     --remote-name \
                     https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
-                curl \
-                    --location \
-                    https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
-                        unzip -d /tmp/archlinuxarm-keyring - && \
-                rm /usr/share/pacman/keyrings/* && \
-                mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
                 rm --force --recursive /etc/pacman.d/gnupg && \
                 BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
             else \
@@ -131,7 +133,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     /usr/share/pacman/; \
             fi && \
             pacman-key --init && \
-            pacman-key --populate && \
+            pacman-key --populate archlinuxarm && \
             mkdir \
                 --mode 0755 \
                 --parents \
