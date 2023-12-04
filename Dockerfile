@@ -57,7 +57,7 @@ RUN        rm /root/.gitignore && \
                apk --no-cache add ca-certificates && \
                rm -rf /var/cache/apk/* && \
                mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
-               update-ca-certificates \
+               update-ca-certificates; \
            fi
 
 RUN \
