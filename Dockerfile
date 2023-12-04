@@ -46,7 +46,7 @@ ARG        TARGETARCH
            # To be able to download "ca-certificates" with "apk add" command.
            # NOTE: We need to copy .gitignore to workaround an unavailable
            # copy certificate file if it exists mechanism.
-COPY       .gitignore ./root-ca-certificates/custom-root-ca.cr[t] /root/
+COPY       .gitignore custom-root-ca.cr[t] /root/
 RUN        rm /root/.gitignore && \
            cat /root/custom-root-ca.crt >> /etc/ssl/certs/ca-certificates.crt
            # Add again root CA with "update-ca-certificates" tool.
