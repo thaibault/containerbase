@@ -42,6 +42,18 @@ ARG        MULTI=true
            ## region local
 FROM       alpine AS bootstrapper
 ARG        TARGETARCH
+
+           # To be able to download "ca-certificates" with "apk add" command.
+           # NOTE: We need to copy .gitignore to workaround an unavailable
+           # copy certificate file if it exists mechanism.
+COPY       .gitignore ./root-ca-certificates/custom-root-ca.cr[t] /root/
+RUN        rm /root/.gitignore && \
+           cat /root/custom-root-ca.crt >> /etc/ssl/certs/ca-certificates.crt
+           # Add again root CA with "update-ca-certificates" tool.
+RUN        apk --no-cache add ca-certificates && rm -rf /var/cache/apk/*
+RUN        mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
+           update-ca-certificates
+
 RUN \
            [ "$BASE_IMAGE" = '' ] && \
            apk add arch-install-scripts curl pacman-makepkg && \
@@ -88,6 +100,7 @@ Include = /etc/pacman.d/mirrorlist' \
                         --output-dir /usr/share/pacman/keyrings/ \
                         --remote-name \
                         https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
+                   rm --force --recursive /etc/pacman.d/gnupg && \
                    BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
            else \
                    apk add zstd && \
