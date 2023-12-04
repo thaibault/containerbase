@@ -82,9 +82,13 @@ Include = /etc/pacman.d/mirrorlist\n\
 Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 echo -e '\n\
+# NOTE: "SigLevel = Never" disables signature checking and work around current\n\
+# key issues in the arm repositories.\n\
 [alarm]\n\
+SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
+SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
@@ -156,7 +160,6 @@ Include = /etc/pacman.d/mirrorlist' \
                 --sync \
                 --noconfirm \
                 base $BOOTSTRAP_EXTRA_PACKAGES && \
-            pacman-key --populate archlinuxarm && \
             rm /rootfs/dev/null && \
             cp /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/mirrorlist && \
             echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
