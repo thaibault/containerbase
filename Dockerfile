@@ -133,7 +133,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     /usr/share/pacman/; \
             fi && \
             pacman-key --init && \
-            pacman-key --populate archlinuxarm && \
+            pacman-key --populate && \
             mkdir \
                 --mode 0755 \
                 --parents \
@@ -156,6 +156,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 --sync \
                 --noconfirm \
                 base $BOOTSTRAP_EXTRA_PACKAGES && \
+            pacman-key --populate archlinuxarm && \
             rm /rootfs/dev/null && \
             cp /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/mirrorlist && \
             echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
