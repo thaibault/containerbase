@@ -62,12 +62,38 @@ RUN \
             fi
 
 # NOTE: Initial version for initializing arch arm keyring:
-#            curl \
+#
+#                curl \
 #                    --location \
 #                    https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
 #                        unzip -d /tmp/archlinuxarm-keyring - && \
 #                rm /usr/share/pacman/keyrings/* && \
 #                mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
+#
+#
+# NOTE: Updated but currently not working solution:
+# Pacman throws: "error: target not found: archlinuxarm-keyring"
+#
+#                curl \
+#                    --create-dirs \
+#                    --location \
+#                    --output-dir /usr/share/pacman/keyrings/ \
+#                    --remote-name \
+#                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-trusted && \
+#                curl \
+#                    --create-dirs \
+#                    --location \
+#                    --output-dir /usr/share/pacman/keyrings/ \
+#                    --remote-name \
+#                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-revoked && \
+#                curl \
+#                    --create-dirs \
+#                    --location \
+#                    --output-dir /usr/share/pacman/keyrings/ \
+#                    --remote-name \
+#                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
+#                rm --force --recursive /etc/pacman.d/gnupg && \
+#                BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring
 
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
@@ -96,27 +122,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
-                    > /etc/pacman.d/mirrorlist && \
-                curl \
-                    --create-dirs \
-                    --location \
-                    --output-dir /usr/share/pacman/keyrings/ \
-                    --remote-name \
-                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-trusted && \
-                curl \
-                    --create-dirs \
-                    --location \
-                    --output-dir /usr/share/pacman/keyrings/ \
-                    --remote-name \
-                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-revoked && \
-                curl \
-                    --create-dirs \
-                    --location \
-                    --output-dir /usr/share/pacman/keyrings/ \
-                    --remote-name \
-                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
-                rm --force --recursive /etc/pacman.d/gnupg && \
-                BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
+                    > /etc/pacman.d/mirrorlist; \
             else \
                 echo -e '\n\
 [core]\n\
