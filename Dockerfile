@@ -74,25 +74,6 @@ RUN \
 # NOTE: Updated but currently not working solution:
 # Pacman throws: "error: target not found: archlinuxarm-keyring"
 #
-#                curl \
-#                    --create-dirs \
-#                    --location \
-#                    --output-dir /usr/share/pacman/keyrings/ \
-#                    --remote-name \
-#                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-trusted && \
-#                curl \
-#                    --create-dirs \
-#                    --location \
-#                    --output-dir /usr/share/pacman/keyrings/ \
-#                    --remote-name \
-#                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-revoked && \
-#                curl \
-#                    --create-dirs \
-#                    --location \
-#                    --output-dir /usr/share/pacman/keyrings/ \
-#                    --remote-name \
-#                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
-#                rm --force --recursive /etc/pacman.d/gnupg && \
 #                BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring
 
 RUN \
@@ -122,7 +103,26 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
-                    > /etc/pacman.d/mirrorlist; \
+                    > /etc/pacman.d/mirrorlist && \
+                curl \
+                    --create-dirs \
+                    --location \
+                    --output-dir /usr/share/pacman/keyrings/ \
+                    --remote-name \
+                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-trusted && \
+                curl \
+                    --create-dirs \
+                    --location \
+                    --output-dir /usr/share/pacman/keyrings/ \
+                    --remote-name \
+                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-revoked && \
+                curl \
+                    --create-dirs \
+                    --location \
+                    --output-dir /usr/share/pacman/keyrings/ \
+                    --remote-name \
+                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
+                rm --force --recursive /etc/pacman.d/gnupg; \
             else \
                 echo -e '\n\
 [core]\n\
