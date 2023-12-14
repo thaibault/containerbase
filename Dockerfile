@@ -69,12 +69,6 @@ RUN \
 #                        unzip -d /tmp/archlinuxarm-keyring - && \
 #                rm /usr/share/pacman/keyrings/* && \
 #                mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
-#
-#
-# NOTE: Updated but currently not working solution:
-# Pacman throws: "error: target not found: archlinuxarm-keyring"
-#
-#                BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring
 
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
@@ -122,7 +116,8 @@ Include = /etc/pacman.d/mirrorlist' \
                     --output-dir /usr/share/pacman/keyrings/ \
                     --remote-name \
                     https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
-                rm --force --recursive /etc/pacman.d/gnupg; \
+                rm --force --recursive /etc/pacman.d/gnupg && \
+                BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
             else \
                 echo -e '\n\
 [core]\n\
@@ -248,10 +243,19 @@ RUN \
                 --noprogressbar \
                 --refresh \
                 --sync \
-                archlinuxarm-keyring \
                 base \
                 openssl-1.1 \
                 nawk && \
+            if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                pacman \
+                    --disable-download-timeout \
+                    --needed \
+                    --noconfirm \
+                    --noprogressbar \
+                    --refresh \
+                    --sync \
+                    archlinuxarm-keyring; \
+            fi && \
             clean-up
             # Update mirrorlist if existing
 RUN \
