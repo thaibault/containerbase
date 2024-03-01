@@ -25,6 +25,7 @@ if $bin --query --deps --unrequired --quiet; then
             sed --regexp-extended 's/.*->.+\. (.+)/\1/'
     )"
     echo Remove unneeded packages: "$orphans".
+    # shellcheck disable=SC2086
     $bin --remove --noconfirm --recursive --nosave $orphans
 fi
 

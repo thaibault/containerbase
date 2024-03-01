@@ -41,7 +41,7 @@
     "update:documentation": "documentation-website"
   },
   "devDependencies": {
-    "documentation-website": "*"
+    "documentation-website": "^1.0.326"
   },
   "documentationWebsite": {
     "name": "containerbase",
@@ -52,5 +52,6 @@
     "node": ">=20",
     "npm": ">=10",
     "yarn": ">=4"
-  }
+  },
+  "packageManager": "yarn@4.1.0+sha256.81a00df816059803e6b5148acf03ce313cad36b7f6e5af6efa040a15981a6ffb"
 }
