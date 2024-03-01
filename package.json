@@ -32,7 +32,8 @@
     "url": "https://github.com/thaibault/containerbase"
   },
   "scripts": {
-    "clear": "echo clear",
+    "clear": "echo nothing to clear.",
+    "clear": "echo nothing to build.",
     "lint": "hash shellcheck && shellcheck -x **/*.sh || echo Please install \"shellcheck\". || true",
     "lint:given": "shellcheck -x",
     "postversion": "yarn publish --non-interactive; git push --tags && git push",
