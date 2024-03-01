@@ -1,6 +1,6 @@
 {
   "name": "containerbase",
-  "version": "1.0.196",
+  "version": "1.0.197",
   "description": "generic containerized application",
   "keywords": [
     "application",
@@ -32,20 +32,27 @@
     "url": "https://github.com/thaibault/containerbase"
   },
   "scripts": {
-    "clear": "echo clear",
+    "clear": "echo nothing to clear.",
+    "build": "echo nothing to build.",
     "lint": "hash shellcheck && shellcheck -x **/*.sh || echo Please install \"shellcheck\". || true",
     "lint:given": "shellcheck -x",
     "postversion": "yarn publish --non-interactive; git push --tags && git push",
     "start": "docker compose --file service/docker-compose.yaml up",
-    "update": "yarn version --patch",
+    "update": "yarn version patch && yarn npm publish",
     "update:documentation": "documentation-website"
   },
   "devDependencies": {
-    "documentation-website": "*"
+    "documentation-website": "^1.0.326"
   },
   "documentationWebsite": {
     "name": "containerbase",
     "tagline": "containerize your application",
     "trackingCode": "UA-40192634-TODO"
-  }
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10",
+    "yarn": ">=4"
+  },
+  "packageManager": "yarn@4.1.0+sha256.81a00df816059803e6b5148acf03ce313cad36b7f6e5af6efa040a15981a6ffb"
 }

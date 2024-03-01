@@ -9,7 +9,7 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC2016,SC2034,SC2155
+# shellcheck disable=SC2016,SC2028,SC2034,SC2155
 export EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 export EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 export USER_GROUP_ID_CHANGED=false
