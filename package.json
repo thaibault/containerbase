@@ -47,5 +47,10 @@
     "name": "containerbase",
     "tagline": "containerize your application",
     "trackingCode": "UA-40192634-TODO"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10",
+    "yarn": ">=4"
   }
 }
