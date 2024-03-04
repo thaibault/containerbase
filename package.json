@@ -36,7 +36,6 @@
     "build": "echo nothing to build.",
     "lint": "hash shellcheck && shellcheck -x **/*.sh || echo Please install \"shellcheck\". || true",
     "lint:given": "shellcheck -x",
-    "postversion": "yarn publish --non-interactive; git push --tags && git push",
     "start": "docker compose --file service/docker-compose.yaml up",
     "update": "yarn version patch && yarn npm publish",
     "update:documentation": "documentation-website"
