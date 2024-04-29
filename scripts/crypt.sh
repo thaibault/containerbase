@@ -45,7 +45,7 @@ fi
 
 FILES=$(find "$source_path" -type f)
 
-# NOTE: Set internal field seperator to the newline character to handle paths
+# NOTE: Set internal field separator to the newline character to handle paths
 # with whitespaces.
 IFS=$'\n'
 set -f

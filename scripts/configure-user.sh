@@ -9,7 +9,7 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC2016,SC2034,SC2155
+# shellcheck disable=SC2155
 # Disable root account expiration.
 chage --expiredate -1 root && \
 # Set proper default user and group id to avoid expensive user id mapping on

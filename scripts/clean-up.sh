@@ -12,7 +12,6 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC1091,SC2016,SC2034,SC2155
 bin=pacman
 if hash yay &>/dev/null; then
     bin=yay

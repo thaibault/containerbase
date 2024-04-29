@@ -12,7 +12,7 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC2016,SC2034,SC2155
+# shellcheck disable=SC2155
 # region convert environment variables given as string into local arrays
 for name in \
     DECRYPTED_PATHS \

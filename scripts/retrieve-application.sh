@@ -9,7 +9,6 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC2016,SC2034,SC2155
 # NOTE: Current version of the application will live in the image. For
 # development scenarios we can simply mount our working copy over the
 # application root.
@@ -37,6 +36,7 @@ then
     mkdir --parents "$(dirname "$APPLICATION_PATH")" &>/dev/null && \
     rm --force --recursive "$APPLICATION_PATH" &>/dev/null
 
+    # shellcheck disable=SC2016
     git \
         clone \
         --depth 1 \
