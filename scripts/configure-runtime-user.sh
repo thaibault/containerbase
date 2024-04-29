@@ -9,7 +9,7 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC2016,SC2028,SC2034,SC2155
+# shellcheck disable=SC2155
 export EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 export EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 export USER_GROUP_ID_CHANGED=false
@@ -34,14 +34,14 @@ if (( HOST_USER_GROUP_ID == 0 )); then
     export MAIN_USER_GROUP_NAME=root
 elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
     echo \
-        "Existing user group id $EXISTING_USER_GROUP_ID already matching the" \
-        the containers one.
+        "Existing user group id ${EXISTING_USER_GROUP_ID} already matching" \
+        the the containers one.
 else
     echo \
-        "Map container\'s existing user group id $EXISTING_USER_GROUP_ID" \
-        "\(\"$MAIN_USER_GROUP_NAME\"\) from container\'s application user" \
-        "\"$MAIN_USER_NAME\" to host\'s group id $HOST_USER_GROUP_ID" \
-        "\(\"$HOST_USER_GROUP_NAME\"\)."
+        "Map container's existing user group id ${EXISTING_USER_GROUP_ID}" \
+        "(\"${MAIN_USER_GROUP_NAME}\") from container's application user" \
+        "\"${MAIN_USER_NAME}\" to host's group id ${HOST_USER_GROUP_ID}" \
+        "(\"${HOST_USER_GROUP_NAME}\")."
 
     export USER_GROUP_ID_CHANGED=true
     if [ "$HOST_USER_GROUP_NAME" = '' ]; then
@@ -52,8 +52,9 @@ else
             echo \
                 Host user group id does not exist in container and container \
                 does not have any application user group \
-                "\"$MAIN_USER_GROUP_NAME\". Creating corresponding user" \
-                "group and assign to the application user \"$MAIN_USER_NAME\"."
+                "\"${MAIN_USER_GROUP_NAME}\". Creating corresponding user" \
+                group and assign to the application user \
+                "\"${MAIN_USER_NAME}\"."
 
             groupadd --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
             usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
@@ -61,9 +62,9 @@ else
             echo \
                 Host user group id does not exist in container and container \
                 has already an application user group \
-                "\"$MAIN_USER_GROUP_NAME\". Changing corresponding user" \
+                "\"${MAIN_USER_GROUP_NAME}\". Changing corresponding user" \
                 group id and assign to the application user \
-                "\"$MAIN_USER_NAME\"."
+                "\"${MAIN_USER_NAME}\"."
 
             groupmod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
         fi
@@ -72,17 +73,18 @@ else
         [ "$EXISTING_USER_GROUP_ID" = UNKNOWN ]
     then
         echo \
-            "Current application user \"$MAIN_USER_NAME\" has no" \
+            "Current application user \"${MAIN_USER_NAME}\" has no" \
             corresponding group and hosts one exists in container \
-            "\"$HOST_USER_GROUP_NAME\": assign it to them."
+            "\"${HOST_USER_GROUP_NAME}\": assign it to them."
 
         usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         groupmod --new-name "$MAIN_USER_NAME" "$HOST_USER_GROUP_NAME"
     else
         echo \
-            "Host user group id $HOST_USER_GROUP_ID could not be mapped into" \
-            container since this group id is already used by application user \
-            "group \"$HOST_USER_GROUP_NAME\"." &>/dev/stderr
+            "Host user group id ${HOST_USER_GROUP_ID} could not be mapped" \
+            into container since this group id is already used by application \
+            "user group \"$HOST_USER_GROUP_NAME\"." \
+                &>/dev/stderr
         sync
 
         exit 1
@@ -104,20 +106,20 @@ export USER_ID_CHANGED=false
 
 if (( HOST_USER_ID == 0 )); then
     echo \
-        Host user id is 0 \(root\), ignoring user mapping and use root as \
+        'Host user id is 0 (root), ignoring user mapping and use root as' \
         application user.
 
     export USER_ID_CHANGED=true
     export MAIN_USER_NAME=root
 elif (( EXISTING_USER_ID == HOST_USER_ID )); then
     echo \
-        "Existing user id $EXISTING_USER_ID already matching the containers" \
-        one.
+        "Existing user id ${EXISTING_USER_ID} already matching the" \
+        containers one.
 else
     echo \
-        "Map container\'s existing application user id $EXISTING_USER_ID" \
-        "\(\"$MAIN_USER_NAME\"\) to host\'s user id $HOST_USER_ID" \
-        "\(\"$HOST_USER_NAME\"\)."
+        "Map container's existing application user id ${EXISTING_USER_ID}" \
+        "(\"${MAIN_USER_NAME}\") to host's user id ${HOST_USER_ID}" \
+        "(\"${HOST_USER_NAME}\")."
 
     export USER_ID_CHANGED=true
 
@@ -127,8 +129,8 @@ else
         then
             echo \
                 Host user id does not exist in container and container does \
-                "not have any application user \"$MAIN_USER_NAME\". Creating" \
-                corresponding user and assign id to them.
+                "not have any application user \"${MAIN_USER_NAME}\"." \
+                Creating corresponding user and assign id to them.
 
             useradd \
                 --create-home \
@@ -139,15 +141,15 @@ else
         else
             echo \
                 Host user group id does not exist in container and container \
-                "has already an application user \"$MAIN_USER_NAME\"." \
+                "has already an application user \"${MAIN_USER_NAME}\"." \
                 Changing corresponding user id.
 
             usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
         fi
     elif [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]; then
         echo \
-            "Current application user \"$MAIN_USER_NAME\" does not exist but" \
-            "hosts one \"$HOST_USER_NAME\". Change corresponding user id" \
+            "Current application user \"${MAIN_USER_NAME}\" does not exist" \
+            "but hosts one \"$HOST_USER_NAME\". Change corresponding user id" \
             to hosts one.
 
         usermod \
@@ -157,9 +159,10 @@ else
         usermod --home "/home/$MAIN_USER_NAME" --move-home "$MAIN_USER_NAME"
     else
         echo \
-            "Host user id $HOST_USER_ID could not be mapped into container" \
+            "Host user id ${HOST_USER_ID} could not be mapped into container" \
             since this user id is already used by application user \
-            "\"$HOST_USER_NAME\"." &>/dev/stderr
+            "\"${HOST_USER_NAME}\"." \
+                &>/dev/stderr
 
         exit 1
     fi
@@ -318,12 +321,12 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
     then
         echo \
             Changing input and output file descriptors ownership to user \
-            "\"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\"."
+            "\"${MAIN_USER_NAME}\" and group \"${MAIN_USER_GROUP_NAME}\"."
     else
         echo \
             Warning: Changing input and output file descriptors ownership to \
-            "user \"$MAIN_USER_NAME\" and group \"$MAIN_USER_GROUP_NAME\"" \
-            did not work.
+            "user \"${MAIN_USER_NAME}\" and group" \
+            "\"${MAIN_USER_GROUP_NAME}\" did not work."
     fi
 fi
 # endregion

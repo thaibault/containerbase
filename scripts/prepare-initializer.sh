@@ -19,12 +19,12 @@
 #    present.
 # 2. Loads environment files if existing.
 # 3. Decrypt configured locations if specified.
-# shellcheck disable=SC2016,SC2034,SC2155
 # region convert environment variables given as string into local arrays
 # shellcheck disable=SC2043
-for name in ENVIRONMENT_FILE_PATHS; do
-    if ! [[ "$(declare -p "$name" 2>/dev/null)" =~ 'declare -a' ]]; then
-        eval "declare -a ${name}_ARRAY=(\$${name})"
+for variable_name in ENVIRONMENT_FILE_PATHS; do
+    if ! [[ "$(declare -p "$variable_name" 2>/dev/null)" =~ 'declare -a' ]]
+    then
+        eval "declare -a ${variable_name}_ARRAY=(\$${variable_name})"
     fi
 done
 # endregion
