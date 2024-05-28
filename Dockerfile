@@ -122,8 +122,7 @@ Include = /etc/pacman.d/mirrorlist' \
             fi && \
             mv \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
-                /usr/share/pacman/
-RUN \
+                /usr/share/pacman/ && \
             pacman-key --init && \
             pacman-key --populate "$REPOSITORY" && \
             mkdir \
