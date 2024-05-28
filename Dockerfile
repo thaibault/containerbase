@@ -112,16 +112,16 @@ Include = /etc/pacman.d/mirrorlist' \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
-            apk add xz zstd && \
+            apk add xz && \
             mkdir /tmp/archlinux-keyring && \
             curl \
                 --location \
                 "$KEYRING_PACKAGE_URL" | \
-                    unzstd | \
-                        tar \
-                            -x \
-                            --directory /tmp/archlinux-keyring \
-                            --verbose && \
+                    tar \
+                        --directory /tmp/archlinux-keyring \
+                        --extract \
+                        --xz \
+                        --verbose && \
             mv \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
                 /usr/share/pacman/ && \
