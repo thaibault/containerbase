@@ -42,8 +42,6 @@ ARG         MULTI=true
             ## region local
 FROM        alpine AS bootstrapper
 ARG         TARGETARCH
-ENV         LANG=en_US.UTF-8
-
             # To be able to download "ca-certificates" with "apk add" command we
             # we need to manually add the certificate in the first place.
             # Afterwards we update with the official tool
@@ -125,7 +123,6 @@ Include = /etc/pacman.d/mirrorlist' \
             mv \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
                 /usr/share/pacman/ && \
-            locale-gen && \
             pacman-key --init && \
             pacman-key --populate "$REPOSITORY" && \
             mkdir \
