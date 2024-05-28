@@ -74,7 +74,6 @@ RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
             mkdir --parents /etc/pacman.d && \
-            BOOTSTRAP_EXTRA_PACKAGES='' && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 echo -e '\n\
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
@@ -98,26 +97,18 @@ Include = /etc/pacman.d/mirrorlist' \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
                     > /etc/pacman.d/mirrorlist && \
+                apk add zstd && \
                 curl \
-                    --create-dirs \
                     --location \
-                    --output-dir /usr/share/pacman/keyrings/ \
-                    --remote-name \
-                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-trusted && \
-                curl \
-                    --create-dirs \
-                    --location \
-                    --output-dir /usr/share/pacman/keyrings/ \
-                    --remote-name \
-                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm-revoked && \
-                curl \
-                    --create-dirs \
-                    --location \
-                    --output-dir /usr/share/pacman/keyrings/ \
-                    --remote-name \
-                    https://raw.githubusercontent.com/archlinuxarm/archlinuxarm-keyring/master/archlinuxarm.gpg && \
-                rm --force --recursive /etc/pacman.d/gnupg && \
-                BOOTSTRAP_EXTRA_PACKAGES=archlinuxarm-keyring; \
+                    http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz && \
+                        unzstd | \
+                            tar \
+                                -x \
+                                --directory /tmp/archlinuxarm-keyring \
+                                --verbose && \
+                mv \
+                    /tmp/archlinuxarm-keyring/usr/share/pacman/keyrings \
+                    /usr/share/pacman/; \
             else \
                 echo -e '\n\
 [core]\n\
@@ -167,7 +158,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 --root /rootfs \
                 --sync \
                 --noconfirm \
-                base $BOOTSTRAP_EXTRA_PACKAGES && \
+                base && \
             rm /rootfs/dev/null && \
             cp --force /etc/pacman.conf /rootfs/etc/ && \
             cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/ && \
