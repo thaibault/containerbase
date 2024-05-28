@@ -74,6 +74,7 @@ RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
             mkdir --parents /etc/pacman.d /tmp/archlinux-keyring && \
+            rm --force --recursive pacman.d/gnupg && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 KEYRING_PACKAGE_URL='http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz' && \
                 echo -e '\n\
@@ -91,9 +92,9 @@ Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
 SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
-#[aur]\n\
-#SigLevel = Optional TrustAll\n\
-#Include = /etc/pacman.d/mirrorlist' \
+[aur]\n\
+SigLevel = Optional TrustAll\n\
+Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
