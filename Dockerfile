@@ -73,10 +73,9 @@ RUN \
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
-            mkdir --parents /etc/pacman.d && \
+            mkdir --parents /etc/pacman.d /tmp/archlinux-keyring && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 KEYRING_PACKAGE_URL='http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz' && \
-                KEYRING_PACKAGE_EXTRACT_PARAMETER='--xz' && \
                 echo -e '\n\
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
 # around current key issues in the arm repositories.\n\
@@ -98,10 +97,17 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
-                    > /etc/pacman.d/mirrorlist; \
+                    > /etc/pacman.d/mirrorlist && \
+                curl \
+                    --location \
+                    "$KEYRING_PACKAGE_URL" | \
+                        tar \
+                            --directory /tmp/archlinux-keyring \
+                            --extract \
+                            --xz \
+                            --verbose; \
             else \
                 KEYRING_PACKAGE_URL='https://archlinux.org/packages/core/any/archlinux-keyring/download' && \
-                KEYRING_PACKAGE_EXTRACT_PARAMETER='--zst' && \
 echo -e '\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
@@ -112,17 +118,17 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
-                    > /etc/pacman.d/mirrorlist; \
+                    > /etc/pacman.d/mirrorlist && \
+                apk add zstd && \
+                curl \
+                    --location \
+                    "$KEYRING_PACKAGE_URL" | \
+                        unzstd | \
+                            tar \
+                                --directory /tmp/archlinux-keyring \
+                                --extract \
+                                --verbose; \
             fi && \
-            mkdir /tmp/archlinux-keyring && \
-            curl \
-                --location \
-                "$KEYRING_PACKAGE_URL" | \
-                    tar \
-                        --directory /tmp/archlinux-keyring \
-                        --extract \
-                        "$KEYRING_PACKAGE_EXTRACT_PARAMETER" \
-                        --verbose && \
             mv \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
                 /usr/share/pacman/ && \
