@@ -176,7 +176,7 @@ Include = /etc/pacman.d/mirrorlist' \
             chroot /rootfs locale-gen && \
             rm --force --recursive /rootfs/var/lib/pacman/sync/*
 
-FROM        scratch as base
+FROM        scratch AS base
 COPY        --from=bootstrapper /rootfs/ /
 ENV         LANG=en_US.UTF-8
 RUN \
