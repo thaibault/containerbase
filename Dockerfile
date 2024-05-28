@@ -49,7 +49,6 @@ ARG         TARGETARCH
             # "update-ca-certificates".
             # NOTE: We need to copy .gitignore to workaround an unavailable
             # copy certificate file if it exists mechanism.
-            # NOTE: We
 COPY        .gitignore custom-root-ca.cr[t] /root/
 RUN \
             rm /root/.gitignore && \
@@ -60,16 +59,6 @@ RUN \
                 mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
                 update-ca-certificates; \
             fi
-
-# NOTE: Initial version for initializing arch arm keyring:
-#
-#                curl \
-#                    --location \
-#                    https://github.com/archlinuxarm/archlinuxarm-keyring/archive/8af9b54e9ee0a8f45ab0810e1b33d7c351b32362.zip | \
-#                        unzip -d /tmp/archlinuxarm-keyring - && \
-#                rm /usr/share/pacman/keyrings/* && \
-#                mv /tmp/archlinuxarm-keyring/*/archlinuxarm* /usr/share/pacman/keyrings/ && \
-
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
@@ -78,22 +67,22 @@ RUN \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 KEYRING_PACKAGE_URL='http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz' && \
                 echo -e '\n\
-# NOTE: "SigLevel = Never" disables signature checking and works arround\n\
-# current key issues in the arm repositories.\n\
+# NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
+# around current key issues in the arm repositories.\n\
 [core]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
-SigLevel = Never\n\
+SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
