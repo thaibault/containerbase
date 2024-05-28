@@ -91,9 +91,9 @@ Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
 SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
-[aur]\n\
-SigLevel = Optional TrustAll\n\
-Include = /etc/pacman.d/mirrorlist' \
+#[aur]\n\
+#SigLevel = Optional TrustAll\n\
+#Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
