@@ -155,7 +155,7 @@ RUN \
 RUN \
             echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
             echo 'LANG=en_US.UTF-8' > /rootfs/etc/locale.conf && \
-            chroot /rootfs locale-gen && \
+            chroot /rootfs locale-gen
 
 FROM        scratch AS base
 COPY        --from=bootstrapper /rootfs/ /
