@@ -112,7 +112,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
-            apk add zstd && \
+            apk add xz zstd && \
             mkdir /tmp/archlinux-keyring && \
             curl \
                 --location \
