@@ -76,6 +76,7 @@ RUN \
             mkdir --parents /etc/pacman.d && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 KEYRING_PACKAGE_URL='http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz' && \
+                KEYRING_PACKAGE_EXTRACT_PARAMETER='--xz' && \
                 echo -e '\n\
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
 # around current key issues in the arm repositories.\n\
@@ -100,7 +101,8 @@ Include = /etc/pacman.d/mirrorlist' \
                     > /etc/pacman.d/mirrorlist; \
             else \
                 KEYRING_PACKAGE_URL='https://archlinux.org/packages/core/any/archlinux-keyring/download' && \
-                echo -e '\n\
+                KEYRING_PACKAGE_EXTRACT_PARAMETER='--zst' && \
+echo -e '\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
@@ -119,7 +121,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     tar \
                         --directory /tmp/archlinux-keyring \
                         --extract \
-                        --xz \
+                        "$KEYRING_PACKAGE_EXTRACT_PARAMETER" \
                         --verbose && \
             mv \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
