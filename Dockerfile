@@ -122,7 +122,8 @@ Include = /etc/pacman.d/mirrorlist' \
             fi && \
             mv \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
-                /usr/share/pacman/ && \
+                /usr/share/pacman/
+RUN \
             pacman-key --init && \
             pacman-key --populate "$REPOSITORY" && \
             mkdir \
@@ -150,10 +151,11 @@ Include = /etc/pacman.d/mirrorlist' \
             rm /rootfs/dev/null && \
             cp --force /etc/pacman.conf /rootfs/etc/ && \
             cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/ && \
+            rm --force --recursive /rootfs/var/lib/pacman/sync/*
+RUN \
             echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
             echo 'LANG=en_US.UTF-8' > /rootfs/etc/locale.conf && \
             chroot /rootfs locale-gen && \
-            rm --force --recursive /rootfs/var/lib/pacman/sync/*
 
 FROM        scratch AS base
 COPY        --from=bootstrapper /rootfs/ /
