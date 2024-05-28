@@ -42,6 +42,7 @@ ARG         MULTI=true
             ## region local
 FROM        alpine AS bootstrapper
 ARG         TARGETARCH
+ENV         LANG=en_US.UTF-8
 
             # To be able to download "ca-certificates" with "apk add" command we
             # we need to manually add the certificate in the first place.
@@ -65,7 +66,8 @@ RUN \
             mkdir --parents /etc/pacman.d /tmp/archlinux-keyring && \
             rm --force --recursive pacman.d/gnupg && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
-                KEYRING_PACKAGE_URL='http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz' && \
+                REPOSITORY=archlinuxarm && \
+                KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
 # around current key issues in the arm repositories.\n\
@@ -97,7 +99,8 @@ Include = /etc/pacman.d/mirrorlist' \
                             --xz \
                             --verbose; \
             else \
-                KEYRING_PACKAGE_URL='https://archlinux.org/packages/core/any/archlinux-keyring/download' && \
+                REPOSITORY=archlinux && \
+                KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
 echo -e '\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
@@ -122,8 +125,9 @@ Include = /etc/pacman.d/mirrorlist' \
             mv \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
                 /usr/share/pacman/ && \
+            locale-gen && \
             pacman-key --init && \
-            pacman-key --populate && \
+            pacman-key --populate "$REPOSITORY" && \
             mkdir \
                 --mode 0755 \
                 --parents \
