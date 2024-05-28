@@ -141,6 +141,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     /rootfs/sys \
                     /rootfs/proc && \
             mknod /rootfs/dev/null c 1 3 && \
+            pacman --root /rootfs "${REPOSITORY}-keyring" && \
             pacman \
                 --refresh \
                 --root /rootfs \
