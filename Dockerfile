@@ -75,6 +75,7 @@ RUN \
             apk add arch-install-scripts curl pacman-makepkg && \
             mkdir --parents /etc/pacman.d && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                KEYRING_PACKAGE_URL='http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz' && \
                 echo -e '\n\
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
 # around current key issues in the arm repositories.\n\
@@ -96,21 +97,9 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
-                    > /etc/pacman.d/mirrorlist && \
-                apk add zstd && \
-                mkdir /tmp/archlinuxarm-keyring && \
-                curl \
-                    --location \
-                    http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz && \
-                        unzstd | \
-                            tar \
-                                -x \
-                                --directory /tmp/archlinuxarm-keyring \
-                                --verbose && \
-                mv \
-                    /tmp/archlinuxarm-keyring/usr/share/pacman/keyrings \
-                    /usr/share/pacman/; \
+                    > /etc/pacman.d/mirrorlist; \
             else \
+                KEYRING_PACKAGE_URL='https://archlinux.org/packages/core/any/archlinux-keyring/download' && \
                 echo -e '\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
@@ -121,21 +110,21 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
-                    > /etc/pacman.d/mirrorlist && \
-                apk add zstd && \
-                mkdir /tmp/archlinux-keyring && \
-                curl \
-                    --location \
-                    https://archlinux.org/packages/core/any/archlinux-keyring/download | \
-                        unzstd | \
-                            tar \
-                                -x \
-                                --directory /tmp/archlinux-keyring \
-                                --verbose && \
-                mv \
-                    /tmp/archlinux-keyring/usr/share/pacman/keyrings \
-                    /usr/share/pacman/; \
+                    > /etc/pacman.d/mirrorlist; \
             fi && \
+            apk add zstd && \
+            mkdir /tmp/archlinux-keyring && \
+            curl \
+                --location \
+                "$KEYRING_PACKAGE_URL" | \
+                    unzstd | \
+                        tar \
+                            -x \
+                            --directory /tmp/archlinux-keyring \
+                            --verbose && \
+            mv \
+                /tmp/archlinux-keyring/usr/share/pacman/keyrings \
+                /usr/share/pacman/ && \
             pacman-key --init && \
             pacman-key --populate && \
             mkdir \
