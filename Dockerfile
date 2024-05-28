@@ -98,6 +98,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
                     > /etc/pacman.d/mirrorlist && \
                 apk add zstd && \
+                mkdir /tmp/archlinuxarm-keyring && \
                 curl \
                     --location \
                     http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz && \
