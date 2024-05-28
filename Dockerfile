@@ -78,22 +78,22 @@ RUN \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 KEYRING_PACKAGE_URL='http://mirror.archlinuxarm.org/aarch64/core/archlinuxarm-keyring-20240419-1-any.pkg.tar.xz' && \
                 echo -e '\n\
-# NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
-# around current key issues in the arm repositories.\n\
+# NOTE: "SigLevel = Never" disables signature checking and works arround\n\
+# current key issues in the arm repositories.\n\
 [core]\n\
-SigLevel = Optional TrustAll\n\
+SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
-SigLevel = Optional TrustAll\n\
+SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
-SigLevel = Optional TrustAll\n\
+SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
-SigLevel = Optional TrustAll\n\
+SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
-SigLevel = Optional TrustAll\n\
+SigLevel = Never\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
