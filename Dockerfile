@@ -65,7 +65,7 @@ RUN \
             rm --force --recursive pacman.d/gnupg && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
-                KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240520-1-any.pkg.tar.xz" && \
+                KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
 # around current key issues in the arm repositories.\n\
@@ -171,41 +171,41 @@ FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="base" Vendor="thaibault products" Version="1.0"
 
-ENV         APPLICATION_PATH /application/
-ENV         ENVIRONMENT_FILE_PATHS "/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
+ENV         APPLICATION_PATH=/application/
+ENV         ENVIRONMENT_FILE_PATHS="/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
 
-ENV         COMMAND 'echo "echo You have to set the \"COMMAND\" environment variable."'
+ENV         COMMAND='echo "echo You have to set the \"COMMAND\" environment variable."'
             # NOTE: This value has be in synchronisation with the "CMD" given
             # value.
-ENV         INITIALIZING_FILE_PATH /usr/bin/initialize
+ENV         INITIALIZING_FILE_PATH=/usr/bin/initialize
 
-ENV         DECRYPT false
-ENV         DECRYPT_AS_USER true
-ENV         DECRYPTED_PATHS /tmp/plain/
-ENV         ENCRYPTED_PATHS "${APPLICATION_PATH}encrypted/"
-ENV         PASSWORD_SECRET_NAMES encryption_password
-ENV         PASSWORD_FILE_PATHS "${APPLICATION_PATH}.encryptionPassword"
+ENV         DECRYPT=false
+ENV         DECRYPT_AS_USER=true
+ENV         DECRYPTED_PATHS=/tmp/plain/
+ENV         ENCRYPTED_PATHS="${APPLICATION_PATH}encrypted/"
+ENV         PASSWORD_SECRET_NAMES=encryption_password
+ENV         PASSWORD_FILE_PATHS="${APPLICATION_PATH}.encryptionPassword"
 
-ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH /application/package.json
-ENV         DEFAULT_MAIN_USER_GROUP_ID 100
-ENV         DEFAULT_MAIN_USER_ID 1000
-ENV         INSTALLER_USER_NAME installer
-ENV         MAIN_USER_GROUP_NAME users
-ENV         MAIN_USER_NAME application
+ENV         APPLICATION_USER_ID_INDICATOR_FILE_PATH=/application/package.json
+ENV         DEFAULT_MAIN_USER_GROUP_ID=100
+ENV         DEFAULT_MAIN_USER_ID=1000
+ENV         INSTALLER_USER_NAME=installer
+ENV         MAIN_USER_GROUP_NAME=users
+ENV         MAIN_USER_NAME=application
 
-ENV         KNOWN_HOSTS ''
+ENV         KNOWN_HOSTS=''
 
 ARG         MIRROR_AREA_PATTERN='default'
 
-ENV         PRIVATE_SSH_KEY ''
-ENV         PUBLIC_SSH_KEY ''
+ENV         PRIVATE_SSH_KEY=''
+ENV         PUBLIC_SSH_KEY=''
             # git@github.com:thaibault/containerbase
-ENV         REPOSITORY_URL https://github.com/thaibault/containerbase.git
+ENV         REPOSITORY_URL=https://github.com/thaibault/containerbase.git
             # NOTE: Do not set as environment variable to avoid shadowing this
             # argument in inherited image builds.
 ARG         BRANCH_NAME
 
-ENV         STANDALONE true
+ENV         STANDALONE=true
 
 WORKDIR     $APPLICATION_PATH
 
