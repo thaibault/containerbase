@@ -64,7 +64,14 @@ RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
             mkdir --parents /etc/pacman.d /tmp/archlinux-keyring && \
-            rm --force --recursive pacman.d/gnupg/* && \
+            rm --force --recursive pacman.d/gnupg/*
+            # Increase pacman's request timeout.
+RUN         sed \
+                --in-place \
+                --regexp-extended \
+                's:#(XferCommand = /usr/bin/curl) (.*):\1 --connect-timeout 30 \2:' \
+                /etc/pacman.conf
+RUN \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
