@@ -66,11 +66,19 @@ RUN \
             mkdir --parents /etc/pacman.d /tmp/archlinux-keyring && \
             rm --force --recursive pacman.d/gnupg/*
             # Increase pacman's request timeout.
-RUN         sed \
-                --in-place \
-                --regexp-extended \
-                's:#(XferCommand = /usr/bin/curl) (.*):\1 --connect-timeout 30 \2:' \
-                /etc/pacman.conf
+            # curl version:
+#RUN         sed \
+#                --in-place \
+#                --regexp-extended \
+#                's:#(XferCommand = /usr/bin/curl )(.*):\1--connect-timeout 30 \2:' \
+#                /etc/pacman.conf
+            # wget version
+#RUN         apk add wget && \
+#            sed \
+#                --in-place \
+#                --regexp-extended \
+#                's:#(XferCommand = /usr/bin/wget )(.*):\1--timeout 30 \2:' \
+#                /etc/pacman.conf
 RUN \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
