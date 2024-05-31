@@ -63,7 +63,7 @@ RUN \
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
-            mkdir --parents /etc/pacman.d /tmp/archlinux-keyring && \
+            mkdir --parents /etc/pacman.d /tmp/keyring && \
             rm --force --recursive pacman.d/gnupg/*
             # Increase pacman's request timeout.
             # curl version:
