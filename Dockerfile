@@ -76,8 +76,7 @@ RUN \
                         --directory /rootfs/ \
                         --extract \
                         --gzip \
-                        --verbose && \
-            ls -lha /rootfs
+                        --verbose
 # endregion
 # region vuild via pacman
 RUN \
@@ -100,7 +99,7 @@ RUN \
 #                's:#(XferCommand = /usr/bin/wget )(.*):\1--timeout 30 \2:' \
 #                /etc/pacman.conf
 RUN \
-            if [[ "$TARGETARCH" == 'arm*' ]] && false; then \
+            if [[ "$TARGETARCH" == 'DISABLED arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
@@ -136,7 +135,7 @@ Include = /etc/pacman.d/mirrorlist' \
                             --extract \
                             --xz \
                             --verbose; \
-            else \
+            elif [[ "$TARGETARCH" == 'x86*' ]]; then \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
 echo -e '\n\
@@ -162,6 +161,8 @@ Include = /etc/pacman.d/mirrorlist' \
                                 --directory /tmp/keyring \
                                 --extract \
                                 --verbose; \
+            else \
+                true; \
             fi && \
             if [ -d /tmp/keyring/usr/share/pacman/keyrings ]; then \
                 mv \
