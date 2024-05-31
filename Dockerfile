@@ -131,7 +131,7 @@ Include = /etc/pacman.d/mirrorlist' \
                             --extract \
                             --xz \
                             --verbose; \
-            elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'x86*' ]]; then \
+            elif [ "$BASE_IMAGE" = '' ]; then \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
 echo -e '\n\
