@@ -49,6 +49,8 @@ ARG         TARGETARCH
             # NOTE: We need to copy .gitignore to workaround an unavailable
             # copy certificate file if it exists mechanism.
 COPY        .gitignore custom-root-ca.cr[t] /root/
+            # NOTE: "*.cer" files can be converted into "*.crt" via:
+            # openssl x509 -inform der -in source.cer -out target.crt
 RUN \
             rm /root/.gitignore && \
             if [ -f /root/custom-root-ca.crt ]; then \
@@ -56,13 +58,13 @@ RUN \
                 apk add --no-cache --no-check-certificate ca-certificates && \
                 rm -rf /var/cache/apk/* && \
                 mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
-                update-ca-certificates; \
+                update-ca-certificates && exit 1; \
             fi
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
             mkdir --parents /etc/pacman.d /tmp/archlinux-keyring && \
-            rm --force --recursive pacman.d/gnupg && \
+            rm --force --recursive pacman.d/gnupg/* && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
