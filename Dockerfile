@@ -190,7 +190,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 cp --force /etc/pacman.conf /rootfs/etc/ && \
                 cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
             fi && \
-            rm --force --recursive /rootfs/var/lib/pacman/sync/* \
+            rm --force --recursive /rootfs/var/lib/pacman/sync/*
 # endregion
 # region increase pacman's request timeout
             # curl version:
