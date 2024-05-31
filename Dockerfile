@@ -87,19 +87,19 @@ RUN \
 # NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
 # around current key issues in the arm repositories.\n\
 [core]\n\
-SigLevel = Optional TrustAll\n\
+#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
-SigLevel = Optional TrustAll\n\
+#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
-SigLevel = Optional TrustAll\n\
+#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
-SigLevel = Optional TrustAll\n\
+#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
-SigLevel = Optional TrustAll\n\
+#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
@@ -109,7 +109,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     --location \
                     "$KEYRING_PACKAGE_URL" | \
                         tar \
-                            --directory /tmp/archlinux-keyring \
+                            --directory /tmp/keyring \
                             --extract \
                             --xz \
                             --verbose; \
@@ -133,12 +133,12 @@ Include = /etc/pacman.d/mirrorlist' \
                     "$KEYRING_PACKAGE_URL" | \
                         unzstd | \
                             tar \
-                                --directory /tmp/archlinux-keyring \
+                                --directory /tmp/keyring \
                                 --extract \
                                 --verbose; \
             fi && \
             mv \
-                /tmp/archlinux-keyring/usr/share/pacman/keyrings \
+                /tmp/keyring/usr/share/pacman/keyrings \
                 /usr/share/pacman/ && \
             pacman-key --init && \
             pacman-key --populate && \
