@@ -64,7 +64,7 @@ RUN \
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
             [[ "$TARGETARCH" == 'arm*' ]] && \
-            apk add curl zstd && \
+            apk add curl && \
             mkdir --parents /rootfs && \
             curl \
                 --connect-timeout 30 \
@@ -72,11 +72,11 @@ RUN \
                 --location \
                 --retry 3 \
                 'http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz' | \
-                    unzstd | \
-                        tar \
-                            --directory /rootfs/ \
-                            --extract \
-                            --verbose && \
+                    tar \
+                        --directory /rootfs/ \
+                        --extract \
+                        --gzip \
+                        --verbose && \
             ls -lha /rootfs
 # endregion
 # region vuild via pacman
