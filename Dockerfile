@@ -60,6 +60,26 @@ RUN \
                 mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
                 update-ca-certificates; \
             fi
+# region build from root file system archive
+RUN \
+            [ "$BASE_IMAGE" = '' ] && \
+            [[ "$TARGETARCH" == 'arm*' ]] && \
+            apk add curl zstd && \
+            mkdir --parents /rootfs && \
+            curl \
+                --connect-timeout 30 \
+                --fail \
+                --location \
+                --retry 3 \
+                'http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz' | \
+                    unzstd | \
+                        tar \
+                            --directory /rootfs/ \
+                            --extract \
+                            --verbose && \
+            ls -lha /rootfs
+# endregion
+# region vuild via pacman
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
             apk add arch-install-scripts curl pacman-makepkg && \
@@ -80,7 +100,7 @@ RUN \
 #                's:#(XferCommand = /usr/bin/wget )(.*):\1--timeout 30 \2:' \
 #                /etc/pacman.conf
 RUN \
-            if [[ "$TARGETARCH" == 'arm*' ]]; then \
+            if [[ "$TARGETARCH" == 'arm*' ]] && false; then \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
@@ -106,7 +126,10 @@ Include = /etc/pacman.d/mirrorlist' \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
                     > /etc/pacman.d/mirrorlist && \
                 curl \
+                    --connect-timeout 30 \
+                    --fail \
                     --location \
+                    --retry 3 \
                     "$KEYRING_PACKAGE_URL" | \
                         tar \
                             --directory /tmp/keyring \
@@ -129,7 +152,10 @@ Include = /etc/pacman.d/mirrorlist' \
                     > /etc/pacman.d/mirrorlist && \
                 apk add zstd && \
                 curl \
+                    --connect-timeout 30 \
+                    --fail \
                     --location \
+                    --retry 3 \
                     "$KEYRING_PACKAGE_URL" | \
                         unzstd | \
                             tar \
@@ -137,37 +163,40 @@ Include = /etc/pacman.d/mirrorlist' \
                                 --extract \
                                 --verbose; \
             fi && \
-            mv \
-                /tmp/keyring/usr/share/pacman/keyrings \
-                /usr/share/pacman/ && \
-            pacman-key --init && \
-            pacman-key --populate && \
-            mkdir \
-                --mode 0755 \
-                --parents \
-                    /rootfs/var/cache/pacman/pkg \
-                    /rootfs/var/lib/pacman \
-                    /rootfs/var/log \
-                    /rootfs/dev \
-                    /rootfs/run \
-                    /rootfs/etc && \
-            mkdir --mode 1777 --parents /rootfs/tmp && \
-            mkdir \
-                --mode 0555 \
-                --parents \
-                    /rootfs/sys \
-                    /rootfs/proc && \
-            mknod /rootfs/dev/null c 1 3 && \
-            pacman \
-                --refresh \
-                --root /rootfs \
-                --sync \
-                --noconfirm \
-                base "${REPOSITORY}-keyring" && \
-            rm /rootfs/dev/null && \
-            cp --force /etc/pacman.conf /rootfs/etc/ && \
-            cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/ && \
-            rm --force --recursive /rootfs/var/lib/pacman/sync/*
+            if [ -d /tmp/keyring/usr/share/pacman/keyrings ]; then \
+                mv \
+                    /tmp/keyring/usr/share/pacman/keyrings \
+                    /usr/share/pacman/ && \
+                pacman-key --init && \
+                pacman-key --populate && \
+                mkdir \
+                    --mode 0755 \
+                    --parents \
+                        /rootfs/var/cache/pacman/pkg \
+                        /rootfs/var/lib/pacman \
+                        /rootfs/var/log \
+                        /rootfs/dev \
+                        /rootfs/run \
+                        /rootfs/etc && \
+                mkdir --mode 1777 --parents /rootfs/tmp && \
+                mkdir \
+                    --mode 0555 \
+                    --parents \
+                        /rootfs/sys \
+                        /rootfs/proc && \
+                mknod /rootfs/dev/null c 1 3 && \
+                pacman \
+                    --refresh \
+                    --root /rootfs \
+                    --sync \
+                    --noconfirm \
+                    base "${REPOSITORY}-keyring" && \
+                rm /rootfs/dev/null && \
+                cp --force /etc/pacman.conf /rootfs/etc/ && \
+                cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/ && \
+                rm --force --recursive /rootfs/var/lib/pacman/sync/*; \
+            fi \
+# endregion
 RUN \
             echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
             echo 'LANG=en_US.UTF-8' > /rootfs/etc/locale.conf && \
