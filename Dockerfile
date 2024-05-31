@@ -58,7 +58,7 @@ RUN \
                 apk add --no-cache --no-check-certificate ca-certificates && \
                 rm -rf /var/cache/apk/* && \
                 mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
-                update-ca-certificates && exit 1; \
+                update-ca-certificates; \
             fi
 RUN \
             [ "$BASE_IMAGE" = '' ] && \
