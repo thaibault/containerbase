@@ -39,6 +39,7 @@ ARG         BASE_IMAGE=base
             # official arch image wich only has "x86-64" architecture support
             # yet.
 ARG         MULTI=true
+ARG         BUILD_ARM_FROM_ARCHIVE=true
             ## region local
 FROM        alpine AS bootstrapper
 ARG         TARGETARCH
@@ -62,44 +63,39 @@ RUN \
             fi
 # region build from root file system archive
 RUN \
-            [ "$BASE_IMAGE" = '' ] && \
-            [[ "$TARGETARCH" == 'arm*' ]] && \
-            apk add curl && \
-            mkdir --parents /rootfs && \
-            curl \
-                --connect-timeout 30 \
-                --fail \
-                --location \
-                --retry 3 \
-                'http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz' | \
-                    tar \
-                        --directory /rootfs/ \
-                        --extract \
-                        --gzip \
-                        --verbose
+            if \
+                $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BASE_IMAGE" = '' ] && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
+                apk add curl && \
+                mkdir --parents /rootfs && \
+                curl \
+                    --connect-timeout 30 \
+                    --fail \
+                    --location \
+                    --retry 3 \
+                    'http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz' | \
+                        tar \
+                            --directory /rootfs/ \
+                            --extract \
+                            --gzip \
+                            --verbose; \
+            fi
 # endregion
 # region vuild via pacman
 RUN \
-            [ "$BASE_IMAGE" = '' ] && \
-            apk add arch-install-scripts curl pacman-makepkg && \
-            mkdir --parents /etc/pacman.d /tmp/keyring && \
-            rm --force --recursive pacman.d/gnupg/*
-            # Increase pacman's request timeout.
-            # curl version:
-#RUN         sed \
-#                --in-place \
-#                --regexp-extended \
-#                's:#(XferCommand = /usr/bin/curl )(.*):\1--connect-timeout 30 \2:' \
-#                /etc/pacman.conf
-            # wget version
-#RUN         apk add wget && \
-#            sed \
-#                --in-place \
-#                --regexp-extended \
-#                's:#(XferCommand = /usr/bin/wget )(.*):\1--timeout 30 \2:' \
-#                /etc/pacman.conf
+            if [ "$BASE_IMAGE" = '' ]; then \
+                apk add arch-install-scripts curl pacman-makepkg && \
+                mkdir --parents /etc/pacman.d /tmp/keyring && \
+                rm --force --recursive pacman.d/gnupg/*; \
+            fi
 RUN \
-            if [[ "$TARGETARCH" == 'DISABLED arm*' ]]; then \
+            if \
+                [ "$BASE_IMAGE" = '' ] && \
+                ! $BUILD_ARM_FROM_ARCHIVE && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
@@ -135,7 +131,7 @@ Include = /etc/pacman.d/mirrorlist' \
                             --extract \
                             --xz \
                             --verbose; \
-            elif [[ "$TARGETARCH" == 'x86*' ]]; then \
+            elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'x86*' ]]; then \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
 echo -e '\n\
@@ -192,15 +188,25 @@ Include = /etc/pacman.d/mirrorlist' \
                     base "${REPOSITORY}-keyring" && \
                 rm /rootfs/dev/null && \
                 cp --force /etc/pacman.conf /rootfs/etc/ && \
-                cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/ && \
-                rm --force --recursive /rootfs/var/lib/pacman/sync/*; \
-            fi
+                cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
+            fi && \
+            rm --force --recursive /rootfs/var/lib/pacman/sync/* \
 # endregion
-RUN \
-            echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
-            echo 'LANG=en_US.UTF-8' > /rootfs/etc/locale.conf && \
-            chroot /rootfs locale-gen
-
+# region increase pacman's request timeout
+            # curl version:
+#RUN         sed \
+#                --in-place \
+#                --regexp-extended \
+#                's:#(XferCommand = /usr/bin/curl )(.*):\1--connect-timeout 30 \2:' \
+#                /rootfs/etc/pacman.conf
+            # wget version
+#RUN         apk add wget && \
+#            sed \
+#                --in-place \
+#                --regexp-extended \
+#                's:#(XferCommand = /usr/bin/wget )(.*):\1--timeout 30 \2:' \
+#                /rootfs/etc/pacman.conf
+# endregion
 FROM        scratch AS base
 COPY        --from=bootstrapper /rootfs/ /
 ENV         LANG=en_US.UTF-8
