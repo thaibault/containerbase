@@ -141,7 +141,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 /tmp/archlinux-keyring/usr/share/pacman/keyrings \
                 /usr/share/pacman/ && \
             pacman-key --init && \
-            pacman-key --populate "$REPOSITORY" && \
+            pacman-key --populate && \
             mkdir \
                 --mode 0755 \
                 --parents \
