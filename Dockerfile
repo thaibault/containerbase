@@ -161,8 +161,6 @@ Include = /etc/pacman.d/mirrorlist' \
                                 --directory /tmp/keyring \
                                 --extract \
                                 --verbose; \
-            else \
-                true; \
             fi && \
             if [ -d /tmp/keyring/usr/share/pacman/keyrings ]; then \
                 mv \
@@ -196,7 +194,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 cp --force /etc/pacman.conf /rootfs/etc/ && \
                 cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/ && \
                 rm --force --recursive /rootfs/var/lib/pacman/sync/*; \
-            fi \
+            fi
 # endregion
 RUN \
             echo 'en_US.UTF-8 UTF-8' > /rootfs/etc/locale.gen && \
