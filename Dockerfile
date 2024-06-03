@@ -8,7 +8,7 @@
 # -------
 
 # This library written by Torben Sickert stand under a creative commons naming
-# 3.0 unported license.
+# 4.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 
 # Basic ArchLinux with user-mapping, AUR integration and support for decryption
@@ -83,7 +83,7 @@ RUN \
                             --verbose; \
             fi
 # endregion
-# region vuild via pacman
+# region build via pacman
 RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
                 apk add arch-install-scripts curl pacman-makepkg && \
@@ -190,7 +190,12 @@ Include = /etc/pacman.d/mirrorlist' \
                 cp --force /etc/pacman.conf /rootfs/etc/ && \
                 cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
             fi && \
-            rm --force --recursive /rootfs/var/lib/pacman/sync/*
+            rm --force --recursive \
+                /rootfs/usr/share/man/* \
+                /rootfs/var/cache/pacman/pkg/* \
+                /rootfs/var/lib/pacman/sync/* \
+                /rootfs/README \
+                /rootfs/etc/pacman.d/mirrorlist.pacnew
 # endregion
 # region increase pacman's request timeout
             # curl version:
@@ -219,8 +224,15 @@ RUN \
             # endregion
             # region configuration
 FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
-LABEL       maintainer="Torben Sickert <info@torben.website>"
-LABEL       Description="base" Vendor="thaibault products" Version="1.0"
+
+LABEL       org.opencontainers.image.title=Multi-Architecture Arch Linux base Image
+LABEL       org.opencontainers.image.description=Multi-Architecture unofficial containerd image of Arch Linux, a simple, lightweight Linux distribution aimed for flexibility with some utility helpers included.
+LABEL       org.opencontainers.image.authors=Torben Sickert <info@torben.website> (@thaibault)
+LABEL       org.opencontainers.image.url=https://github.com/thaibault/containerbase/pkgs/container/containerbase
+LABEL       org.opencontainers.image.documentation=https://github.com/thaibault/containerbase/blob/main/readme.md
+LABEL       org.opencontainers.image.source=https://github.com/thaibault/containerbase
+LABEL       org.opencontainers.image.licenses=CC-4.0
+LABEL       org.opencontainers.image.version=0.0.1
 
 ENV         APPLICATION_PATH=/application/
 ENV         ENVIRONMENT_FILE_PATHS="/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
