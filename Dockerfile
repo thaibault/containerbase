@@ -124,11 +124,6 @@ Include = /etc/pacman.d/mirrorlist' \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
             fi
-# TODO
-#--config /rootfs/etc/pacman.conf \
-#--dbpath /rootfs/ \
-#--gpgdir /rootfs/ \
-#--hookdir /rootfs/hookdir \
 RUN \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
@@ -136,6 +131,10 @@ RUN \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
                 pacman \
+                    --config /rootfs/etc/pacman.conf \
+                    --dbpath /rootfs/var/lib/pacman/ \
+                    --gpgdir /rootfs/etc/pacman.d/gnupg/ \
+                    --hookdir /rootfs/etc/pacman.d/hooks/ \
                     --remove \
                     --sysroot /rootfs \
                     --cascade \
@@ -147,6 +146,10 @@ RUN \
                     net-tools \
                     vi && \
                 pacman \
+                    --config /rootfs/etc/pacman.conf \
+                    --dbpath /rootfs/var/lib/pacman/ \
+                    --gpgdir /rootfs/etc/pacman.d/gnupg/ \
+                    --hookdir /rootfs/etc/pacman.d/hooks/ \
                     --refresh \
                     --sysroot /rootfs \
                     --sync \
