@@ -89,7 +89,8 @@ RUN \
                 apk add arch-install-scripts curl pacman-makepkg && \
                 mkdir --parents /etc/pacman.d /tmp/keyring && \
                 rm --force --recursive pacman.d/gnupg/*; \
-            fi
+            fi && \
+            true
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
