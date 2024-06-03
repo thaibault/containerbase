@@ -91,7 +91,11 @@ RUN \
                 rm --force --recursive pacman.d/gnupg/*; \
             fi
 RUN \
-            if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
+            if \
+                ! $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BASE_IMAGE" = '' ] && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
@@ -123,9 +127,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
-            fi && \
-            cp --force /etc/pacman.conf /rootfs/etc/ && \
-            cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/
+            fi
 RUN \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
@@ -133,10 +135,6 @@ RUN \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
                 pacman \
-                    --config /rootfs/etc/pacman.conf \
-                    --dbpath /rootfs/var/lib/pacman/ \
-                    --gpgdir /rootfs/etc/pacman.d/gnupg/ \
-                    --hookdir /rootfs/etc/pacman.d/hooks/ \
                     --remove \
                     --sysroot /rootfs \
                     --cascade \
@@ -148,10 +146,6 @@ RUN \
                     net-tools \
                     vi && \
                 pacman \
-                    --config /rootfs/etc/pacman.conf \
-                    --dbpath /rootfs/var/lib/pacman/ \
-                    --gpgdir /rootfs/etc/pacman.d/gnupg/ \
-                    --hookdir /rootfs/etc/pacman.d/hooks/ \
                     --refresh \
                     --sysroot /rootfs \
                     --sync \
@@ -212,7 +206,9 @@ RUN \
                     --sync \
                     --noconfirm \
                     base "${REPOSITORY}-keyring" && \
-                rm /rootfs/dev/null; \
+                rm /rootfs/dev/null && \
+                cp --force /etc/pacman.conf /rootfs/etc/ && \
+                cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
             fi && \
             rm --force --recursive \
                 /rootfs/var/cache/pacman/pkg/* \
