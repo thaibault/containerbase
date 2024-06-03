@@ -40,13 +40,14 @@ ARG         BASE_IMAGE=base
             # bootstrap arch linux root files.
 ARG         BUILD_ARM_FROM_ARCHIVE=true
             # NOTE: Disabling "MULTI" via "--build-arg MULTI=''" will use
-            # official arch image wich only has "x86-64" architecture support
-            # yet.
+            # pre-build arch images which may have deprecated packages to
+            # update included.
 ARG         MULTI=true
 ARG         MIRROR_AREA_PATTERN='default'
-ARG         TARGETARCH
 
 FROM        alpine AS bootstrapper
+ARG         BUILD_ARM_FROM_ARCHIVE
+ARG         TARGETARCH
             # To be able to download "ca-certificates" with "apk add" command we
             # we need to manually add the certificate in the first place.
             # Afterwards we update with the official tool
@@ -190,6 +191,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     --root /rootfs \
                     --sync \
                     --noconfirm \
+                    --noprogressbar \
                     base "${REPOSITORY}-keyring" && \
                 rm /rootfs/dev/null && \
                 cp --force /etc/pacman.conf /rootfs/etc/ && \
@@ -203,6 +205,7 @@ Include = /etc/pacman.d/mirrorlist' \
 # endregion
 # region install and update packages
 FROM        scratch AS scratch-minified
+ARG         MIRROR_AREA_PATTERN
 COPY        --from=bootstrapper /rootfs/ /
 COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
 RUN \
@@ -213,15 +216,6 @@ RUN \
             # NOTE: openssl-1.1 is needed by arm pacman but not provided per
             # default.
 RUN \
-            if [[ "$TARGETARCH" == 'arm*' ]]; then \
-                pacman \
-                    --needed \
-                    --noconfirm \
-                    --noprogressbar \
-                    --refresh \
-                    --sync \
-                    archlinuxarm-keyring; \
-            fi && \
             pacman \
                 --needed \
                 --noconfirm \
@@ -249,29 +243,18 @@ RUN \
             fi
             # Update package database to retrieve newest package versions
 RUN \
-            if \
-                [ "$BUILD_ARM_FROM_ARCHIVE" = true ] && \
-                [ "$BASE_IMAGE" = '' ] && \
-                [[ "$TARGETARCH" == 'arm*' ]]; \
-            then \
-                pacman \
-                    --remove \
-                    --cascade \
-                    --recursive \
-                    --noconfirm \
-                    --nosave \
-                    nano \
-                    netctl \
-                    net-tools \
-                    vi; \
-            fi && \
             pacman \
                 --remove \
                 --cascade \
                 --recursive \
                 --noconfirm \
                 --nosave \
-                nawk && \
+                nawk \
+                nano \
+                netctl \
+                net-tools \
+                vi || \
+            true && \
             pacman \
                 --needed \
                 --noconfirm \
@@ -317,7 +300,6 @@ RUN \
 # region configuration
 FROM        scratch-minified AS base
 COPY        --from=bootstrapper / /
-ENV         LANG=en_US.UTF-8
 RUN         ln --force --symbolic /usr/lib/os-release /etc/os-release
 ## region configuration
 FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
@@ -364,6 +346,8 @@ ENV         REPOSITORY_URL=https://github.com/thaibault/containerbase.git
 ARG         BRANCH_NAME
 
 ENV         STANDALONE=true
+
+ENV         LANG=en_US.UTF-8
 
 WORKDIR     $APPLICATION_PATH
 
