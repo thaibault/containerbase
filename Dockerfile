@@ -32,7 +32,7 @@
 # - podman pod rm --force base_pod; podman play kube kubernetes.yaml
 # - docker rm --force base; docker compose up
 # endregion
-            # region base image preparation
+# region bootstrapping
             # NOTE: Just remove default value "local" to use remote image.
 ARG         BASE_IMAGE=base
             # NOTE: Disabling "MULTI" via "--build-arg MULTI=''" will use
@@ -61,7 +61,7 @@ RUN \
                 mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
                 update-ca-certificates; \
             fi
-# region bootstrap from file system archive
+## region bootstrap from file system archive
 RUN \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
@@ -82,8 +82,8 @@ RUN \
                             --gzip \
                             --verbose; \
             fi
-# endregion
-# region prepare / bootstrap via pacman
+## endregion
+## region bootstrap via pacman
 RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
                 apk add arch-install-scripts curl pacman-makepkg && \
@@ -129,41 +129,9 @@ Include = /etc/pacman.d/mirrorlist' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
             if \
-                $BUILD_ARM_FROM_ARCHIVE && \
+                ! $BUILD_ARM_FROM_ARCHIVE && \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
-            then \
-                cp \
-                    --recursive \
-                    /rootfs/usr/share/pacman/keyrings \
-                    /usr/share/pacman/ && \
-                rm \
-                    --force \
-                    --recursive \
-                    /etc/pacman.d/gnupg \
-                    /var/lib/pacman/sync && \
-                pacman-key --init && \
-                pacman-key --refresh-keys && \
-                pacman-key --updatedb && \
-                pacman-key --populate && \
-                pacman \
-                    --remove \
-                    --root /rootfs \
-                    --cascade \
-                    --recursive \
-                    --noconfirm \
-                    --nosave \
-                    nano \
-                    netctl \
-                    net-tools \
-                    vi && \
-                pacman \
-                    --refresh \
-                    --root /rootfs \
-                    --sync \
-                    --sysupgrade \
-                    --noconfirm; \
-            elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
                 curl \
                     --connect-timeout 30 \
@@ -228,29 +196,133 @@ Include = /etc/pacman.d/mirrorlist' \
                 /rootfs/var/lib/pacman/sync \
                 /rootfs/README \
                 /rootfs/etc/pacman.d/mirrorlist.pacnew
+## endregion
 # endregion
-# region increase pacman's request timeout
-            # curl version:
-#RUN         sed \
-#                --in-place \
-#                --regexp-extended \
-#                's:#(XferCommand = /usr/bin/curl )(.*):\1--connect-timeout 30 \2:' \
-#                /rootfs/etc/pacman.conf
-            # wget version
-#RUN         apk add wget && \
-#            sed \
-#                --in-place \
-#                --regexp-extended \
-#                's:#(XferCommand = /usr/bin/wget )(.*):\1--timeout 30 \2:' \
-#                /rootfs/etc/pacman.conf
-# endregion
-FROM        scratch AS base
+# region install and update packages
+FROM        scratch AS scratch-minified
 COPY        --from=bootstrapper /rootfs/ /
+COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
+RUN \
+            rm --force --recursive /etc/pacman.d/gnupg && \
+            pacman-key --init && \
+            pacman-key --populate
+## region install needed base packages
+            # NOTE: openssl-1.1 is needed by arm pacman but not provided per
+            # default.
+RUN \
+            if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                pacman \
+                    --needed \
+                    --noconfirm \
+                    --noprogressbar \
+                    --refresh \
+                    --sync \
+                    archlinuxarm-keyring; \
+            fi && \
+            pacman \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --refresh \
+                --sync \
+                base \
+                openssl-1.1 \
+                nawk && \
+            clean-up
+            # Update mirrorlist if existing
+RUN \
+            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
+            [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
+            mv \
+                /etc/pacman.d/mirrorlist.pacnew \
+                /etc/pacman.d/mirrorlist \
+                &>/dev/null || \
+                true; \
+            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
+            cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
+            awk \
+                '/^## '"${MIRROR_AREA_PATTERN}"'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
+                /etc/pacman.d/mirrorlist.orig \
+                >/etc/pacman.d/mirrorlist || \
+                true
+            # Update package database to retrieve newest package versions
+RUN \
+            pacman \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --refresh \
+                --sync \
+                --sysupgrade && \
+            clean-up && \
+            # Configure locale.
+            sed \
+                --regexp-extended \
+                --expression 's/#(en_US.UTF-8 UTF-8)/\1/' \
+                --in-place \
+                /etc/locale.gen && \
+            locale-gen && \
+## endregion
+## region install needed packages
+            # NOTE: "neovim" is needed for debugging scenarios.
+            # NOTE: "openssh" to retrieve files securely e.g. via git.
+            pacman \
+                --needed \
+                --noconfirm \
+                --sync \
+                --noprogressbar \
+                neovim \
+                openssh && \
+            clean-up
+## endregion
+## region install packages to build other packages
+RUN \
+            pacman \
+                --disable-download-timeout \
+                --needed \
+                --noconfirm \
+                --noprogressbar \
+                --sync \
+                base-devel \
+                git && \
+            clean-up && \
+            mkdir --parents /etc/containerBase
+## endregion
+RUN         if \
+                $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BASE_IMAGE" = '' ] && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
+                cp \
+                    --recursive \
+                    /rootfs/usr/share/pacman/keyrings \
+                    /usr/share/pacman/ && \
+                pacman \
+                    --remove \
+                    --root /rootfs \
+                    --cascade \
+                    --recursive \
+                    --noconfirm \
+                    --nosave \
+                    nawk \
+                    nano \
+                    netctl \
+                    net-tools \
+                    vi && \
+                pacman \
+                    --refresh \
+                    --root /rootfs \
+                    --sync \
+                    --sysupgrade \
+                    --noconfirm; \
+            el
+# endregion
+# region configuration
+FROM        scratch-minified AS base
+COPY        --from=bootstrapper / /
 ENV         LANG=en_US.UTF-8
 RUN         ln --force --symbolic /usr/lib/os-release /etc/os-release
-            ## endregion
-            # endregion
-            # region configuration
+## region configuration
 FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
 
 LABEL       org.opencontainers.image.title='Multi-Architecture Arch Linux base Image'
@@ -301,94 +373,8 @@ ENV         STANDALONE=true
 WORKDIR     $APPLICATION_PATH
 
 USER        root
-            # endregion
-COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
-            # region install needed base packages
-            # NOTE: openssl-1.1 is needed by arm pacman but not provided per
-            # default.
-RUN \
-            pacman \
-                --disable-download-timeout \
-                --needed \
-                --noconfirm \
-                --noprogressbar \
-                --refresh \
-                --sync \
-                base \
-                openssl-1.1 \
-                nawk && \
-            if [[ "$TARGETARCH" == 'arm*' ]]; then \
-                pacman \
-                    --disable-download-timeout \
-                    --needed \
-                    --noconfirm \
-                    --noprogressbar \
-                    --refresh \
-                    --sync \
-                    archlinuxarm-keyring; \
-            fi && \
-            clean-up
-            # Update mirrorlist if existing
-RUN \
-            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
-            [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
-            mv \
-                /etc/pacman.d/mirrorlist.pacnew \
-                /etc/pacman.d/mirrorlist \
-                &>/dev/null || \
-                true; \
-            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
-            cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
-            awk \
-                '/^## '"${MIRROR_AREA_PATTERN}"'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
-                /etc/pacman.d/mirrorlist.orig \
-                >/etc/pacman.d/mirrorlist || \
-                true
-            # Update package database to retrieve newest package versions
-RUN \
-            pacman \
-                --disable-download-timeout \
-                --needed \
-                --noconfirm \
-                --noprogressbar \
-                --refresh \
-                --sync \
-                --sysupgrade && \
-            clean-up && \
-            # Configure locale.
-            sed \
-                --regexp-extended \
-                --expression 's/#(en_US.UTF-8 UTF-8)/\1/' \
-                --in-place \
-                /etc/locale.gen && \
-            locale-gen && \
-            # endregion
-            # region install needed packages
-            # NOTE: "neovim" is only needed for debugging scenarios.
-            pacman \
-                --disable-download-timeout \
-                --needed \
-                --noconfirm \
-                --sync \
-                --noprogressbar \
-                neovim \
-                openssh && \
-            clean-up
-            # endregion
-            # region install packages to build other packages
-RUN \
-            pacman \
-                --disable-download-timeout \
-                --needed \
-                --noconfirm \
-                --noprogressbar \
-                --sync \
-                base-devel \
-                git && \
-            clean-up && \
-            mkdir --parents /etc/containerBase
-            # endregion
-            # region retrieve artefacts
+## endregion
+## region retrieve artefacts
 COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
 COPY        --link ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user
 COPY        --link ./scripts/configure-user.sh /usr/bin/configure-user
@@ -400,8 +386,8 @@ COPY        --link ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer
 COPY        --link ./scripts/retrieve-application.sh /usr/bin/retrieve-application
 COPY        --link ./scripts/execute-command.sh /usr/bin/execute-command
 COPY        --link ./scripts/run-command.sh /usr/bin/run-command
-            # endregion
-            # region configure user
+## endregion
+## region configure user
 RUN \
             configure-user && \
             # We cannot use yay as root user so we introduce an install user.
@@ -417,9 +403,9 @@ RUN \
                 -e \
                 "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
                 >>/etc/sudoers
-            # endregion
+## endregion
 USER        $INSTALLER_USER_NAME
-            # region install and configure yay
+## region install and configure yay
 RUN \
             pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
@@ -435,19 +421,20 @@ RUN \
             popd && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
-            # endregion
+## endregion
 USER        root
 
 RUN         retrieve-application
 RUN         env >/etc/default_environment
-            # region bootstrap application
+## region bootstrap application
 RUN \
             mv /usr/bin/initialize "$INITIALIZING_FILE_PATH" &>/dev/null; \
             chmod +x "$INITIALIZING_FILE_PATH"
 # NOTE: "/usr/bin/initialize" (without brackets), "$INITIALIZING_FILE_PATH" or
 # ["$INITIALIZING_FILE_PATH"] wont work with command line argument forwarding.
 ENTRYPOINT  ["/usr/bin/initialize"]
-            # endregion
+## endregion
+# endregion
 # region modline
 # vim: set tabstop=4 shiftwidth=4 expandtab filetype=dockerfile:
 # vim: foldmethod=marker foldmarker=region,endregion:
