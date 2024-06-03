@@ -90,7 +90,11 @@ RUN \
                 mkdir --parents /etc/pacman.d /tmp/keyring; \
             fi
 RUN \
-            if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
+            if \
+                ! $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BASE_IMAGE" = '' ] && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
                 sed \
                     --in-place \
                     --regexp-extended \
@@ -156,7 +160,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     net-tools \
                     vi && \
                 pacman \
-                    -yy \
+                    --refresh \
                     --sysroot /rootfs \
                     --sync \
                     --sysupgrade \
