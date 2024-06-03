@@ -130,13 +130,14 @@ Include = /etc/pacman.d/mirrorlist' \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
-            fi && \
+            fi
+RUN \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
-                arch-chroot /rootfs pacman \
+                chroot /rootfs pacman \
                     --remove \
                     --cascade \
                     --recursive \
@@ -146,7 +147,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     netctl \
                     net-tools \
                     vi && \
-                arch-chroot /rootfs pacman \
+                chroot /rootfs pacman \
                     --refresh \
                     --sync \
                     --sysupgrade \
