@@ -137,12 +137,11 @@ Include = /etc/pacman.d/mirrorlist' \
                     --recursive \
                     /rootfs/usr/share/pacman/keyrings \
                     /usr/share/pacman/ && \
-                rm --force --recursive /etc/pacman.d/gnupg && \
-                cp \
+                rm \
+                    --force \
                     --recursive \
-                    /rootfs/etc/pacman.d/gnupg \
-                    /etc/pacman.d/ && \
-                rm --force --recursive /var/lib/pacman/sync && \
+                    /etc/pacman.d/gnupg \
+                    /var/lib/pacman/sync && \
                 pacman-key --init && \
                 pacman-key --refresh-keys && \
                 pacman-key --updatedb && \
