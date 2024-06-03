@@ -95,13 +95,7 @@ RUN \
                     --in-place \
                     --regexp-extended \
                     's/^(Architecture = +)[^ ]+$/\1aarch64/' \
-                    /etc/pacman.conf; \
-            fi && \
-            if \
-                ! $BUILD_ARM_FROM_ARCHIVE && \
-                [ "$BASE_IMAGE" = '' ] && \
-                [[ "$TARGETARCH" == 'arm*' ]]; \
-            then \
+                    /etc/pacman.conf && \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
@@ -134,11 +128,25 @@ Include = /etc/pacman.d/mirrorlist' \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
+            rm \
+                --force \
+                --recursive \
+                /etc/pacman.d/gnupg/* \
+                /var/lib/pacman/sync && \
+            pacman-key --init && \
+            pacman-key --populate && \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
+                rm \
+                    --force \
+                    --recursive \
+                    /etc/pacman.d/gnupg/* \
+                    /var/lib/pacman/sync && \
+                pacman-key --init && \
+                pacman-key --populate && \
                 pacman \
                     --remove \
                     --sysroot /rootfs \
@@ -184,12 +192,9 @@ Include = /etc/pacman.d/mirrorlist' \
                                 --verbose; \
             fi && \
             if [ -d /tmp/keyring/usr/share/pacman/keyrings ]; then \
-                rm --force --recursive pacman.d/gnupg/* && \
                 mv \
                     /tmp/keyring/usr/share/pacman/keyrings \
                     /usr/share/pacman/ && \
-                pacman-key --init && \
-                pacman-key --populate && \
                 mkdir \
                     --mode 0755 \
                     --parents \
