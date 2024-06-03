@@ -112,7 +112,7 @@ Include = /etc/pacman.d/mirrorlist' \
             elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" != 'arm*' ]]; then \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
-echo -e '\n\
+                echo -e '\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
@@ -123,7 +123,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
-            fi \
+            fi
 # TODO
 #--config /rootfs/etc/pacman.conf \
 #--dbpath /rootfs/ \
