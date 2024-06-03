@@ -83,7 +83,7 @@ RUN \
                             --verbose; \
             fi
 # endregion
-# region build via pacman
+# region prepare via pacman
 RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
                 apk add arch-install-scripts curl pacman-makepkg && \
@@ -91,32 +91,7 @@ RUN \
                 rm --force --recursive pacman.d/gnupg/*; \
             fi
 RUN \
-            if \
-                $BUILD_ARM_FROM_ARCHIVE && \
-                [ "$BASE_IMAGE" = '' ] && \
-                [[ "$TARGETARCH" == 'arm*' ]]; \
-            then \
-                pacman \
-                    --root /rootfs \
-                    --remove \
-                    --cascade \
-                    --recursive \
-                    --noconfirm \
-                    --nosave \
-                    nano \
-                    netctl \
-                    net-tools \
-                    vi && \
-                pacman \
-                    --refresh \
-                    --root /rootfs \
-                    --sync \
-                    --sysupgrade \
-                    --noconfirm; \
-            elif \
-                [ "$BASE_IMAGE" = '' ] && \
-                [[ "$TARGETARCH" == 'arm*' ]]; \
-            then \
+            if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
@@ -140,18 +115,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirror.archlinuxarm.org/$arch/$repo' \
-                    > /etc/pacman.d/mirrorlist && \
-                curl \
-                    --connect-timeout 30 \
-                    --fail \
-                    --location \
-                    --retry 3 \
-                    "$KEYRING_PACKAGE_URL" | \
-                        tar \
-                            --directory /tmp/keyring \
-                            --extract \
-                            --xz \
-                            --verbose; \
+                    > /etc/pacman.d/mirrorlist; \
             elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" != 'arm*' ]]; then \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
@@ -165,7 +129,45 @@ Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
-                    > /etc/pacman.d/mirrorlist && \
+                    > /etc/pacman.d/mirrorlist; \
+            fi && \
+            if \
+                $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BASE_IMAGE" = '' ] && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
+                pacman \
+                    --root /rootfs \
+                    --remove \
+                    --cascade \
+                    --recursive \
+                    --noconfirm \
+                    --nosave \
+                    nano \
+                    netctl \
+                    net-tools \
+                    vi && \
+                pacman \
+                    --refresh \
+                    --root /rootfs \
+                    --sync \
+                    --sysupgrade \
+                    --noconfirm; \
+            elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; \
+            then && \
+                curl \
+                    --connect-timeout 30 \
+                    --fail \
+                    --location \
+                    --retry 3 \
+                    "$KEYRING_PACKAGE_URL" | \
+                        tar \
+                            --directory /tmp/keyring \
+                            --extract \
+                            --xz \
+                            --verbose; \
+            fi && \
+            elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" != 'arm*' ]]; then \
                 apk add zstd && \
                 curl \
                     --connect-timeout 30 \
@@ -336,13 +338,6 @@ RUN \
                 /etc/pacman.d/mirrorlist.orig \
                 >/etc/pacman.d/mirrorlist || \
                 true
-            # && \
-            # Update pacman keys (is optional and sometimes not working)
-            #rm --force --recursive /etc/pacman.d/gnupg && \
-            #pacman-key --init && \
-            #pacman-key --populate archlinux && \
-            #pacman-key --refresh-keys || \
-            #true
             # Update package database to retrieve newest package versions
 RUN \
             pacman \
