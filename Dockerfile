@@ -166,7 +166,6 @@ Include = /etc/pacman.d/mirrorlist' \
                             --extract \
                             --xz \
                             --verbose; \
-            fi && \
             elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" != 'arm*' ]]; then \
                 apk add zstd && \
                 curl \
