@@ -141,11 +141,12 @@ Include = /etc/pacman.d/mirrorlist' \
                     --recursive \
                     /rootfs/usr/share/pacman/keyrings \
                     /usr/share/pacman/ && \
-                rm \
-                    --force \
+                rm --force --recursive /rootfs/etc/pacman.d/gnupg && \
+                cp \
                     --recursive \
-                    /etc/pacman.d/gnupg/* \
-                    /var/lib/pacman/sync && \
+                    /rootfs/etc/pacman.d/gnupg \
+                    /rootfs/etc/pacman.d/ && \
+                rm --force --recursive /var/lib/pacman/sync && \
                 pacman-key --init && \
                 pacman-key --populate && \
                 pacman \
@@ -196,7 +197,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 mv \
                     /tmp/keyring/usr/share/pacman/keyrings \
                     /usr/share/pacman/ && \
-                rm --force --recursive /etc/pacman.d/gnupg/* /var/lib/pacman/sync && \
+                rm --force --recursive /etc/pacman.d/gnupg /var/lib/pacman/sync && \
                 pacman-key --init && \
                 pacman-key --populate && \
                 mkdir \
@@ -227,7 +228,7 @@ Include = /etc/pacman.d/mirrorlist' \
             fi && \
             rm --force --recursive \
                 /rootfs/var/cache/pacman/pkg/* \
-                /rootfs/var/lib/pacman/sync/* \
+                /rootfs/var/lib/pacman/sync \
                 /rootfs/README \
                 /rootfs/etc/pacman.d/mirrorlist.pacnew
 # endregion
