@@ -186,12 +186,25 @@ Include = /etc/pacman.d/mirrorlist' \
                     --sync \
                     --noconfirm \
                     base "${REPOSITORY}-keyring" && \
+                pacman \
+                    --root /rootfs \
+                    --remove \
+                    --cascade \
+                    --recursive \
+                    --noconfirm \
+                    --nosave \
+                    go \
+                    nano \
+                    nawk \
+                    netctl \
+                    net-tools \
+                    openssl-1.1 \
+                    vi && \
                 rm /rootfs/dev/null && \
                 cp --force /etc/pacman.conf /rootfs/etc/ && \
                 cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
             fi && \
             rm --force --recursive \
-                /rootfs/usr/share/man/* \
                 /rootfs/var/cache/pacman/pkg/* \
                 /rootfs/var/lib/pacman/sync/* \
                 /rootfs/README \
