@@ -243,18 +243,12 @@ RUN \
             fi
             # Update package database to retrieve newest package versions
 RUN \
-            pacman \
-                --remove \
-                --cascade \
-                --recursive \
-                --noconfirm \
-                --nosave \
+            clean-up \
                 nawk \
                 nano \
                 netctl \
                 net-tools \
-                vi || \
-            true && \
+                vi && \
             pacman \
                 --needed \
                 --noconfirm \
