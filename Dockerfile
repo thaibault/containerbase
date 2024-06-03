@@ -60,8 +60,8 @@ RUN \
                 rm -rf /var/cache/apk/* && \
                 mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
                 update-ca-certificates; \
-            fi \
-# region build from root file system archive
+            fi
+# region bootstrap from file system archive
 RUN \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
@@ -83,7 +83,7 @@ RUN \
                             --verbose; \
             fi
 # endregion
-# region prepare via pacman
+# region prepare / bootstrap via pacman
 RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
                 apk add arch-install-scripts curl pacman-makepkg && \
