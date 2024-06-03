@@ -91,6 +91,13 @@ RUN \
                 rm --force --recursive pacman.d/gnupg/*; \
             fi
 RUN \
+            if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
+                sed \
+                    --in-place \
+                    --regexp-extended \
+                    's/^(Architecture = +)[^ ]+$/\1aarch64/' \
+                    /etc/pacman.conf; \
+            fi && \
             if \
                 ! $BUILD_ARM_FROM_ARCHIVE && \
                 [ "$BASE_IMAGE" = '' ] && \
@@ -127,8 +134,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
-            fi
-RUN \
+            fi && \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
                 [ "$BASE_IMAGE" = '' ] && \
