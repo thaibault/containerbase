@@ -204,7 +204,7 @@ Include = /etc/pacman.d/mirrorlist' \
 ## endregion
 # endregion
 # region install and update packages
-FROM        scratch AS scratch-minified
+FROM        scratch AS root
 ARG         MIRROR_AREA_PATTERN
 COPY        --from=bootstrapper /rootfs/ /
 COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
@@ -298,7 +298,8 @@ RUN \
 ## endregion
 # endregion
 # region configuration
-FROM        scratch-minified AS base
+FROM        scratch AS base
+COPY        --from=root / /
 RUN         ln --force --symbolic /usr/lib/os-release /etc/os-release
 ## region configuration
 FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
