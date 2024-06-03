@@ -137,7 +137,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     --recursive \
                     /rootfs/usr/share/pacman/keyrings \
                     /usr/share/pacman/ && \
-                rm --force --recursive /rootfs/etc/pacman.d/gnupg && \
+                rm --force --recursive /etc/pacman.d/gnupg && \
                 cp \
                     --recursive \
                     /rootfs/etc/pacman.d/gnupg \
