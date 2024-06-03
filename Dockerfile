@@ -95,22 +95,15 @@ RUN \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
-# NOTE: "SigLevel = Optional TrustAll" disables signature checking and work\n\
-# around current key issues in the arm repositories.\n\
 [core]\n\
-#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
-#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [community]\n\
-#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
-#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
-#SigLevel = Optional TrustAll\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
@@ -130,15 +123,20 @@ Include = /etc/pacman.d/mirrorlist' \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
-            fi
+            fi \
+#--config /rootfs/etc/pacman.conf \
+#--dbpath /rootfs/ \
+#--gpgdir /rootfs/ \
+#--hookdir /rootfs/hookdir \
 RUN \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
-                chroot /rootfs pacman \
+                pacman \
                     --remove \
+                    --sysroot /rootfs \
                     --cascade \
                     --recursive \
                     --noconfirm \
@@ -147,8 +145,9 @@ RUN \
                     netctl \
                     net-tools \
                     vi && \
-                chroot /rootfs pacman \
+                pacman \
                     --refresh \
+                    --sysroot /rootfs \
                     --sync \
                     --sysupgrade \
                     --noconfirm; \
