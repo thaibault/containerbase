@@ -80,7 +80,22 @@ RUN \
                             --directory /rootfs/ \
                             --extract \
                             --gzip \
-                            --verbose && \
+                            --verbose; \
+            fi
+# endregion
+# region build via pacman
+RUN \
+            if [ "$BASE_IMAGE" = '' ]; then \
+                apk add arch-install-scripts curl pacman-makepkg && \
+                mkdir --parents /etc/pacman.d /tmp/keyring && \
+                rm --force --recursive pacman.d/gnupg/*; \
+            fi
+RUN \
+            if \
+                $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BASE_IMAGE" = '' ] && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
                 pacman \
                     --root /rootfs \
                     --remove \
@@ -95,19 +110,8 @@ RUN \
                     net-tools \
                     openssl-1.1 \
                     vi; \
-            fi
-# endregion
-# region build via pacman
-RUN \
-            if [ "$BASE_IMAGE" = '' ]; then \
-                apk add arch-install-scripts curl pacman-makepkg && \
-                mkdir --parents /etc/pacman.d /tmp/keyring && \
-                rm --force --recursive pacman.d/gnupg/*; \
-            fi
-RUN \
-            if \
+            elif \
                 [ "$BASE_IMAGE" = '' ] && \
-                ! $BUILD_ARM_FROM_ARCHIVE && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
                 REPOSITORY=archlinuxarm && \
