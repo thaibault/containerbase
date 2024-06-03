@@ -103,12 +103,9 @@ RUN \
                     --recursive \
                     --noconfirm \
                     --nosave \
-                    go \
                     nano \
-                    nawk \
                     netctl \
                     net-tools \
-                    openssl-1.1 \
                     vi; \
             elif \
                 [ "$BASE_IMAGE" = '' ] && \
@@ -422,6 +419,14 @@ RUN \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
             /usr/bin/makepkg --install --needed --noconfirm --syncdeps && \
+            pacman \
+                --root /rootfs \
+                --remove \
+                --cascade \
+                --recursive \
+                --noconfirm \
+                --nosave \
+                go && \
             popd && \
             rm --force --recursive yay && \
             popd && \
