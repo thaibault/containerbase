@@ -87,8 +87,7 @@ RUN \
 RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
                 apk add arch-install-scripts curl pacman-makepkg && \
-                mkdir --parents /etc/pacman.d /tmp/keyring && \
-                rm --force --recursive pacman.d/gnupg/*; \
+                mkdir --parents /etc/pacman.d /tmp/keyring; \
             fi
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
@@ -185,6 +184,7 @@ Include = /etc/pacman.d/mirrorlist' \
                                 --verbose; \
             fi && \
             if [ -d /tmp/keyring/usr/share/pacman/keyrings ]; then \
+                rm --force --recursive pacman.d/gnupg/* && \
                 mv \
                     /tmp/keyring/usr/share/pacman/keyrings \
                     /usr/share/pacman/ && \
