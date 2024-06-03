@@ -148,6 +148,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     /rootfs/etc/pacman.d/ && \
                 rm --force --recursive /var/lib/pacman/sync && \
                 pacman-key --init && \
+                pacman-key --updatedb && \
                 pacman-key --populate && \
                 pacman \
                     --remove \
@@ -250,11 +251,7 @@ Include = /etc/pacman.d/mirrorlist' \
 FROM        scratch AS base
 COPY        --from=bootstrapper /rootfs/ /
 ENV         LANG=en_US.UTF-8
-RUN \
-            ln --force --symbolic /usr/lib/os-release /etc/os-release && \
-            rm --force --recursive /etc/pacman.d/gnupg && \
-            pacman-key --init && \
-            pacman-key --populate
+RUN         ln --force --symbolic /usr/lib/os-release /etc/os-release
             ## endregion
             # endregion
             # region configuration
