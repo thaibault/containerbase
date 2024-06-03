@@ -136,8 +136,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
-                pacman \
-                    --root /rootfs \
+                arch-chroot /rootfs pacman \
                     --remove \
                     --cascade \
                     --recursive \
@@ -147,9 +146,8 @@ Include = /etc/pacman.d/mirrorlist' \
                     netctl \
                     net-tools \
                     vi && \
-                pacman \
+                arch-chroot /rootfs pacman \
                     --refresh \
-                    --root /rootfs \
                     --sync \
                     --sysupgrade \
                     --noconfirm; \
