@@ -106,7 +106,13 @@ RUN \
                     nano \
                     netctl \
                     net-tools \
-                    vi; \
+                    vi && \
+                pacman \
+                    --refresh \
+                    --root /rootfs \
+                    --sync \
+                    --sysupgrade \
+                    --noconfirm; \
             elif \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
@@ -397,8 +403,7 @@ COPY        --link ./scripts/run-command.sh /usr/bin/run-command
             # region configure user
 RUN \
             configure-user && \
-            # We cannot use yay as root user so we introduce an (unatted)
-            # install user.
+            # We cannot use yay as root user so we introduce an install user.
             # Create specified user with not yet existing name and id.
             # NOTE: Use exotic user id reduce risk of id clashing when mapping
             # to hosts user id at runtime.
