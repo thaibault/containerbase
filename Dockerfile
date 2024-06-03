@@ -90,11 +90,7 @@ RUN \
                 mkdir --parents /etc/pacman.d /tmp/keyring; \
             fi
 RUN \
-            if \
-                ! $BUILD_ARM_FROM_ARCHIVE && \
-                [ "$BASE_IMAGE" = '' ] && \
-                [[ "$TARGETARCH" == 'arm*' ]]; \
-            then \
+            if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 sed \
                     --in-place \
                     --regexp-extended \
@@ -145,14 +141,15 @@ Include = /etc/pacman.d/mirrorlist' \
                 cp \
                     --recursive \
                     /rootfs/etc/pacman.d/gnupg \
-                    /rootfs/etc/pacman.d/ && \
+                    /etc/pacman.d/ && \
                 rm --force --recursive /var/lib/pacman/sync && \
                 pacman-key --init && \
+                pacman-key --refresh-keys && \
                 pacman-key --updatedb && \
                 pacman-key --populate && \
                 pacman \
                     --remove \
-                    --sysroot /rootfs \
+                    --root /rootfs \
                     --cascade \
                     --recursive \
                     --noconfirm \
@@ -163,7 +160,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     vi && \
                 pacman \
                     --refresh \
-                    --sysroot /rootfs \
+                    --root /rootfs \
                     --sync \
                     --sysupgrade \
                     --noconfirm; \
