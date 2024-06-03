@@ -123,7 +123,9 @@ Include = /etc/pacman.d/mirrorlist' \
                 echo \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
-            fi
+            fi && \
+            cp --force /etc/pacman.conf /rootfs/etc/ && \
+            cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/
 RUN \
             if \
                 $BUILD_ARM_FROM_ARCHIVE && \
@@ -210,9 +212,7 @@ RUN \
                     --sync \
                     --noconfirm \
                     base "${REPOSITORY}-keyring" && \
-                rm /rootfs/dev/null && \
-                cp --force /etc/pacman.conf /rootfs/etc/ && \
-                cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
+                rm /rootfs/dev/null; \
             fi && \
             rm --force --recursive \
                 /rootfs/var/cache/pacman/pkg/* \
