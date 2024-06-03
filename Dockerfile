@@ -89,8 +89,7 @@ RUN \
                 apk add arch-install-scripts curl pacman-makepkg && \
                 mkdir --parents /etc/pacman.d /tmp/keyring && \
                 rm --force --recursive pacman.d/gnupg/*; \
-            fi && \
-            true
+            fi
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 REPOSITORY=archlinuxarm && \
@@ -125,6 +124,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
             fi \
+# TODO
 #--config /rootfs/etc/pacman.conf \
 #--dbpath /rootfs/ \
 #--gpgdir /rootfs/ \
