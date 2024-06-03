@@ -299,7 +299,6 @@ RUN \
 # endregion
 # region configuration
 FROM        scratch-minified AS base
-COPY        --from=bootstrapper / /
 RUN         ln --force --symbolic /usr/lib/os-release /etc/os-release
 ## region configuration
 FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
