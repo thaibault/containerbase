@@ -225,9 +225,9 @@ RUN \
             # region configuration
 FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
 
-LABEL       org.opencontainers.image.title=Multi-Architecture Arch Linux base Image
-LABEL       org.opencontainers.image.description=Multi-Architecture unofficial containerd image of Arch Linux, a simple, lightweight Linux distribution aimed for flexibility with some utility helpers included.
-LABEL       org.opencontainers.image.authors=Torben Sickert <info@torben.website> (@thaibault)
+LABEL       org.opencontainers.image.title='Multi-Architecture Arch Linux base Image'
+LABEL       org.opencontainers.image.description='Multi-Architecture unofficial containerd image of Arch Linux, a simple, lightweight Linux distribution aimed for flexibility with some utility helpers included.'
+LABEL       org.opencontainers.image.authors='Torben Sickert <info@torben.website> (@thaibault)'
 LABEL       org.opencontainers.image.url=https://github.com/thaibault/containerbase/pkgs/container/containerbase
 LABEL       org.opencontainers.image.documentation=https://github.com/thaibault/containerbase/blob/main/readme.md
 LABEL       org.opencontainers.image.source=https://github.com/thaibault/containerbase
