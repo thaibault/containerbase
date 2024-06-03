@@ -154,7 +154,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     --sysupgrade \
                     --noconfirm; \
             elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; \
-            then && \
+            then \
                 curl \
                     --connect-timeout 30 \
                     --fail \
