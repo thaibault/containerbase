@@ -156,7 +156,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     net-tools \
                     vi && \
                 pacman \
-                    --refresh \
+                    -yy \
                     --sysroot /rootfs \
                     --sync \
                     --sysupgrade \
