@@ -33,16 +33,20 @@
 # - docker rm --force base; docker compose up
 # endregion
 # region bootstrapping
-            # NOTE: Just remove default value "local" to use remote image.
+            # NOTE: Just remove default value "base" to use remote image.
 ARG         BASE_IMAGE=base
+            # NOTE: Disabling "BUILD_ARM_FROM_ARCHIVE" via "--build-arg
+            # BUILD_ARM_FROM_ARCHIVE=''" will use alpine's arm pacman to
+            # bootstrap arch linux root files.
+ARG         BUILD_ARM_FROM_ARCHIVE=true
             # NOTE: Disabling "MULTI" via "--build-arg MULTI=''" will use
             # official arch image wich only has "x86-64" architecture support
             # yet.
 ARG         MULTI=true
-ARG         BUILD_ARM_FROM_ARCHIVE=true
-            ## region local
-FROM        alpine AS bootstrapper
+ARG         MIRROR_AREA_PATTERN='default'
 ARG         TARGETARCH
+
+FROM        alpine AS bootstrapper
             # To be able to download "ca-certificates" with "apk add" command we
             # we need to manually add the certificate in the first place.
             # Afterwards we update with the official tool
@@ -64,7 +68,7 @@ RUN \
 ## region bootstrap from file system archive
 RUN \
             if \
-                $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BUILD_ARM_FROM_ARCHIVE" = true ] && \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
@@ -129,7 +133,7 @@ Include = /etc/pacman.d/mirrorlist' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
             if \
-                ! $BUILD_ARM_FROM_ARCHIVE && \
+                [ "$BUILD_ARM_FROM_ARCHIVE" = '' ] && \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
@@ -194,8 +198,7 @@ Include = /etc/pacman.d/mirrorlist' \
             rm --force --recursive \
                 /rootfs/var/cache/pacman/pkg/* \
                 /rootfs/var/lib/pacman/sync \
-                /rootfs/README \
-                /rootfs/etc/pacman.d/mirrorlist.pacnew
+                /rootfs/README
 ## endregion
 # endregion
 # region install and update packages
@@ -231,22 +234,44 @@ RUN \
             clean-up
             # Update mirrorlist if existing
 RUN \
-            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
-            [ -f /etc/pacman.d/mirrorlist.pacnew ] && \
-            mv \
-                /etc/pacman.d/mirrorlist.pacnew \
-                /etc/pacman.d/mirrorlist \
-                &>/dev/null || \
-                true; \
-            [[ "$MIRROR_AREA_PATTERN" != default ]] && \
-            cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
-            awk \
-                '/^## '"${MIRROR_AREA_PATTERN}"'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
-                /etc/pacman.d/mirrorlist.orig \
-                >/etc/pacman.d/mirrorlist || \
-                true
+            if [[ "$MIRROR_AREA_PATTERN" != default ]]; then \
+                if [ -f /etc/pacman.d/mirrorlist.pacnew ]; then \
+                    mv \
+                        /etc/pacman.d/mirrorlist.pacnew \
+                        /etc/pacman.d/mirrorlist \
+                        &>/dev/null; \
+                fi && \
+                cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && \
+                awk \
+                    '/^## '"${MIRROR_AREA_PATTERN}"'$/{f=1}f==0{next}/^$/{exit}{print substr($0, 2)}' \
+                    /etc/pacman.d/mirrorlist.orig \
+                    >/etc/pacman.d/mirrorlist; \
+            fi
             # Update package database to retrieve newest package versions
 RUN \
+            if \
+                [ "$BUILD_ARM_FROM_ARCHIVE" = true ] && \
+                [ "$BASE_IMAGE" = '' ] && \
+                [[ "$TARGETARCH" == 'arm*' ]]; \
+            then \
+                pacman \
+                    --remove \
+                    --cascade \
+                    --recursive \
+                    --noconfirm \
+                    --nosave \
+                    nano \
+                    netctl \
+                    net-tools \
+                    vi; \
+            fi && \
+            pacman \
+                --remove \
+                --cascade \
+                --recursive \
+                --noconfirm \
+                --nosave \
+                nawk && \
             pacman \
                 --needed \
                 --noconfirm \
@@ -288,34 +313,6 @@ RUN \
             clean-up && \
             mkdir --parents /etc/containerBase
 ## endregion
-RUN         if \
-                $BUILD_ARM_FROM_ARCHIVE && \
-                [ "$BASE_IMAGE" = '' ] && \
-                [[ "$TARGETARCH" == 'arm*' ]]; \
-            then \
-                cp \
-                    --recursive \
-                    /rootfs/usr/share/pacman/keyrings \
-                    /usr/share/pacman/ && \
-                pacman \
-                    --remove \
-                    --root /rootfs \
-                    --cascade \
-                    --recursive \
-                    --noconfirm \
-                    --nosave \
-                    nawk \
-                    nano \
-                    netctl \
-                    net-tools \
-                    vi && \
-                pacman \
-                    --refresh \
-                    --root /rootfs \
-                    --sync \
-                    --sysupgrade \
-                    --noconfirm; \
-            el
 # endregion
 # region configuration
 FROM        scratch-minified AS base
@@ -357,8 +354,6 @@ ENV         MAIN_USER_GROUP_NAME=users
 ENV         MAIN_USER_NAME=application
 
 ENV         KNOWN_HOSTS=''
-
-ARG         MIRROR_AREA_PATTERN='default'
 
 ENV         PRIVATE_SSH_KEY=''
 ENV         PUBLIC_SSH_KEY=''
