@@ -418,15 +418,12 @@ RUN \
             pushd /tmp && \
             git clone https://aur.archlinux.org/yay.git && \
             pushd yay && \
-            /usr/bin/makepkg --install --needed --noconfirm --syncdeps && \
-            pacman \
-                --root /rootfs \
-                --remove \
-                --cascade \
-                --recursive \
+            /usr/bin/makepkg \
+                --install \
+                --needed \
                 --noconfirm \
-                --nosave \
-                go && \
+                --rmdeps \
+                --syncdeps && \
             popd && \
             rm --force --recursive yay && \
             popd && \
