@@ -191,7 +191,6 @@ Include = /etc/pacman.d/mirrorlist' \
                 cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
             fi && \
             rm --force --recursive \
-                /rootfs/usr/share/man/* \
                 /rootfs/var/cache/pacman/pkg/* \
                 /rootfs/var/lib/pacman/sync/* \
                 /rootfs/README \

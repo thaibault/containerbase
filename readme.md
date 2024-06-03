@@ -28,6 +28,17 @@ Use case
 A basic ArchLinux based docker configuration with configured and ready to use
 git and yay.
 
+### Jump into the image interactively
+
+```bash
+docker run --entrypoint /usr/bin/bash --interactive --tty tsickert/containerbase
+```
+
+### Run a process
+
+```bash
+docker run --env COMMAND=/path/to/executable/file tsickert/containerbase
+```
 <!-- region modline
 vim: set tabstop=4 shiftwidth=4 expandtab:
 vim: foldmethod=marker foldmarker=region,endregion:
