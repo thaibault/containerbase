@@ -93,7 +93,8 @@ RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
                 apk add arch-install-scripts curl pacman-makepkg && \
                 mkdir --parents /etc/pacman.d /tmp/keyring; \
-            fi
+            fi \
+COPY        --link ./pacman-conf.d-noextract.conf /etc/pacmand.d/noextract.conf
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 sed \
@@ -198,9 +199,13 @@ Include = /etc/pacman.d/mirrorlist' \
                 cp --force /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/; \
             fi && \
             rm --force --recursive \
+                /rootfs/README \
                 /rootfs/var/cache/pacman/pkg/* \
                 /rootfs/var/lib/pacman/sync \
-                /rootfs/README
+                /rootfs/usr/share/doc/* \
+                /rootfs/usr/share/gtk-doc/html/* \
+                /rootfs/usr/share/info/* \
+                /rootfs/usr/share/man/*
 ## endregion
 # endregion
 # region install and update packages
@@ -208,6 +213,7 @@ FROM        scratch AS root
 ARG         MIRROR_AREA_PATTERN
 COPY        --from=bootstrapper /rootfs/ /
 COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
+COPY        --link ./pacman-conf.d-noextract.conf /etc/pacmand.d/noextract.conf
 RUN \
             rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
@@ -217,7 +223,6 @@ RUN \
             # default.
 RUN \
             pacman \
-                --needed \
                 --noconfirm \
                 --noprogressbar \
                 --refresh \
