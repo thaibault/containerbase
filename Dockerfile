@@ -252,6 +252,7 @@ RUN \
 RUN \
             clean-up \
                 linux \
+                linux-aarch64 \
                 linux-firmware \
                 nawk \
                 nano \
