@@ -93,7 +93,7 @@ RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
                 apk add arch-install-scripts curl pacman-makepkg && \
                 mkdir --parents /etc/pacman.d /tmp/keyring; \
-            fi \
+            fi
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacmand.d/noextract.conf
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
