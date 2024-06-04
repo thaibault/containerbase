@@ -188,6 +188,7 @@ Include = /etc/pacman.d/mirrorlist' \
                         /rootfs/proc && \
                 mknod /rootfs/dev/null c 1 3 && \
                 pacman \
+                    --disable-download-timeout \
                     --refresh \
                     --root /rootfs \
                     --sync \
@@ -223,6 +224,7 @@ RUN \
             # default.
 RUN \
             pacman \
+                --disable-download-timeout \
                 --noconfirm \
                 --noprogressbar \
                 --refresh \
@@ -255,6 +257,7 @@ RUN \
                 net-tools \
                 vi && \
             pacman \
+                --disable-download-timeout \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
@@ -274,6 +277,7 @@ RUN \
             # NOTE: "neovim" is needed for debugging scenarios.
             # NOTE: "openssh" to retrieve files securely e.g. via git.
             pacman \
+                --disable-download-timeout \
                 --needed \
                 --noconfirm \
                 --sync \
