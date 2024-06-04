@@ -251,6 +251,8 @@ RUN \
             # Update package database to retrieve newest package versions
 RUN \
             clean-up \
+                linux \
+                linux-firmware \
                 nawk \
                 nano \
                 netctl \
