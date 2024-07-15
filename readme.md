@@ -39,7 +39,3 @@ docker run --entrypoint /usr/bin/bash --interactive --tty tsickert/containerbase
 ```bash
 docker run --env COMMAND=/path/to/executable/file tsickert/containerbase
 ```
-<!-- region modline
-vim: set tabstop=4 shiftwidth=4 expandtab:
-vim: foldmethod=marker foldmarker=region,endregion:
-endregion -->
