@@ -9,7 +9,7 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC2155
+# shellcheck disable=SC2155,SC2028
 export EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 export EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 
@@ -34,6 +34,7 @@ if (( HOST_USER_GROUP_ID == 0 )); then
         Host user group id is 0 \(root\), ignoring user mapping and use root \
         as application group.
 
+    export USER_GROUP_ID_CHANGED=false
     export MAIN_USER_GROUP_NAME=root
 elif $USER_GROUP_ID_CHANGED; then
     echo \
@@ -115,6 +116,7 @@ if (( HOST_USER_ID == 0 )); then
         'Host user id is 0 (root), ignoring user mapping and use root as' \
         application user.
 
+    export USER_ID_CHANGED=false
     export MAIN_USER_NAME=root
 elif $USER_ID_CHANGED; then
     echo \
@@ -201,6 +203,10 @@ for path in "$@"; do
 
     # region handle group
     if $all; then
+        echo \
+            "Map file\'s group ownership in \"${path}\" to" \
+            "\"${MAIN_USER_GROUP_NAME}\"."
+
         $find_command \
             -exec \
                 chgrp \
@@ -227,6 +233,10 @@ for path in "$@"; do
         [[ "$EXISTING_USER_GROUP_ID" != '' ]] && \
         [[ "$EXISTING_USER_GROUP_ID" != UNKNOWN ]]
     then
+        echo \
+            "Map file\'s group ownership in \"${path}\" to" \
+            "\"${MAIN_USER_GROUP_NAME}\"."
+
         $find_command \
             -group "$EXISTING_USER_GROUP_ID" \
             -exec \
@@ -254,6 +264,10 @@ for path in "$@"; do
     # endregion
     # region handle user
     if $all; then
+        echo \
+            "Map file\'s user ownership in \"${path}\" to" \
+            "\"${MAIN_USER_NAME}\"."
+
         $find_command \
             -exec \
                 chown \
@@ -280,6 +294,10 @@ for path in "$@"; do
         [[ "$EXISTING_USER_ID" != '' ]] && \
         [[ "$EXISTING_USER_ID" != UNKNOWN ]]
     then
+        echo \
+            "Map file\'s user ownership in \"${path}\" to" \
+            "\"${MAIN_USER_NAME}\"."
+
         $find_command \
             -user "$EXISTING_USER_ID" \
             -exec \
