@@ -10,6 +10,13 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155,SC2028
+if (( UID != 0 )); then
+    echo \
+        Warning: You should bootstrap your container as root when using \
+        configure runtime user. \
+        1>&2
+fi
+
 export EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 export EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
 
