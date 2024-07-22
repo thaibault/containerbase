@@ -12,7 +12,6 @@
 # shellcheck disable=SC2155
 export EXISTING_USER_GROUP_ID=$(id --group "$MAIN_USER_NAME")
 export EXISTING_USER_ID=$(id --user "$MAIN_USER_NAME")
-export USER_GROUP_ID_CHANGED=false
 
 if [ "$HOST_USER_GROUP_ID" = '' ] || [ "$HOST_USER_GROUP_ID" = UNKNOWN ]; then
     export HOST_USER_GROUP_ID="$(
@@ -24,26 +23,25 @@ export HOST_USER_GROUP_NAME="$(
         cut --delimiter : --fields 1
 )"
 
+export USER_GROUP_ID_CHANGED=true
+if (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
+    export USER_GROUP_ID_CHANGED=false
+fi
+
 # region configure group
 if (( HOST_USER_GROUP_ID == 0 )); then
     echo \
         Host user group id is 0 \(root\), ignoring user mapping and use root \
         as application group.
 
-    export USER_GROUP_ID_CHANGED=true
     export MAIN_USER_GROUP_NAME=root
-elif (( EXISTING_USER_GROUP_ID == HOST_USER_GROUP_ID )); then
-    echo \
-        "Existing user group id ${EXISTING_USER_GROUP_ID} already matching" \
-        the the containers one.
-else
+elif $USER_GROUP_ID_CHANGED; then
     echo \
         "Map container's existing user group id ${EXISTING_USER_GROUP_ID}" \
         "(\"${MAIN_USER_GROUP_NAME}\") from container's application user" \
         "\"${MAIN_USER_NAME}\" to host's group id ${HOST_USER_GROUP_ID}" \
         "(\"${HOST_USER_GROUP_NAME}\")."
 
-    export USER_GROUP_ID_CHANGED=true
     if [ "$HOST_USER_GROUP_NAME" = '' ]; then
         if \
             [ "$EXISTING_USER_GROUP_ID" = '' ] || \
@@ -89,6 +87,10 @@ else
 
         exit 1
     fi
+else
+    echo \
+        "Existing user group id ${EXISTING_USER_GROUP_ID} already matching" \
+        the the containers one.
 fi
 # endregion
 # region configure user
@@ -102,26 +104,23 @@ export HOST_USER_NAME="$(
     getent passwd "$HOST_USER_ID" | \
         cut --delimiter : --fields 1
 )"
-export USER_ID_CHANGED=false
+
+export USER_ID_CHANGED=true
+if (( EXISTING_USER_ID == HOST_USER_ID )); then
+    export USER_ID_CHANGED=false
+fi
 
 if (( HOST_USER_ID == 0 )); then
     echo \
         'Host user id is 0 (root), ignoring user mapping and use root as' \
         application user.
 
-    export USER_ID_CHANGED=true
     export MAIN_USER_NAME=root
-elif (( EXISTING_USER_ID == HOST_USER_ID )); then
-    echo \
-        "Existing user id ${EXISTING_USER_ID} already matching the" \
-        containers one.
-else
+elif $USER_ID_CHANGED; then
     echo \
         "Map container's existing application user id ${EXISTING_USER_ID}" \
         "(\"${MAIN_USER_NAME}\") to host's user id ${HOST_USER_ID}" \
         "(\"${HOST_USER_NAME}\")."
-
-    export USER_ID_CHANGED=true
 
     if [ "$HOST_USER_NAME" = '' ]; then
         if \
@@ -166,6 +165,10 @@ else
 
         exit 1
     fi
+else
+    echo \
+        "Existing user id ${EXISTING_USER_ID} already matching the" \
+        containers one.
 fi
 
 # Disable user account expiration.
