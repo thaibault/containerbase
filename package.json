@@ -1,6 +1,6 @@
 {
   "name": "containerbase",
-  "version": "1.0.206",
+  "version": "1.0.207",
   "description": "generic containerized application",
   "keywords": [
     "application",
@@ -41,7 +41,7 @@
     "update:documentation": "documentation-website"
   },
   "devDependencies": {
-    "documentation-website": "^1.0.330"
+    "documentation-website": "^1.0.332"
   },
   "documentationWebsite": {
     "name": "containerbase",

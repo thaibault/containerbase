@@ -375,7 +375,7 @@ COPY        --link ./scripts/run-command.sh /usr/bin/run-command
 ## region configure user
 RUN \
             configure-user && \
-            # We cannot use yay as root user so we introduce an install user.
+            # We cannot use aura as root user so we introduce an install user.
             # Create specified user with not yet existing name and id.
             # NOTE: Use exotic user id reduce risk of id clashing when mapping
             # to hosts user id at runtime.
@@ -390,11 +390,11 @@ RUN \
                 >>/etc/sudoers
 ## endregion
 USER        $INSTALLER_USER_NAME
-## region install and configure yay
+## region install and configure aura
 RUN \
             pushd /tmp && \
-            git clone https://aur.archlinux.org/yay.git && \
-            pushd yay && \
+            git clone https://aur.archlinux.org/aura.git && \
+            pushd aura && \
             /usr/bin/makepkg \
                 --install \
                 --needed \
@@ -402,7 +402,7 @@ RUN \
                 --rmdeps \
                 --syncdeps && \
             popd && \
-            rm --force --recursive yay && \
+            rm --force --recursive aura && \
             popd && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
