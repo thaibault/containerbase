@@ -48,23 +48,29 @@ ARG         MIRROR_AREA_PATTERN='default'
 FROM        alpine AS bootstrapper
 ARG         BUILD_ARM_FROM_ARCHIVE
 ARG         TARGETARCH
-            # To be able to download "ca-certificates" with "apk add" command we
+
+ENV         CUSTOM_ROOT_CERTIFICATE_FILE_NAME=custom-root-ca.crt
+ENV         INSTALL_COMMAND='apk add --no-check-certificate'
+
+            # To be able to download "ca-certificates" with "apk add" command
             # we need to manually add the certificate in the first place.
             # Afterwards we update with the official tool
             # "update-ca-certificates".
             # NOTE: We need to copy .gitignore to workaround an unavailable
             # copy certificate file if it exists mechanism.
-COPY        .gitignore custom-root-ca.cr[t] /root/
+COPY        .gitignore $CUSTOM_ROOT_CERTIFICATE_FILE_NAME /root/
             # NOTE: "*.cer" files can be converted into "*.crt" via:
             # openssl x509 -inform der -in source.cer -out target.crt
+
+            # cat "/root/${CUSTOM_ROOT_CERTIFICATE_FILE_NAME}" >> /etc/ssl/certs/ca-certificates.crt && \
 RUN \
             rm /root/.gitignore && \
-            if [ -f /root/custom-root-ca.crt ]; then \
-                cat /root/custom-root-ca.crt >> /etc/ssl/certs/ca-certificates.crt && \
-                apk add --no-cache --no-check-certificate ca-certificates && \
-                rm -rf /var/cache/apk/* && \
-                mv /root/custom-root-ca.crt /usr/local/share/ca-certificates/ && \
-                update-ca-certificates; \
+            if [ -f "/root/${CUSTOM_ROOT_CERTIFICATE_FILE_NAME}" ]; then \
+                echo Register found certificate. && \
+                $INSTALL_COMMAND --no-cache ca-certificates && \
+                mv "/root/${CUSTOM_ROOT_CERTIFICATE_FILE_NAME}" "/usr/local/share/ca-certificates/${CUSTOM_ROOT_CERTIFICATE_FILE_NAME}" && \
+                update-ca-certificates && \
+                rm -rf /var/cache/apk/*; \
             fi
 ## region bootstrap from file system archive
 RUN \
@@ -73,7 +79,7 @@ RUN \
                 [ "$BASE_IMAGE" = '' ] && \
                 [[ "$TARGETARCH" == 'arm*' ]]; \
             then \
-                apk add curl && \
+                $INSTALL_COMMAND curl && \
                 mkdir --parents /rootfs && \
                 curl \
                     --connect-timeout 30 \
@@ -91,7 +97,7 @@ RUN \
 ## region bootstrap via pacman
 RUN \
             if [ "$BASE_IMAGE" = '' ]; then \
-                apk add arch-install-scripts curl pacman-makepkg && \
+                $INSTALL_COMMAND arch-install-scripts curl pacman-makepkg && \
                 mkdir --parents /etc/pacman.d /tmp/keyring; \
             fi
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacmand.d/noextract.conf
@@ -151,7 +157,7 @@ Include = /etc/pacman.d/mirrorlist' \
                             --xz \
                             --verbose; \
             elif [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" != 'arm*' ]]; then \
-                apk add zstd && \
+                $INSTALL_COMMAND zstd && \
                 curl \
                     --connect-timeout 30 \
                     --fail \
