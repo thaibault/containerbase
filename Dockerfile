@@ -49,7 +49,7 @@ FROM        alpine AS bootstrapper
 ARG         BUILD_ARM_FROM_ARCHIVE
 ARG         TARGETARCH
 
-ENV         CUSTOM_ROOT_CERTIFICATE_FILE_NAME=custom-root-ca.crt
+ENV         CUSTOM_ROOT_CERTIFICATE_FILE_NAME=custom-root-ca.cr[t]
 ENV         INSTALL_COMMAND='apk add --no-check-certificate'
 
             # To be able to download "ca-certificates" with "apk add" command
