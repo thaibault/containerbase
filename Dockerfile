@@ -49,6 +49,8 @@ FROM        alpine AS bootstrapper
 ARG         BUILD_ARM_FROM_ARCHIVE
 ARG         TARGETARCH
 
+            # NOTE: We need to wrap "t" with brackets to make the file copy
+            # optional.
 ENV         CUSTOM_ROOT_CERTIFICATE_FILE_NAME=custom-root-ca.cr[t]
 ENV         INSTALL_COMMAND='apk add --no-check-certificate'
 
