@@ -401,17 +401,23 @@ USER        $INSTALLER_USER_NAME
 ## region install and configure aura
 RUN \
             pushd /tmp && \
-            git clone https://aur.archlinux.org/aura.git && \
-            pushd aura && \
-            /usr/bin/makepkg \
-                --install \
-                --needed \
-                --noconfirm \
-                --rmdeps \
-                --syncdeps && \
-            popd && \
-            rm --force --recursive aura && \
-            popd && \
+            if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                git clone https://aur.archlinux.org/aura.git && \
+                pushd aura && \
+                /usr/bin/makepkg \
+                    --install \
+                    --needed \
+                    --noconfirm \
+                    --rmdeps \
+                    --syncdeps && \
+                popd && \
+                rm --force --recursive aura && \
+                popd; \
+            else \
+                git clone https://github.com/fosskers/aura.git && \
+                cd aura/rust && \
+                cargo install --path aura-pm; \
+            fi && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
 ## endregion
