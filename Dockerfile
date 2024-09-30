@@ -403,6 +403,18 @@ USER        $INSTALLER_USER_NAME
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
+                git clone https://aur.archlinux.org/aura.git && \
+                pushd aura && \
+                /usr/bin/makepkg \
+                    --install \
+                    --needed \
+                    --noconfirm \
+                    --rmdeps \
+                    --syncdeps && \
+                popd && \
+                rm --force --recursive aura && \
+                popd; \
+            else \
                 pacman \
                     --disable-download-timeout \
                     --needed \
@@ -420,18 +432,6 @@ RUN \
                     --remove \
                     --unneeded \
                     cargo; \
-            else \
-                git clone https://aur.archlinux.org/aura.git && \
-                    pushd aura && \
-                /usr/bin/makepkg \
-                    --install \
-                    --needed \
-                    --noconfirm \
-                    --rmdeps \
-                    --syncdeps && \
-                popd && \
-                rm --force --recursive aura && \
-                popd; \
             fi && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
