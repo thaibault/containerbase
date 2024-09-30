@@ -402,8 +402,26 @@ USER        $INSTALLER_USER_NAME
 RUN \
             pushd /tmp && \
             if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                pacman \
+                    --disable-download-timeout \
+                    --needed \
+                    --noconfirm \
+                    --noprogressbar \
+                    --sync \
+                    cargo && \
+                clean-up && \
+                git clone https://github.com/fosskers/aura.git && \
+                cd aura/rust && \
+                cargo install --path aura-pm && \
+                pacman \
+                    --cascade \
+                    --nosave \
+                    --remove \
+                    --unneeded \
+                    cargo; \
+            else \
                 git clone https://aur.archlinux.org/aura.git && \
-                pushd aura && \
+                    pushd aura && \
                 /usr/bin/makepkg \
                     --install \
                     --needed \
@@ -413,10 +431,6 @@ RUN \
                 popd && \
                 rm --force --recursive aura && \
                 popd; \
-            else \
-                git clone https://github.com/fosskers/aura.git && \
-                cd aura/rust && \
-                cargo install --path aura-pm; \
             fi && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
