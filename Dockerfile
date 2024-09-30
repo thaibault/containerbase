@@ -415,7 +415,7 @@ RUN \
                 rm --force --recursive aura && \
                 popd; \
             else \
-                pacman \
+                sudo pacman \
                     --disable-download-timeout \
                     --needed \
                     --noconfirm \
@@ -426,7 +426,7 @@ RUN \
                 git clone https://github.com/fosskers/aura.git && \
                 cd aura/rust && \
                 cargo install --path aura-pm && \
-                pacman \
+                sudo pacman \
                     --cascade \
                     --nosave \
                     --remove \
