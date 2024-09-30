@@ -399,9 +399,10 @@ RUN \
 ## endregion
 USER        $INSTALLER_USER_NAME
 ## region install and configure aura
+            # Alternat architecture would be reflected as "aarch64".
 RUN \
             pushd /tmp && \
-            if [[ "$TARGETARCH" == 'arm*' ]]; then \
+            if [[ "$(uname --machine)" == 'x86_64' ]]; then \
                 pacman \
                     --disable-download-timeout \
                     --needed \
