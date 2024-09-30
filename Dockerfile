@@ -415,23 +415,7 @@ RUN \
                 rm --force --recursive aura && \
                 popd; \
             else \
-                sudo pacman \
-                    --disable-download-timeout \
-                    --needed \
-                    --noconfirm \
-                    --noprogressbar \
-                    --sync \
-                    cargo && \
-                clean-up && \
-                git clone https://github.com/fosskers/aura.git && \
-                cd aura/rust && \
-                cargo install --path aura-pm && \
-                sudo pacman \
-                    --cascade \
-                    --nosave \
-                    --remove \
-                    --unneeded \
-                    cargo; \
+                sudo ln --symbolic /usr/bin/pacman /usr/bin/aura; \
             fi && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
