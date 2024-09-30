@@ -49,6 +49,8 @@ FROM        alpine AS bootstrapper
 ARG         BUILD_ARM_FROM_ARCHIVE
 ARG         TARGETARCH
 
+            # NOTE: We need to wrap "t" with brackets to make the file copy
+            # optional.
 ENV         CUSTOM_ROOT_CERTIFICATE_FILE_NAME=custom-root-ca.cr[t]
 ENV         INSTALL_COMMAND='apk add --no-check-certificate'
 
@@ -399,17 +401,23 @@ USER        $INSTALLER_USER_NAME
 ## region install and configure aura
 RUN \
             pushd /tmp && \
-            git clone https://aur.archlinux.org/aura.git && \
-            pushd aura && \
-            /usr/bin/makepkg \
-                --install \
-                --needed \
-                --noconfirm \
-                --rmdeps \
-                --syncdeps && \
-            popd && \
-            rm --force --recursive aura && \
-            popd && \
+            if [[ "$TARGETARCH" == 'arm*' ]]; then \
+                git clone https://aur.archlinux.org/aura.git && \
+                pushd aura && \
+                /usr/bin/makepkg \
+                    --install \
+                    --needed \
+                    --noconfirm \
+                    --rmdeps \
+                    --syncdeps && \
+                popd && \
+                rm --force --recursive aura && \
+                popd; \
+            else \
+                git clone https://github.com/fosskers/aura.git && \
+                cd aura/rust && \
+                cargo install --path aura-pm; \
+            fi && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
 ## endregion
