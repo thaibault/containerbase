@@ -375,6 +375,7 @@ COPY        --link ./scripts/crypt.sh /usr/bin/crypt
 COPY        --link ./scripts/decrypt.sh /usr/bin/decrypt
 COPY        --link ./scripts/encrypt.sh /usr/bin/encrypt
 COPY        --link ./scripts/initialize.sh /usr/bin/initialize
+COPY        --link ./scripts/pacman-wrapper.sh /usr/bin/pacman-wrapper
 COPY        --link ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer
 COPY        --link ./scripts/retrieve-application.sh /usr/bin/retrieve-application
 COPY        --link ./scripts/execute-command.sh /usr/bin/execute-command
@@ -403,26 +404,8 @@ USER        $INSTALLER_USER_NAME
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
-                pacman \
-                    --disable-download-timeout \
-                    --needed \
-                    --noconfirm \
-                    --noprogressbar \
-                    --sync \
-                    cargo && \
-                clean-up && \
-                git clone https://github.com/fosskers/aura.git && \
-                cd aura/rust && \
-                cargo install --path aura-pm && \
-                pacman \
-                    --cascade \
-                    --nosave \
-                    --remove \
-                    --unneeded \
-                    cargo; \
-            else \
                 git clone https://aur.archlinux.org/aura.git && \
-                    pushd aura && \
+                pushd aura && \
                 /usr/bin/makepkg \
                     --install \
                     --needed \
