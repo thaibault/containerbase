@@ -12,7 +12,7 @@ WORKDIR     $APPLICATION_PATH
 
 # Install custom packages (optionally from the arch user repository)
 USER        $INSTALLER_USER_NAME
-RUN         yay \
+RUN         pacman-wrapper \
                 --needed \
                 --noconfirm \
                 --refresh \
