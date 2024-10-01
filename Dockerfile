@@ -375,6 +375,7 @@ COPY        --link ./scripts/crypt.sh /usr/bin/crypt
 COPY        --link ./scripts/decrypt.sh /usr/bin/decrypt
 COPY        --link ./scripts/encrypt.sh /usr/bin/encrypt
 COPY        --link ./scripts/initialize.sh /usr/bin/initialize
+COPY        --link ./scripts/pacman-wrapper.sh /usr/bin/pacman-wrapper
 COPY        --link ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer
 COPY        --link ./scripts/retrieve-application.sh /usr/bin/retrieve-application
 COPY        --link ./scripts/execute-command.sh /usr/bin/execute-command
@@ -414,8 +415,6 @@ RUN \
                 popd && \
                 rm --force --recursive aura && \
                 popd; \
-            else \
-                sudo ln --symbolic /usr/bin/pacman /usr/bin/aura; \
             fi && \
             rm --force --recursive ~/.cache/go-build && \
             clean-up
