@@ -54,7 +54,7 @@ run() {
         su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
     fi
 }
-# region encrypt security related artefacts needed at runti me
+# region encrypt security related artefacts needed at runtime
 for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
     if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
         rm \
