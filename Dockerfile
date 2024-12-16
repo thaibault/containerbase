@@ -339,6 +339,9 @@ ENV         DECRYPT=false
 ENV         DECRYPT_AS_USER=true
 ENV         DECRYPTED_PATHS=/tmp/plain/
 ENV         ENCRYPTED_PATHS="${APPLICATION_PATH}encrypted/"
+            # NOTE: You can provide the password via environmane variable
+            # "DECRYPTION_PASSWORD" a secret with configured name or via a
+            # provided file with confgigured path.
 ENV         PASSWORD_SECRET_NAMES=encryption_password
 ENV         PASSWORD_FILE_PATHS="${APPLICATION_PATH}.encryptionPassword"
 
