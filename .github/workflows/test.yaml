@@ -1,6 +1,7 @@
 name: Test encrypted build
 
 on:
+  # Runs when a new image was build.
   workflow_run:
     workflows:
       - "Build image and push"
