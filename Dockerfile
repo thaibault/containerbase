@@ -117,8 +117,6 @@ RUN \
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
 Include = /etc/pacman.d/mirrorlist\n\
-[community]\n\
-Include = /etc/pacman.d/mirrorlist\n\
 [alarm]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [aur]\n\
@@ -134,8 +132,6 @@ Include = /etc/pacman.d/mirrorlist' \
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
-Include = /etc/pacman.d/mirrorlist\n\
-[community]\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
