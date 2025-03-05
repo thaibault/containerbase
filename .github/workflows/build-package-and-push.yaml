@@ -16,13 +16,10 @@ on:
           - major
           - minor
           - patch
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.event.repository.name }}
+          - candidate
 
 jobs:
-  build-package-and-push:
+  main:
     runs-on: ubuntu-latest
     container: node:lts
     steps:
@@ -37,3 +34,10 @@ jobs:
       - name: Print determined version.
         run: echo Newly determined version is \"${{ steps.build-package-and-push.outputs.version }}\".
         shell: bash
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: prepare-${{ inputs.type == 'candidate' && 'pre-' || '' }}release-event
+          client-payload: '{"version": "${{ steps.prepare-release.outputs.version }}"}'
