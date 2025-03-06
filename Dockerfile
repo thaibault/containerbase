@@ -193,6 +193,7 @@ Include = /etc/pacman.d/mirrorlist' \
                 mknod /rootfs/dev/null c 1 3 && \
                 pacman \
                     --disable-download-timeout \
+                    --disable-sandbox \
                     --refresh \
                     --root /rootfs \
                     --sync \
@@ -229,6 +230,7 @@ RUN \
 RUN \
             pacman \
                 --disable-download-timeout \
+                --disable-sandbox \
                 --noconfirm \
                 --noprogressbar \
                 --refresh \
@@ -265,6 +267,7 @@ RUN \
                 vi && \
             pacman \
                 --disable-download-timeout \
+                --disable-sandbox \
                 --needed \
                 --noconfirm \
                 --noprogressbar \
@@ -285,6 +288,7 @@ RUN \
             # NOTE: "openssh" to retrieve files securely e.g. via git.
             pacman \
                 --disable-download-timeout \
+                --disable-sandbox \
                 --needed \
                 --noconfirm \
                 --sync \
@@ -297,6 +301,7 @@ RUN \
 RUN \
             pacman \
                 --disable-download-timeout \
+                --disable-sandbox \
                 --needed \
                 --noconfirm \
                 --noprogressbar \

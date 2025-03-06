@@ -40,7 +40,7 @@
     "update:documentation": "documentation-website"
   },
   "devDependencies": {
-    "documentation-website": "^1.0.344"
+    "documentation-website": "^1.0.345"
   },
   "documentationWebsite": {
     "name": "containerbase",
