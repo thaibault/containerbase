@@ -103,7 +103,7 @@ RUN \
                 mkdir --parents /etc/pacman.d /tmp/keyring; \
             fi
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
-RUN         -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
+RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 sed \
@@ -220,7 +220,7 @@ ARG         MIRROR_AREA_PATTERN
 COPY        --from=bootstrapper /rootfs/ /
 COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
-RUN         -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
+RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
 RUN \
             rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
