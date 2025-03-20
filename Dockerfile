@@ -102,7 +102,8 @@ RUN \
                 $INSTALL_COMMAND arch-install-scripts curl pacman-makepkg && \
                 mkdir --parents /etc/pacman.d /tmp/keyring; \
             fi
-COPY        --link ./pacman-conf.d-noextract.conf /etc/pacmand.d/noextract.conf
+COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
+RUN         -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> pacman.conf
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 sed \
@@ -218,7 +219,8 @@ FROM        scratch AS root
 ARG         MIRROR_AREA_PATTERN
 COPY        --from=bootstrapper /rootfs/ /
 COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
-COPY        --link ./pacman-conf.d-noextract.conf /etc/pacmand.d/noextract.conf
+COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
+RUN         -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> pacman.conf
 RUN \
             rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
