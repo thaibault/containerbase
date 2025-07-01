@@ -12,7 +12,7 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC2016,SC2034,SC2155
+# shellcheck disable=SC2155
 # region convert environment variables given as string into local arrays
 for name in \
     DECRYPTED_PATHS \
@@ -54,7 +54,7 @@ run() {
         su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
     fi
 }
-# region encrypt security related artefacts needed at runti me
+# region encrypt security related artefacts needed at runtime
 for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
     if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
         rm \

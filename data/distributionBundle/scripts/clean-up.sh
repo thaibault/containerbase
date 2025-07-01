@@ -12,20 +12,22 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC1091,SC2016,SC2034,SC2155
-bin=pacman
-if hash yay &>/dev/null; then
-    bin=yay
-fi
+for package in "$@"; do
+    if pacman-wrapper --query --info "$package" &>/dev/null; then
+        echo "Remove package ${package}."
+        pacman-wrapper --remove --noconfirm --recursive --nosave "$package"
+    fi
+done
 
-if $bin --query --deps --unrequired --quiet; then
+if pacman-wrapper --query --deps --unrequired --quiet; then
     orphans="$(
-        $bin --query --deps --unrequired --quiet | \
+        pacman-wrapper --query --deps --unrequired --quiet | \
             tr '\n' ' ' | \
             sed --regexp-extended 's/.*->.+\. (.+)/\1/'
     )"
-    echo Remove unneeded packages: "$orphans".
-    $bin --remove --noconfirm --recursive --nosave $orphans
+    echo "Remove unneeded packages: ${orphans}."
+    # shellcheck disable=SC2086
+    pacman-wrapper --remove --noconfirm --recursive --nosave $orphans
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
