@@ -21,6 +21,7 @@ Project status
 
 [![test](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/test.yaml?label=test&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/test.yaml)
 
+[![deploy documentation website](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/deploy-documentation-website.yaml?label=deploy%20documentation%20website&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/deploy-documentation-website.yaml)
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/containerbase.svg?label=documentation-website&style=for-the-badge)](https://torben.website/containerbase)
 
 <!--|deDE:Einsatz-->
