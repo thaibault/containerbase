@@ -12,20 +12,11 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC1091
-source prepare-initializer "$@" && \
-
-set -e
-
-source decrypt "$@"
-
-if [ -d "${DECRYPTED_PATHS[0]}" ]; then
-    source configure-runtime-user "${DECRYPTED_PATHS[0]}:all:follow"
-else
-    source configure-runtime-user
+if hash aura &>/dev/null; then
+    exec aura "$@"
 fi
-
-source execute-command "$(eval "$COMMAND $*")"
+sudo pacman "$@"
+exit $?
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
