@@ -9,15 +9,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "containerbase@workspace:."
   dependencies:
-    documentation-website: "npm:^1.0.387"
+    documentation-website: "npm:^1.0.394"
   languageName: unknown
   linkType: soft
 
-"documentation-website@npm:^1.0.387":
-  version: 1.0.387
-  resolution: "documentation-website@npm:1.0.387"
+"documentation-website@npm:^1.0.394":
+  version: 1.0.394
+  resolution: "documentation-website@npm:1.0.394"
   bin:
     documentation-website: build/deploy.js
-  checksum: 10c0/2067d42d64485c68d2972a59663931df833eabeca34e3c20b8a87a31cbf2554f8981e53b3c7b9842beedfe990817d4fa82b03276356162c32db6135d917d34dd
+  checksum: 10c0/559cb58d7dd20c387e6147885c43a50a5950bb308e2798f0995dff4948449eea6e2dcaf875185e2b59896a88570f9f583bdbcb5792c898e70f694f15358f04a3
   languageName: node
   linkType: hard
