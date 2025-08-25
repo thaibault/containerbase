@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile-upstream:master-labs
+# check=skip=SecretsUsedInArgOrEnv
 # region header
 # [Project page](https://torben.website/containerbase)
 
