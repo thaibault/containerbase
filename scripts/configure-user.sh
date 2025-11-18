@@ -10,13 +10,16 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155
+source ./bashlink/module.sh
+bl.module.import bashlink.logging
+
 # Disable root account expiration.
 chage --expiredate -1 root && \
 # Set proper default user and group id to avoid expensive user id mapping on
 # application startup.
 if [[ "$MAIN_USER_NAME" != root ]]; then
     if (( DEFAULT_MAIN_USER_GROUP_ID == 0 )); then
-        echo \
+        bl.logging.error \
             If you define 0 as default main user group id \
             \"MAIN_USER_GROUP_NAME\" has to be configured as \"root\". \
             &>/dev/stderr
@@ -24,7 +27,7 @@ if [[ "$MAIN_USER_NAME" != root ]]; then
         exit 1
     fi
     if (( DEFAULT_MAIN_USER_ID == 0 )); then
-        echo \
+        bl.logging.error \
             If you define 0 as default main user id \"MAIN_USER_NAME\" has \
             to be configured as \"root\". \
             &>/dev/stderr
