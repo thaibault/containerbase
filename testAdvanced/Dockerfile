@@ -1,4 +1,4 @@
-
+FROM        ghcr.io/thaibault/containerbase:latest
 
 LABEL       maintainer="Torben Sickert <info@torben.website>"
 LABEL       Description="proxy" Vendor="thaibault products" Version="1.0"
