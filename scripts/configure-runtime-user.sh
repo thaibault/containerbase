@@ -10,8 +10,7 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155,SC2028
-source ./bashlink/module.sh
-bl.module.import bashlink.logging
+#source get-bashlink
 
 if (( UID != 0 )); then
     bl.logging.warn \
