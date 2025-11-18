@@ -10,10 +10,13 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155,SC2028
+source ./bashlink/module.sh
+bl.module.import bashlink.logging
+
 if (( UID != 0 )); then
-    echo \
-        Warning: You should bootstrap your container as root when using \
-        configure runtime user. \
+    bl.logging.warn \
+        You should bootstrap your container as root when using configure \
+        runtime user. \
         1>&2
 fi
 
@@ -37,14 +40,14 @@ fi
 
 # region configure group
 if (( HOST_USER_GROUP_ID == 0 )); then
-    echo \
+    bl.logging.info \
         Host user group id is 0 \(root\), ignoring user mapping and use root \
         as application group.
 
     export USER_GROUP_ID_CHANGED=false
     export MAIN_USER_GROUP_NAME=root
 elif $USER_GROUP_ID_CHANGED; then
-    echo \
+    bl.logging.info \
         "Map container's existing user group id ${EXISTING_USER_GROUP_ID}" \
         "(\"${MAIN_USER_GROUP_NAME}\") from container's application user" \
         "\"${MAIN_USER_NAME}\" to host's group id ${HOST_USER_GROUP_ID}" \
@@ -55,7 +58,7 @@ elif $USER_GROUP_ID_CHANGED; then
             [ "$EXISTING_USER_GROUP_ID" = '' ] || \
             [ "$EXISTING_USER_GROUP_ID" = UNKNOWN ]
         then
-            echo \
+            bl.logging.info \
                 Host user group id does not exist in container and container \
                 does not have any application user group \
                 "\"${MAIN_USER_GROUP_NAME}\". Creating corresponding user" \
@@ -65,7 +68,7 @@ elif $USER_GROUP_ID_CHANGED; then
             groupadd --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_GROUP_NAME"
             usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         else
-            echo \
+            bl.logging.info \
                 Host user group id does not exist in container and container \
                 has already an application user group \
                 "\"${MAIN_USER_GROUP_NAME}\". Changing corresponding user" \
@@ -78,7 +81,7 @@ elif $USER_GROUP_ID_CHANGED; then
         [ "$EXISTING_USER_GROUP_ID" = '' ] || \
         [ "$EXISTING_USER_GROUP_ID" = UNKNOWN ]
     then
-        echo \
+        bl.logging.info \
             "Current application user \"${MAIN_USER_NAME}\" has no" \
             corresponding group and hosts one exists in container \
             "\"${HOST_USER_GROUP_NAME}\": assign it to them."
@@ -86,7 +89,7 @@ elif $USER_GROUP_ID_CHANGED; then
         usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
         groupmod --new-name "$MAIN_USER_NAME" "$HOST_USER_GROUP_NAME"
     else
-        echo \
+        bl.logging.error \
             "Host user group id ${HOST_USER_GROUP_ID} could not be mapped" \
             into container since this group id is already used by application \
             "user group \"$HOST_USER_GROUP_NAME\"." \
@@ -96,7 +99,7 @@ elif $USER_GROUP_ID_CHANGED; then
         exit 1
     fi
 else
-    echo \
+    bl.logging.info \
         "Existing user group id ${EXISTING_USER_GROUP_ID} already matching" \
         the the containers one.
 fi
@@ -119,14 +122,14 @@ if (( EXISTING_USER_ID == HOST_USER_ID )); then
 fi
 
 if (( HOST_USER_ID == 0 )); then
-    echo \
+    bl.logging.info \
         'Host user id is 0 (root), ignoring user mapping and use root as' \
         application user.
 
     export USER_ID_CHANGED=false
     export MAIN_USER_NAME=root
 elif $USER_ID_CHANGED; then
-    echo \
+    bl.logging.info \
         "Map container's existing application user id ${EXISTING_USER_ID}" \
         "(\"${MAIN_USER_NAME}\") to host's user id ${HOST_USER_ID}" \
         "(\"${HOST_USER_NAME}\")."
@@ -135,7 +138,7 @@ elif $USER_ID_CHANGED; then
         if \
             [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]
         then
-            echo \
+            bl.logging.info \
                 Host user id does not exist in container and container does \
                 "not have any application user \"${MAIN_USER_NAME}\"." \
                 Creating corresponding user and assign id to them.
@@ -147,7 +150,7 @@ elif $USER_ID_CHANGED; then
                 --uid "$HOST_USER_ID" \
                 "$MAIN_USER_NAME"
         else
-            echo \
+            bl.logging.info \
                 Host user group id does not exist in container and container \
                 "has already an application user \"${MAIN_USER_NAME}\"." \
                 Changing corresponding user id.
@@ -155,7 +158,7 @@ elif $USER_ID_CHANGED; then
             usermod --uid "$HOST_USER_ID" "$MAIN_USER_NAME"
         fi
     elif [ "$EXISTING_USER_ID" = '' ] || [ "$EXISTING_USER_ID" = UNKNOWN ]; then
-        echo \
+        bl.logging.info \
             "Current application user \"${MAIN_USER_NAME}\" does not exist" \
             "but hosts one \"$HOST_USER_NAME\". Change corresponding user id" \
             to hosts one.
@@ -166,7 +169,7 @@ elif $USER_ID_CHANGED; then
             "$HOST_USER_NAME"
         usermod --home "/home/$MAIN_USER_NAME" --move-home "$MAIN_USER_NAME"
     else
-        echo \
+        bl.logging.error \
             "Host user id ${HOST_USER_ID} could not be mapped into container" \
             since this user id is already used by application user \
             "\"${HOST_USER_NAME}\"." \
@@ -175,7 +178,7 @@ elif $USER_ID_CHANGED; then
         exit 1
     fi
 else
-    echo \
+    bl.logging.info \
         "Existing user id ${EXISTING_USER_ID} already matching the" \
         containers one.
 fi
@@ -210,7 +213,7 @@ for path in "$@"; do
 
     # region handle group
     if $all; then
-        echo \
+        bl.logging.info \
             "Map file\'s group ownership in \"${path}\" to" \
             "\"${MAIN_USER_GROUP_NAME}\"."
 
@@ -240,7 +243,7 @@ for path in "$@"; do
         [[ "$EXISTING_USER_GROUP_ID" != '' ]] && \
         [[ "$EXISTING_USER_GROUP_ID" != UNKNOWN ]]
     then
-        echo \
+        bl.logging.info \
             "Map file\'s group ownership in \"${path}\" to" \
             "\"${MAIN_USER_GROUP_NAME}\"."
 
@@ -271,7 +274,7 @@ for path in "$@"; do
     # endregion
     # region handle user
     if $all; then
-        echo \
+        bl.logging.info \
             "Map file\'s user ownership in \"${path}\" to" \
             "\"${MAIN_USER_NAME}\"."
 
@@ -301,7 +304,7 @@ for path in "$@"; do
         [[ "$EXISTING_USER_ID" != '' ]] && \
         [[ "$EXISTING_USER_ID" != UNKNOWN ]]
     then
-        echo \
+        bl.logging.info \
             "Map file\'s user ownership in \"${path}\" to" \
             "\"${MAIN_USER_NAME}\"."
 
@@ -347,13 +350,13 @@ if (( HOST_USER_GROUP_ID != 0 )) && (( HOST_USER_ID != 0 )); then
         /proc/self/fd/1 \
         /proc/self/fd/2
     then
-        echo \
+        bl.logging.info \
             Changing input and output file descriptors ownership to user \
             "\"${MAIN_USER_NAME}\" and group \"${MAIN_USER_GROUP_NAME}\"."
     else
-        echo \
-            Warning: Changing input and output file descriptors ownership to \
-            "user \"${MAIN_USER_NAME}\" and group" \
+        bl.logging.warn \
+            Changing input and output file descriptors ownership to user \
+            "\"${MAIN_USER_NAME}\" and group" \
             "\"${MAIN_USER_GROUP_NAME}\" did not work."
     fi
 fi

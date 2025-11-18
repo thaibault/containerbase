@@ -13,6 +13,9 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155
+source ./bashlink/module.sh
+bl.module.import bashlink.logging
+
 # region convert environment variables given as string into local arrays
 for name in \
     DECRYPTED_PATHS \
@@ -81,7 +84,7 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
                 "${DECRYPTED_PATHS_ARRAY[index]}" \
                 "${ENCRYPTED_PATHS_ARRAY[index]}"
             then
-                echo \
+                bl.logging.error \
                     "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
                     "\"${ENCRYPTED_PATHS_ARRAY[index]}\" failed."
 
@@ -91,14 +94,14 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
             "${DECRYPTED_PATHS_ARRAY[index]}" \
             "${ENCRYPTED_PATHS_ARRAY[index]}"
         then
-            echo \
+            bl.logging.error \
                 "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
                 "\"${ENCRYPTED_PATHS_ARRAY[index]}\" failed."
 
             exit 1
         fi
 
-        echo \
+        bl.logging.info \
             "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
             "\"${ENCRYPTED_PATHS_ARRAY[index]}\" successfully finished."
     fi
