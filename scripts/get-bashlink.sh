@@ -18,7 +18,7 @@ cb_download() {
     local -r __documentation__='
         Simply downloads missing modules.
 
-        >>> br.download --silent https://domain.tld/path/to/file.ext; echo $?
+        >>> cb.download --silent https://domain.tld/path/to/file.ext; echo $?
         6
     '
     command curl --insecure "$@"
@@ -38,7 +38,7 @@ else
         declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
         if ! (
             [ -f "${BR_BASHLNK_PATH}module.sh" ] || \
-            br.download \
+            cb.download \
                 https://raw.githubusercontent.com/thaibault/bashlink/main/module.sh \
                     >"${BR_BASHLNK_PATH}module.sh"
         ); then
