@@ -13,6 +13,7 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC1004,SC2016,SC2034,SC2155
+shopt -s expand_aliases
 alias cb.download=cb_download
 cb_download() {
     local -r __documentation__='
