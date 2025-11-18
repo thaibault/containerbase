@@ -12,6 +12,8 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
+# shellcheck disable=SC1004,SC2016,SC2034,SC2155
+shopt -s expand_aliases
 alias br.download=br_download
 br_download() {
     local -r __documentation__='
