@@ -13,9 +13,8 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC1004,SC2016,SC2034,SC2155
-shopt -s expand_aliases
-alias br.download=br_download
-br_download() {
+alias cb.download=cb_download
+cb_download() {
     local -r __documentation__='
         Simply downloads missing modules.
 
@@ -29,29 +28,27 @@ br_download() {
 if [ -f "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh" ]; then
     # shellcheck disable=SC1090
     source "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh"
-elif [ -f "/usr/lib/bashlink/module.sh" ]; then
-    # shellcheck disable=SC1091
-    source "/usr/lib/bashlink/module.sh"
 else
-    declare -g BR_CACHE_PATH=/tmp/containerbaseInstallCache/
-    declare -gr BL_MODULE_REMOTE_MODULE_CACHE_PATH="${BR_CACHE_PATH}bashlink"
-    mkdir --parents "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
-    declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
-    if ! (
-        [ -f "${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh" ] || \
-        br.download \
-            https://raw.githubusercontent.com/thaibault/bashlink/main/module.sh \
-                >"${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh"
-    ); then
-        echo Needed bashlink library could not be retrieved. 1>&2
-        rm \
-            --force \
-            --recursive \
-            "${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh"
-        exit 1
+    declare -g CB_BASHLINK_PATH=/usr/lib/bashlink/
+    if [ -f "${BR_BASHLNK_PATH}module.sh" ]; then
+        # shellcheck disable=SC1091
+        source "${BR_BASHLNK_PATH}module.sh"
+    else
+        mkdir --parents "$BR_BASHLNK_PATH"
+        declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
+        if ! (
+            [ -f "${BR_BASHLNK_PATH}module.sh" ] || \
+            br.download \
+                https://raw.githubusercontent.com/thaibault/bashlink/main/module.sh \
+                    >"${BR_BASHLNK_PATH}module.sh"
+        ); then
+            echo Needed bashlink library could not be retrieved. 1>&2
+            rm --force  --recursive "$BR_BASHLNK_PATH"
+            exit 1
+        fi
+        # shellcheck disable=SC1091
+        source "${BR_BASHLNK_PATH}module.sh"
     fi
-    # shellcheck disable=SC1091
-    source "${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh"
 fi
 
 bl.module.import bashlink.logging
