@@ -370,6 +370,8 @@ WORKDIR     $APPLICATION_PATH
 USER        root
 ## endregion
 ## region retrieve artefacts
+COPY        --link ./node_modules/bashlink /usr/bin/bashlink
+
 COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
 COPY        --link ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user
 COPY        --link ./scripts/configure-user.sh /usr/bin/configure-user

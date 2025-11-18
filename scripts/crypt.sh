@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+# region header
+# Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+# License
+# -------
+
+# This library written by Torben Sickert stand under a creative commons naming
+# 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
+# endregion
+source ./bashlink/module.sh
+bl.module.import bashlink.logging
 
 # crypt -d -p PASSWORD /from /to
 # crypt --decrypt --password PASSWORD /from /to
@@ -26,7 +38,7 @@ while true; do
             ;;
         *)
             if [[ "$target_path" != '' ]]; then
-                echo "Given argument: \"$1\" is not available."
+                bl.logging.error "Given argument: \"$1\" is not available."
                 exit 1
             elif [ "$source_path" = '' ]; then
                 source_path="$1"
@@ -51,12 +63,12 @@ IFS=$'\n'
 set -f
 
 for file_path in $FILES; do
-    echo "Process \"$file_path\"."
+    bl.logging.info "Process \"$file_path\"."
 
     outfile="${file_path/$source_path/$target_path}"
     directory_path="$(dirname "$outfile")"
     if [ ! -d "$directory_path" ]; then
-        echo "Create directory \"$directory_path\"."
+        bl.logging.info "Create directory \"$directory_path\"."
 
         mkdir --parents "$directory_path"
     fi

@@ -12,9 +12,13 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
+source ./bashlink/module.sh
+bl.module.import bashlink.logging
+
 for package in "$@"; do
     if pacman-wrapper --query --info "$package" &>/dev/null; then
-        echo "Remove package ${package}."
+        bl.logging.info "Remove package ${package}."
+
         pacman-wrapper --remove --noconfirm --recursive --nosave "$package"
     fi
 done
@@ -25,7 +29,7 @@ if pacman-wrapper --query --deps --unrequired --quiet; then
             tr '\n' ' ' | \
             sed --regexp-extended 's/.*->.+\. (.+)/\1/'
     )"
-    echo "Remove unneeded packages: ${orphans}."
+    bl.logging.info "Remove unneeded packages: ${orphans}."
     # shellcheck disable=SC2086
     pacman-wrapper --remove --noconfirm --recursive --nosave $orphans
 fi
