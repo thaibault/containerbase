@@ -37,6 +37,7 @@ else
     else
         mkdir --parents "$BR_BASHLNK_PATH"
         declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
+        declare -gr BL_MODULE_AVOID_TIDY_UP_PATH=true
         if ! (
             [ -f "${BR_BASHLNK_PATH}module.sh" ] || \
             cb.download \

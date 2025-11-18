@@ -40,8 +40,8 @@
     "update:documentation": "documentation-website"
   },
   "devDependencies": {
-    "bashlink": "^1.0.269",
-    "documentation-website": "^1.0.394"
+    "bashlink": "^1.0.271",
+    "documentation-website": "^1.0.395"
   },
   "documentationWebsite": {
     "name": "containerbase",
