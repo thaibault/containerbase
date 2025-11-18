@@ -19,13 +19,13 @@ do
         chown "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" "$path"
 done
 
+cd &>/dev/null && \
 if \
     [ "$STANDALONE" = true ] && \
     [[ "$PRIVATE_SSH_KEY" != '' ]] && \
     [[ "$PUBLIC_SSH_KEY" != '' ]] && \
     [[ "$REPOSITORY_URL" != '' ]]
 then
-    cd &>/dev/null && \
     mkdir --parents .ssh && \
     echo -e "$PRIVATE_SSH_KEY" >.ssh/id_rsa && \
     chmod 600 .ssh/id_rsa && \
@@ -60,9 +60,9 @@ then
         --recursive \
         "${MAIN_USER_NAME}:${MAIN_USER_GROUP_NAME}" \
         "$APPLICATION_PATH" \
-            >/dev/null && \
-    pwd
+            >/dev/null
 fi
+pwd
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:

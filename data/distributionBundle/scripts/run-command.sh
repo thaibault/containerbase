@@ -9,13 +9,16 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
+source ./bashlink/module.sh
+bl.module.import bashlink.logging
+
 if [[ "$*" != '' ]] && [[ "$*" != UNKNOWN ]]; then
     if (( HOST_USER_ID == 0 )); then
-        echo "Run command \"$*\" as root user."
+        bl.logging.info "Run command \"$*\" as root user."
 
         eval "$*"
     else
-        echo \
+        bl.logging.info \
             "Run command \"$*\" as user \"${MAIN_USER_NAME}\" in group" \
             "\"${MAIN_USER_GROUP_NAME}\"."
 
