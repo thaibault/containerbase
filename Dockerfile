@@ -219,7 +219,8 @@ Include = /etc/pacman.d/mirrorlist' \
 FROM        scratch AS root
 ARG         MIRROR_AREA_PATTERN
 COPY        --from=bootstrapper /rootfs/ /
-COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
+COPY        --link ./scripts/get-bashlink.sh      /usr/bin/get-bashlink
+COPY        --link ./scripts/clean-up.sh          /usr/bin/clean-up
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
 RUN \
@@ -370,20 +371,19 @@ WORKDIR     $APPLICATION_PATH
 USER        root
 ## endregion
 ## region retrieve artefacts
-COPY        --link ./node_modules/bashlink /usr/bin/bashlink
-
-COPY        --link ./scripts/clean-up.sh /usr/bin/clean-up
+COPY        --link ./scripts/get-bashlink.sh           /usr/bin/get-bashlink
+COPY        --link ./scripts/clean-up.sh               /usr/bin/clean-up
 COPY        --link ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user
-COPY        --link ./scripts/configure-user.sh /usr/bin/configure-user
-COPY        --link ./scripts/crypt.sh /usr/bin/crypt
-COPY        --link ./scripts/decrypt.sh /usr/bin/decrypt
-COPY        --link ./scripts/encrypt.sh /usr/bin/encrypt
-COPY        --link ./scripts/initialize.sh /usr/bin/initialize
-COPY        --link ./scripts/pacman-wrapper.sh /usr/bin/pacman-wrapper
-COPY        --link ./scripts/prepare-initializer.sh /usr/bin/prepare-initializer
-COPY        --link ./scripts/retrieve-application.sh /usr/bin/retrieve-application
-COPY        --link ./scripts/execute-command.sh /usr/bin/execute-command
-COPY        --link ./scripts/run-command.sh /usr/bin/run-command
+COPY        --link ./scripts/configure-user.sh         /usr/bin/configure-user
+COPY        --link ./scripts/crypt.sh                  /usr/bin/crypt
+COPY        --link ./scripts/decrypt.sh                /usr/bin/decrypt
+COPY        --link ./scripts/encrypt.sh                /usr/bin/encrypt
+COPY        --link ./scripts/initialize.sh             /usr/bin/initialize
+COPY        --link ./scripts/pacman-wrapper.sh         /usr/bin/pacman-wrapper
+COPY        --link ./scripts/prepare-initializer.sh    /usr/bin/prepare-initializer
+COPY        --link ./scripts/retrieve-application.sh   /usr/bin/retrieve-application
+COPY        --link ./scripts/execute-command.sh        /usr/bin/execute-command
+COPY        --link ./scripts/run-command.sh            /usr/bin/run-command
 ## endregion
 ## region configure user
 RUN \
@@ -425,6 +425,7 @@ RUN \
 ## endregion
 USER        root
 
+RUN         get-bashlink
 RUN         retrieve-application
 RUN         env >/etc/default_environment
 ## region bootstrap application

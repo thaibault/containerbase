@@ -4,6 +4,9 @@
 
 set -e
 
+source /usr/lib/bashlink/module.sh
+bl.module.import logging
+
 source prepare-initializer "$@"
 
 echo Application started.
@@ -12,16 +15,16 @@ source configure-runtime-user
 
 source decrypt "$@"
 
-echo \
+bl.logging.info \
     "Decrypted content of encrypted folder \"$ENCRYPTED_PATHS\" located at" \
     "\"$DECRYPTED_PATHS\" is:"
 
 tree "$DECRYPTED_PATHS"
 
-echo \
+bl.logging.info \
     "Example file content of \"${DECRYPTED_PATHS}secret-configuration.txt\"" \
     "is \"$(cat "${DECRYPTED_PATHS}secret-configuration.txt")\"."
 
-echo First level meta file data are:
+bl.logging.info First level meta file data are:
 
 ls --all --human-readable -l "$DECRYPTED_PATHS"

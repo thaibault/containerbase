@@ -5,13 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"bashlink@npm:^1.0.269":
-  version: 1.0.269
-  resolution: "bashlink@npm:1.0.269"
+"bashlink@npm:^1.0.271":
+  version: 1.0.271
+  resolution: "bashlink@npm:1.0.271"
   bin:
     bashlink-doctest: doctest.sh
     bashlink-document: documentation.sh
-  checksum: 10c0/8c329dc17e7dff6366205f365d42d6d4d178564b3fba7b0a90b9815fefab6e6641bbe17fb9c5980b9ac17f491ebaa5768da9f76c8771896df61cb4a854c93f73
+  checksum: 10c0/d09a6c98fb9a477070c4853b742eff37d2a0e9aa3e4b079a30a0787c2a42a8221d418c2ece4b49d9e9b9b91c0a92859ca337145af7981da77515ab8c69be769f
   languageName: node
   linkType: hard
 
@@ -19,16 +19,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "containerbase@workspace:."
   dependencies:
-    bashlink: "npm:^1.0.269"
-    documentation-website: "npm:^1.0.394"
+    bashlink: "npm:^1.0.271"
+    documentation-website: "npm:^1.0.395"
   languageName: unknown
   linkType: soft
 
-"documentation-website@npm:^1.0.394":
-  version: 1.0.394
-  resolution: "documentation-website@npm:1.0.394"
+"documentation-website@npm:^1.0.395":
+  version: 1.0.395
+  resolution: "documentation-website@npm:1.0.395"
   bin:
     documentation-website: build/deploy.js
-  checksum: 10c0/559cb58d7dd20c387e6147885c43a50a5950bb308e2798f0995dff4948449eea6e2dcaf875185e2b59896a88570f9f583bdbcb5792c898e70f694f15358f04a3
+  checksum: 10c0/98c180824a275c7e430f53588dc907ab546de0c06f318ea9a1222242c0e337c4c8f97594b96a4797ea7c1c4fb8f286b4b4ad2ba293c4ce516a6ae088b4eb243d
   languageName: node
   linkType: hard
