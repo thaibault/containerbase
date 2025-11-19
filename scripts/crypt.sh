@@ -78,14 +78,16 @@ for file_path in $FILES; do
             --output "${outfile/.gpg/}" \
             --verbose \
             "${GPG_ARGUMENTS[@]}" \
-            "$file_path"
+            "$file_path" \
+                1>/dev/null
     else
         gpg \
             --symmetric \
             --output "${outfile}.gpg" \
             --verbose \
             "${GPG_ARGUMENTS[@]}" \
-            "$file_path"
+            "$file_path" \
+                1>/dev/null
     fi
 done
 
