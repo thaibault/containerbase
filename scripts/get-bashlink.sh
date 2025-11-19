@@ -35,11 +35,9 @@ else
         # shellcheck disable=SC1091
         source "${CB_BASHLNK_PATH}module.sh"
     else
-        echo A "$CB_BASHLNK_PATH"
         mkdir --parents "$CB_BASHLNK_PATH"
         declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
         declare -gr BL_MODULE_AVOID_TIDY_UP_PATH=true
-        echo B "$CB_BASHLNK_PATH"
         if ! (
             [ -f "${CB_BASHLNK_PATH}module.sh" ] || \
             cb.download \
