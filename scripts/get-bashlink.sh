@@ -31,27 +31,25 @@ if [ -f "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh" ]; then
     source "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh"
 else
     declare -g CB_BASHLINK_PATH=/usr/lib/bashlink/
-    if [ -f "${CB_BASHLNK_PATH}module.sh" ]; then
+    if [ -f "${CB_BASHLINK_PATH}module.sh" ]; then
         # shellcheck disable=SC1091
-        source "${CB_BASHLNK_PATH}module.sh"
+        source "${CB_BASHLINK_PATH}module.sh"
     else
-        echo C "$CB_BASHLNK_PATH"
-        mkdir --parents "$CB_BASHLNK_PATH"
+        mkdir --parents "$CB_BASHLINK_PATH"
         declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
         declare -gr BL_MODULE_AVOID_TIDY_UP_PATH=true
-        echo D
         if ! (
-            [ -f "${CB_BASHLNK_PATH}module.sh" ] || \
+            [ -f "${CB_BASHLINK_PATH}module.sh" ] || \
             cb.download \
                 https://raw.githubusercontent.com/thaibault/bashlink/main/module.sh \
-                    >"${CB_BASHLNK_PATH}module.sh"
+                    >"${CB_BASHLINK_PATH}module.sh"
         ); then
             echo Needed bashlink library could not be retrieved. 1>&2
-            rm --force  --recursive "$BR_BASHLNK_PATH"
+            rm --force  --recursive "$BR_BASHLINK_PATH"
             exit 1
         fi
         # shellcheck disable=SC1091
-        source "${CB_BASHLNK_PATH}module.sh"
+        source "${CB_BASHLINK_PATH}module.sh"
     fi
 fi
 
