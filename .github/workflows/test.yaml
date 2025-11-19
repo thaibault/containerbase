@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/thaibault/containerbase:latest
 
-    # NOTE: Theses environment variables are only needed to test the encrypt
+    # NOTE: These environment variables are only needed to test the encrypt
     # script.
     env:
       DECRYPTED_PATHS: testSimple/
@@ -29,9 +29,7 @@ jobs:
       PASSWORD_FILE_PATHS: testAdvanced/.encryptionPassword
 
     steps:
-      - uses: actions/checkout@v3.1.0
-
-      - run: ./scripts/encrypt.sh
+      - run: encrypt
       - run: ls --all --human-readable -l testEncryption
 
       - run: rm --force --recursive testEncryption
