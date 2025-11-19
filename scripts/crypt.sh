@@ -76,20 +76,16 @@ for file_path in $FILES; do
         gpg \
             --decrypt \
             --output "${outfile/.gpg/}" \
-            --verbose \
             "${GPG_ARGUMENTS[@]}" \
             "$file_path" \
                 1>/dev/null
     else
-        echo JAU1
         gpg \
             --symmetric \
             --output "${outfile}.gpg" \
-            --verbose \
             "${GPG_ARGUMENTS[@]}" \
             "$file_path" \
-                &>/dev/null
-        echo JAU2
+                1>/dev/null
     fi
 done
 
