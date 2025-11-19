@@ -9,8 +9,7 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-source ./bashlink/module.sh
-bl.module.import bashlink.logging
+source get-bashlink
 
 # crypt -d -p PASSWORD /from /to
 # crypt --decrypt --password PASSWORD /from /to
@@ -79,14 +78,16 @@ for file_path in $FILES; do
             --output "${outfile/.gpg/}" \
             --verbose \
             "${GPG_ARGUMENTS[@]}" \
-            "$file_path"
+            "$file_path" \
+                1>/dev/null
     else
         gpg \
             --symmetric \
             --output "${outfile}.gpg" \
             --verbose \
             "${GPG_ARGUMENTS[@]}" \
-            "$file_path"
+            "$file_path" \
+                1>/dev/null
     fi
 done
 
