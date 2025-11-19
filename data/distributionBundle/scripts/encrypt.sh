@@ -13,8 +13,7 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155
-source ./bashlink/module.sh
-bl.module.import bashlink.logging
+source get-bashlink
 
 # region convert environment variables given as string into local arrays
 for name in \
