@@ -9,7 +9,11 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-source get-bashlink
+if [ -f ./scripts/get-bashlink.sh ]; then
+    source ./scripts/get-bashlink.sh
+else
+    source get-bashlink
+fi
 
 # crypt -d -p PASSWORD /from /to
 # crypt --decrypt --password PASSWORD /from /to
