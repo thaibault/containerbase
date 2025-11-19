@@ -62,7 +62,7 @@ IFS=$'\n'
 set -f
 
 for file_path in $FILES; do
-    echo "Process \"$file_path\"."
+    echo "Process \"$file_path\"." bl.logging.get_level
     bl.logging.info "Process \"$file_path\"."
 
     outfile="${file_path/$source_path/$target_path}"

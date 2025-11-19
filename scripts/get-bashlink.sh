@@ -54,6 +54,7 @@ else
 fi
 
 bl.module.import bashlink.logging
+bl.logging.set_level info
 
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
