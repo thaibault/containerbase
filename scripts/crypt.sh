@@ -88,7 +88,7 @@ for file_path in $FILES; do
             --verbose \
             "${GPG_ARGUMENTS[@]}" \
             "$file_path" \
-                1>/dev/null
+                &>/dev/null
         echo JAU2
     fi
 done
