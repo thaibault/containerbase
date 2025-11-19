@@ -13,11 +13,7 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155
-if [ -f ./scripts/get-bashlink.sh ]; then
-    source ./scripts/get-bashlink.sh
-else
-    source get-bashlink
-fi
+source get-bashlink
 
 # region convert environment variables given as string into local arrays
 for name in \

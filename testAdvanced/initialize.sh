@@ -4,12 +4,11 @@
 
 set -e
 
-source /usr/lib/bashlink/module.sh
-bl.module.import logging
+source get-bashlink
 
 source prepare-initializer "$@"
 
-echo Application started.
+bl.logging.info Application started.
 
 source configure-runtime-user
 

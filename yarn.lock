@@ -5,13 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"bashlink@npm:^1.0.271":
-  version: 1.0.271
-  resolution: "bashlink@npm:1.0.271"
+"bashlink@npm:^1.0.272":
+  version: 1.0.272
+  resolution: "bashlink@npm:1.0.272"
   bin:
     bashlink-doctest: doctest.sh
     bashlink-document: documentation.sh
-  checksum: 10c0/d09a6c98fb9a477070c4853b742eff37d2a0e9aa3e4b079a30a0787c2a42a8221d418c2ece4b49d9e9b9b91c0a92859ca337145af7981da77515ab8c69be769f
+  checksum: 10c0/89270abaf61b08c4f054a55941b7c87f895d179bab63edf20f9d27ff30cbc5e561b097eb8821675da651245439a2ec898db94bfd68a5a4b6a486995d2ca3acc9
   languageName: node
   linkType: hard
 
@@ -19,7 +19,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "containerbase@workspace:."
   dependencies:
-    bashlink: "npm:^1.0.271"
+    bashlink: "npm:^1.0.272"
     documentation-website: "npm:^1.0.395"
   languageName: unknown
   linkType: soft
