@@ -26,15 +26,18 @@ cb_download() {
     return $?
 }
 
+echo A
 if [ -f "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh" ]; then
     # shellcheck disable=SC1090
     source "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh"
 else
+    echo B
     declare -g CB_BASHLINK_PATH=/usr/lib/bashlink/
     if [ -f "${CB_BASHLNK_PATH}module.sh" ]; then
         # shellcheck disable=SC1091
         source "${CB_BASHLNK_PATH}module.sh"
     else
+        echo C
         mkdir --parents "$CB_BASHLNK_PATH"
         declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
         declare -gr BL_MODULE_AVOID_TIDY_UP_PATH=true
