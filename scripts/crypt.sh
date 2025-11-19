@@ -81,6 +81,7 @@ for file_path in $FILES; do
             "$file_path" \
                 1>/dev/null
     else
+        echo JAU1
         gpg \
             --symmetric \
             --output "${outfile}.gpg" \
@@ -88,6 +89,7 @@ for file_path in $FILES; do
             "${GPG_ARGUMENTS[@]}" \
             "$file_path" \
                 1>/dev/null
+        echo JAU2
     fi
 done
 
