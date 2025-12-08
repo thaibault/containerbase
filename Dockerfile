@@ -404,7 +404,7 @@ RUN \
                 --uid 7777 && \
             echo \
                 -e \
-                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/pacman-key,/usr/bin/rm" \
                 >>/etc/sudoers
 ## endregion
 USER        $INSTALLER_USER_NAME
