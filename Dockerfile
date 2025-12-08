@@ -410,19 +410,27 @@ RUN \
 USER        $INSTALLER_USER_NAME
 ## region install and configure aura
             # Alternate architecture would be reflected as "aarch64".
+            # NOTE: Pacman has issues to understand that "cargo" is provided by
+            # "rust" package. Thus we need to workaround this by installing
+            # "rust" manually before building "aura".
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
                 git clone https://aur.archlinux.org/aura.git && \
                 pushd aura && \
                 /usr/bin/makepkg --syncdeps && \
+                sed \
+                    --in-place \
+                    --regexp-extended \
+                    's/(makedepends=\("cargo"\))/#\1/' \
+                    ./PKGBUILD && \
                 pacman \
                     --disable-download-timeout \
                     --needed \
                     --noconfirm \
                     --noprogressbar \
                     --sync \
-                    cargo && \
+                    rust && \
                 pacman \
                     -U \
                     --needed \
@@ -435,7 +443,7 @@ RUN \
                     --noconfirm \
                     --nosave \
                     --recursive \
-                    cargo && \
+                    rust && \
                 popd && \
                 rm --force --recursive aura && \
                 popd; \
