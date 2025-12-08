@@ -409,10 +409,11 @@ RUN \
 ## endregion
 USER        $INSTALLER_USER_NAME
 ## region install and configure aura
-            # Alternate architecture would be reflected as "aarch64".
+            # NOTE: Alternate architecture would be reflected as "aarch64".
             # NOTE: Pacman has issues to understand that "cargo" is provided by
             # "rust" package. Thus we need to workaround this by installing
-            # "rust" manually before building "aura".
+            # "rust" manually before building "aura" and hide the "makedepends"
+            # for "cargo" in the "PKGBUILD" file.
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
