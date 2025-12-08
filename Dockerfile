@@ -137,7 +137,7 @@ Include = /etc/pacman.d/mirrorlist\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
-                    'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
+                    'Server = http://de.mirror.archlinuxarm.org/aarch64/$repo' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
             if \
