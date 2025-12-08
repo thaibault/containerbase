@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "bashlink": "^1.0.273",
-    "documentation-website": "^1.0.396"
+    "documentation-website": "^1.0.397"
   },
   "documentationWebsite": {
     "name": "containerbase",
