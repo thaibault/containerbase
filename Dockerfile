@@ -105,6 +105,8 @@ RUN \
             fi
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
+            # NOTE: "SigLevel = Required DatabaseOptional" can be removed for non arm* architecture as soon as signed
+            # database packages are supported.
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 sed \
