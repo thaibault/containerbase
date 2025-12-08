@@ -131,6 +131,8 @@ Include = /etc/pacman.d/mirrorlist' \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
                 echo -e '\n\
+SigLevel = Required DatabaseOptional\n\
+\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
