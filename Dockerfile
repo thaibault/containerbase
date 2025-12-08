@@ -137,7 +137,7 @@ Include = /etc/pacman.d/mirrorlist\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
-                    'Server = http://de.mirror.archlinuxarm.org/aarch64/$repo' \
+                    'Server = https://fastly.mirror.pkgbuild.com/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
             if \
