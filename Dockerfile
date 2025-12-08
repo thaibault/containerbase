@@ -424,7 +424,7 @@ RUN \
                     --regexp-extended \
                     's/(makedepends=\("cargo"\))/#\1/' \
                     ./PKGBUILD && \
-                pacman \
+                sudo pacman \
                     --disable-download-timeout \
                     --needed \
                     --noconfirm \
@@ -432,13 +432,13 @@ RUN \
                     --sync \
                     rust && \
                 /usr/bin/makepkg --syncdeps && \
-                pacman \
+                sudo pacman \
                     -U \
                     --needed \
                     --noconfirm \
                     --rmdeps \
                     *.pkg.tar.zst && \
-                pacman \
+                sudo pacman \
                     --remove \
                     --cascade \
                     --noconfirm \
