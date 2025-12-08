@@ -425,6 +425,7 @@ RUN \
                     --regexp-extended \
                     's/(makedepends=\("cargo"\))/#\1/' \
                     ./PKGBUILD && \
+                cat ./PKGBUILD && \
                 pacman \
                     --disable-download-timeout \
                     --needed \
