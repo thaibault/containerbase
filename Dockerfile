@@ -415,13 +415,13 @@ RUN \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
                 git clone https://aur.archlinux.org/aura.git && \
                 pushd aura && \
-                /usr/bin/makepkg \
-                    --install \
+                /usr/bin/makepkg --syncdeps && \
+                pacman \
+                    -U \
                     --needed \
                     --noconfirm \
                     --rmdeps \
-                    --skippgpcheck \
-                    --syncdeps && \
+                    *.pkg.tar.zst && \
                 popd && \
                 rm --force --recursive aura && \
                 popd; \
