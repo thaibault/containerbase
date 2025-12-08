@@ -417,11 +417,25 @@ RUN \
                 pushd aura && \
                 /usr/bin/makepkg --syncdeps && \
                 pacman \
+                    --disable-download-timeout \
+                    --needed \
+                    --noconfirm \
+                    --noprogressbar \
+                    --sync \
+                    rust && \
+                pacman \
                     -U \
                     --needed \
                     --noconfirm \
                     --rmdeps \
                     *.pkg.tar.zst && \
+                pacman \
+                    --remove \
+                    --cascade \
+                    --noconfirm \
+                    --nosave \
+                    --recursive \
+                    rust && \
                 popd && \
                 rm --force --recursive aura && \
                 popd; \
