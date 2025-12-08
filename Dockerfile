@@ -414,6 +414,14 @@ RUN \
 USER        $INSTALLER_USER_NAME
 ## region install and configure aura
             # NOTE: Alternate architecture would be reflected as "aarch64".
+            # NOTE: Alternate version when more control about pacman's install
+            # call is needed:
+            #/usr/bin/makepkg --rmdeps --syncdeps && \
+            #sudo pacman \
+            #   -U \
+            #   --needed \
+            #   --noconfirm \
+            #   *.pkg.tar.zst && \
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
