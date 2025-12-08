@@ -431,12 +431,11 @@ RUN \
                     --noprogressbar \
                     --sync \
                     rust && \
-                /usr/bin/makepkg --syncdeps && \
+                /usr/bin/makepkg --rmdeps --syncdeps && \
                 sudo pacman \
                     -U \
                     --needed \
                     --noconfirm \
-                    --rmdeps \
                     *.pkg.tar.zst && \
                 sudo pacman \
                     --remove \
