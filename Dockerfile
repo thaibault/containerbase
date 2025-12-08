@@ -118,6 +118,9 @@ RUN \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
+LocalFileSigLevel = Optional\n\
+SigLevel = Required DatabaseOptional TrustedOnly\n\
+\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
@@ -134,7 +137,8 @@ Include = /etc/pacman.d/mirrorlist' \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
                 echo -e '\n\
-#SigLevel = Required DatabaseOptional TrustedOnly\n\
+LocalFileSigLevel = Optional\n\
+SigLevel = Required DatabaseOptional TrustedOnly\n\
 \n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
