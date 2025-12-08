@@ -432,8 +432,8 @@ RUN \
                     --sync \
                     rust && \
                 /usr/bin/makepkg --rmdeps --syncdeps && \
-                pacman-key --init && \
-                pacman-key --populate && \
+                sudo pacman-key --init && \
+                sudo pacman-key --populate && \
                 sudo pacman \
                     -U \
                     --needed \
