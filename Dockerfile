@@ -105,8 +105,9 @@ RUN \
             fi
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
-            # NOTE: "SigLevel = Required DatabaseOptional" can be removed for non arm* architecture as soon as signed
-            # database packages are supported.
+            # NOTE: "SigLevel = Required DatabaseOptional TrustedOnly" can be
+            # removed for non arm* architecture as soon as signed database
+            # packages are supported.
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 sed \
@@ -117,6 +118,9 @@ RUN \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
+LocalFileSigLevel = Optional\n\
+SigLevel = Required DatabaseOptional TrustedOnly\n\
+\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
@@ -133,7 +137,8 @@ Include = /etc/pacman.d/mirrorlist' \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
                 echo -e '\n\
-SigLevel = Required DatabaseOptional\n\
+LocalFileSigLevel = Optional\n\
+SigLevel = Required DatabaseOptional TrustedOnly\n\
 \n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
@@ -403,12 +408,20 @@ RUN \
                 --uid 7777 && \
             echo \
                 -e \
-                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/pacman-key,/usr/bin/rm" \
                 >>/etc/sudoers
 ## endregion
 USER        $INSTALLER_USER_NAME
 ## region install and configure aura
-            # Alternat architecture would be reflected as "aarch64".
+            # NOTE: Alternate architecture would be reflected as "aarch64".
+            # NOTE: Alternate version when more control about pacman's install
+            # call is needed:
+            #/usr/bin/makepkg --rmdeps --syncdeps && \
+            #sudo pacman \
+            #   -U \
+            #   --needed \
+            #   --noconfirm \
+            #   *.pkg.tar.zst && \
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
