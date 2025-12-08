@@ -409,7 +409,7 @@ RUN \
 ## endregion
 USER        $INSTALLER_USER_NAME
 ## region install and configure aura
-            # Alternat architecture would be reflected as "aarch64".
+            # Alternate architecture would be reflected as "aarch64".
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
@@ -422,7 +422,7 @@ RUN \
                     --noconfirm \
                     --noprogressbar \
                     --sync \
-                    rust && \
+                    cargo && \
                 pacman \
                     -U \
                     --needed \
@@ -435,7 +435,7 @@ RUN \
                     --noconfirm \
                     --nosave \
                     --recursive \
-                    rust && \
+                    cargo && \
                 popd && \
                 rm --force --recursive aura && \
                 popd; \
