@@ -419,13 +419,12 @@ RUN \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
                 git clone https://aur.archlinux.org/aura.git && \
                 pushd aura && \
-                /usr/bin/makepkg --syncdeps && \
                 sed \
                     --in-place \
                     --regexp-extended \
                     's/(makedepends=\("cargo"\))/#\1/' \
                     ./PKGBUILD && \
-                cat ./PKGBUILD && \
+                /usr/bin/makepkg --syncdeps && \
                 pacman \
                     --disable-download-timeout \
                     --needed \
