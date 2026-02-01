@@ -237,8 +237,6 @@ RUN \
             pacman-key --init && \
             pacman-key --populate
 ## region install needed base packages
-            # NOTE: openssl-1.1 is needed by arm pacman but not provided per
-            # default.
 RUN \
             pacman \
                 --disable-download-timeout \
@@ -247,7 +245,6 @@ RUN \
                 --refresh \
                 --sync \
                 base \
-                openssl-1.1 \
                 nawk && \
             clean-up
             # Update mirrorlist if existing
