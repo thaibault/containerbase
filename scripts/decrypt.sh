@@ -58,7 +58,7 @@ if [[ "$DECRYPT" != false ]]; then
         then
             "$@"
         else
-            su "$MAIN_USER_NAME" --group "$MAIN_USER_GROUP_NAME" -c "$*"
+            su --group "$MAIN_USER_GROUP_NAME" "$MAIN_USER_NAME" -c "$*"
         fi
     }
     # region decrypt security related artefacts needed at runtime
