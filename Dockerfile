@@ -234,10 +234,10 @@ COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
 RUN \
             rm --force --recursive /etc/pacman.d/gnupg && \
-            # NOTE: We need to provide the unpreviliged user "alpm" for \
+            # NOTE: We need to provide the unprivileged user "alpm" for \
             # pacman to work properly. \
-            sudo groupadd --gid 701 alpm && \
-            sudo useradd \
+            groupadd --gid 701 alpm && \
+            useradd \
                 --uid 701 \
                 --gid alpm \
                 --home / \
