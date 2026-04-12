@@ -236,7 +236,8 @@ RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.
             # to work properly.
 RUN \
             getent group alpm &>/dev/null || \
-            groupadd --gid 701 alpm && \
+            groupadd --gid 701 alpm
+RUN         getent alpm &>/dev/null || \
             useradd \
                 --uid 701 \
                 --gid alpm \
