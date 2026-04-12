@@ -232,16 +232,18 @@ COPY        --link ./scripts/get-bashlink.sh      /usr/bin/get-bashlink
 COPY        --link ./scripts/clean-up.sh          /usr/bin/clean-up
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
+            # NOTE: We need to provide the unprivileged user "alpm" for pacman
+            # to work properly.
 RUN \
-            rm --force --recursive /etc/pacman.d/gnupg && \
-            # NOTE: We need to provide the unprivileged user "alpm" for \
-            # pacman to work properly. \
+            getent group admin &>/dev/null || \
             groupadd --gid 701 alpm && \
             useradd \
                 --uid 701 \
                 --gid alpm \
                 --home / \
-                --shell /usr/bin/nologin alpm && \
+                --shell /usr/bin/nologin alpm
+RUN \
+            rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
             pacman-key --populate
 ## region install needed base packages
