@@ -235,13 +235,14 @@ RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.
             # NOTE: We need to provide the unprivileged user "alpm" for pacman
             # to work properly.
 RUN \
-            getent group admin &>/dev/null || \
+            getent group alpm &>/dev/null || \
             groupadd --gid 701 alpm && \
             useradd \
                 --uid 701 \
                 --gid alpm \
                 --home / \
-                --shell /usr/bin/nologin alpm
+                --shell /usr/bin/nologin \
+                alpm
 RUN \
             rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
