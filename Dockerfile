@@ -234,6 +234,14 @@ COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
 RUN \
             rm --force --recursive /etc/pacman.d/gnupg && \
+            # NOTE: We need to provide the unpreviliged user "alpm" for \
+            # pacman to work properly. \
+            sudo groupadd --gid 701 alpm && \
+            sudo useradd \
+                --uid 701 \
+                --gid alpm \
+                --home / \
+                --shell /usr/bin/nologin alpm && \
             pacman-key --init && \
             pacman-key --populate
 ## region install needed base packages
@@ -282,17 +290,17 @@ RUN \
                 --sync \
                 --sysupgrade && \
             clean-up && \
-            # Configure locale.
+            # Configure locale. \
             sed \
                 --regexp-extended \
                 --expression 's/#(en_US.UTF-8 UTF-8)/\1/' \
                 --in-place \
                 /etc/locale.gen && \
             locale-gen && \
-## endregion
-## region install needed packages
-            # NOTE: "neovim" is needed for debugging scenarios.
-            # NOTE: "openssh" to retrieve files securely e.g. via git.
+## endregion \
+## region install needed packages \
+            # NOTE: "neovim" is needed for debugging scenarios. \
+            # NOTE: "openssh" to retrieve files securely e.g. via git. \
             pacman \
                 --disable-download-timeout \
                 --needed \
@@ -394,10 +402,10 @@ COPY        --link ./scripts/run-command.sh            /usr/bin/run-command
 ## region configure user
 RUN \
             configure-user && \
-            # We cannot use aura as root user so we introduce an install user.
-            # Create specified user with not yet existing name and id.
-            # NOTE: Use exotic user id reduce risk of id clashing when mapping
-            # to hosts user id at runtime.
+            # We cannot use aura as root user so we introduce an install \
+            # user. Create specified user with not yet existing name and id. \
+            # NOTE: Use exotic user id reduce risk of id clashing when \
+            # mapping to hosts user id at runtime. \
             useradd \
                 --create-home \
                 --no-user-group \
