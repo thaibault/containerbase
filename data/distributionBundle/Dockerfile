@@ -105,6 +105,9 @@ RUN \
             fi
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
+            # NOTE: "SigLevel = Required DatabaseOptional TrustedOnly" can be
+            # removed for non arm* architecture as soon as signed database
+            # packages are supported.
 RUN \
             if [ "$BASE_IMAGE" = '' ] && [[ "$TARGETARCH" == 'arm*' ]]; then \
                 sed \
@@ -115,6 +118,9 @@ RUN \
                 REPOSITORY=archlinuxarm && \
                 KEYRING_PACKAGE_URL="http://mirror.archlinuxarm.org/aarch64/core/${REPOSITORY}-keyring-20240419-1-any.pkg.tar.xz" && \
                 echo -e '\n\
+LocalFileSigLevel = Optional\n\
+SigLevel = Required DatabaseOptional TrustedOnly\n\
+\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
@@ -131,13 +137,16 @@ Include = /etc/pacman.d/mirrorlist' \
                 REPOSITORY=archlinux && \
                 KEYRING_PACKAGE_URL="https://archlinux.org/packages/core/any/${REPOSITORY}-keyring/download" && \
                 echo -e '\n\
+LocalFileSigLevel = Optional\n\
+SigLevel = Required DatabaseOptional TrustedOnly\n\
+\n\
 [core]\n\
 Include = /etc/pacman.d/mirrorlist\n\
 [extra]\n\
 Include = /etc/pacman.d/mirrorlist' \
                     >> /etc/pacman.conf && \
                 echo \
-                    'Server = http://mirrors.xtom.com/archlinux/$repo/os/$arch' \
+                    'Server = https://fastly.mirror.pkgbuild.com/$repo/os/$arch' \
                     > /etc/pacman.d/mirrorlist; \
             fi && \
             if \
@@ -223,13 +232,23 @@ COPY        --link ./scripts/get-bashlink.sh      /usr/bin/get-bashlink
 COPY        --link ./scripts/clean-up.sh          /usr/bin/clean-up
 COPY        --link ./pacman-conf.d-noextract.conf /etc/pacman.d/noextract.conf
 RUN         echo -e '\n\nInclude = /etc/pacman.d/noextract.conf' >> /etc/pacman.conf
+            # NOTE: We need to provide the unprivileged user "alpm" for pacman
+            # to work properly.
+RUN \
+            getent group alpm &>/dev/null || \
+            groupadd --gid 701 alpm
+RUN         id alpm &>/dev/null || \
+            useradd \
+                --uid 701 \
+                --gid alpm \
+                --home / \
+                --shell /usr/bin/nologin \
+                alpm
 RUN \
             rm --force --recursive /etc/pacman.d/gnupg && \
             pacman-key --init && \
             pacman-key --populate
 ## region install needed base packages
-            # NOTE: openssl-1.1 is needed by arm pacman but not provided per
-            # default.
 RUN \
             pacman \
                 --disable-download-timeout \
@@ -238,7 +257,6 @@ RUN \
                 --refresh \
                 --sync \
                 base \
-                openssl-1.1 \
                 nawk && \
             clean-up
             # Update mirrorlist if existing
@@ -276,17 +294,17 @@ RUN \
                 --sync \
                 --sysupgrade && \
             clean-up && \
-            # Configure locale.
+            # Configure locale. \
             sed \
                 --regexp-extended \
                 --expression 's/#(en_US.UTF-8 UTF-8)/\1/' \
                 --in-place \
                 /etc/locale.gen && \
             locale-gen && \
-## endregion
-## region install needed packages
-            # NOTE: "neovim" is needed for debugging scenarios.
-            # NOTE: "openssh" to retrieve files securely e.g. via git.
+## endregion \
+## region install needed packages \
+            # NOTE: "neovim" is needed for debugging scenarios. \
+            # NOTE: "openssh" to retrieve files securely e.g. via git. \
             pacman \
                 --disable-download-timeout \
                 --needed \
@@ -388,10 +406,10 @@ COPY        --link ./scripts/run-command.sh            /usr/bin/run-command
 ## region configure user
 RUN \
             configure-user && \
-            # We cannot use aura as root user so we introduce an install user.
-            # Create specified user with not yet existing name and id.
-            # NOTE: Use exotic user id reduce risk of id clashing when mapping
-            # to hosts user id at runtime.
+            # We cannot use aura as root user so we introduce an install \
+            # user. Create specified user with not yet existing name and id. \
+            # NOTE: Use exotic user id reduce risk of id clashing when \
+            # mapping to hosts user id at runtime. \
             useradd \
                 --create-home \
                 --no-user-group \
@@ -399,12 +417,20 @@ RUN \
                 --uid 7777 && \
             echo \
                 -e \
-                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/rm" \
+                "\n\n%users ALL=(ALL) ALL\n${INSTALLER_USER_NAME} ALL=(ALL) NOPASSWD:/usr/bin/pacman,/usr/bin/pacman-key,/usr/bin/rm" \
                 >>/etc/sudoers
 ## endregion
 USER        $INSTALLER_USER_NAME
 ## region install and configure aura
-            # Alternat architecture would be reflected as "aarch64".
+            # NOTE: Alternate architecture would be reflected as "aarch64".
+            # NOTE: Alternate version when more control about pacman's install
+            # call is needed:
+            #/usr/bin/makepkg --rmdeps --syncdeps && \
+            #sudo pacman \
+            #   -U \
+            #   --needed \
+            #   --noconfirm \
+            #   *.pkg.tar.zst && \
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
