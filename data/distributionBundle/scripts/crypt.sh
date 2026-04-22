@@ -76,7 +76,7 @@ for file_path in $FILES; do
         gpg \
             --decrypt \
             --output "${outfile/.gpg/}" \
-            --verbose \
+            --quiet \
             "${GPG_ARGUMENTS[@]}" \
             "$file_path" \
                 1>/dev/null
@@ -84,7 +84,7 @@ for file_path in $FILES; do
         gpg \
             --symmetric \
             --output "${outfile}.gpg" \
-            --verbose \
+            --quiet \
             "${GPG_ARGUMENTS[@]}" \
             "$file_path" \
                 1>/dev/null
