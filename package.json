@@ -43,8 +43,7 @@
     "bashlink": "^1.0.279",
     "web-documentation": "^1.0.2"
   },
-  "documentationWebsite": {
-    "name": "containerbase",
+  "webDocumentation": {
     "tagline": "containerize your application",
     "trackingCode": "UA-40192634-TODO"
   },
