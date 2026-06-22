@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "bashlink": "^1.0.279",
-    "web-documentation": "^1.0.2"
+    "web-documentation": "^1.0.40"
   },
   "webDocumentation": {
     "tagline": "containerize your application",
