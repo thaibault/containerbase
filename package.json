@@ -40,8 +40,8 @@
     "update:documentation": "web-documentation"
   },
   "devDependencies": {
-    "bashlink": "^1.0.279",
-    "web-documentation": "^1.0.40"
+    "bashlink": "^1.0.280",
+    "web-documentation": "^1.0.45"
   },
   "webDocumentation": {
     "tagline": "containerize your application",
