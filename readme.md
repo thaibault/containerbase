@@ -6,7 +6,7 @@ Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
 License
 -------
 
-This library written by Torben Sickert stand under a creative commons naming
+This library written by Torben Sickert stands under a creative commons naming
 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 endregion -->
 
@@ -22,7 +22,7 @@ Project status
 [![test](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/test.yaml?label=test&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/test.yaml)
 
 [![deploy web documentation](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/deploy-web-documentation.yaml?label=deploy%20web%20documentation&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/deploy-web-documentation.yaml)
-[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/containerbase.svg?label=documentation-website&style=for-the-badge)](https://torben.website/containerbase)
+[![web documentation](https://img.shields.io/website-up-down-green-red/https/torben.website/containerbase.svg?label=web-documentation&style=for-the-badge)](https://torben.website/containerbase)
 
 <!--|deDE:Einsatz-->
 Use case
