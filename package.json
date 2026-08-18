@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "bashlink": "^1.0.280",
-    "web-documentation": "^1.0.45"
+    "web-documentation": "^1.0.46"
   },
   "engines": {
     "node": ">=24",
