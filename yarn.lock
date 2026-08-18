@@ -20,15 +20,15 @@ __metadata:
   resolution: "containerbase@workspace:."
   dependencies:
     bashlink: "npm:^1.0.280"
-    web-documentation: "npm:^1.0.46"
+    web-documentation: "npm:^1.0.47"
   languageName: unknown
   linkType: soft
 
-"web-documentation@npm:^1.0.46":
-  version: 1.0.46
-  resolution: "web-documentation@npm:1.0.46"
+"web-documentation@npm:^1.0.47":
+  version: 1.0.47
+  resolution: "web-documentation@npm:1.0.47"
   bin:
     web-documentation: build/deploy.js
-  checksum: 10c0/6728850ebf552e175e89128cd0bce572b6ff7ce0fc871d22d1c5c8474ed462c444e2957b2d26eb3cc624f9fccd0a59be2d519647c48320390bdc8bdb16902206
+  checksum: 10c0/cf7bfbe8541b9630885623fa74acf7a1b634b223e06bd7e90d6eb321561f59576967f779e6245e8875a2d90a46b82252cda7f1b129a9082c5cb75c9db5d96c3a
   languageName: node
   linkType: hard
