@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 # region header
-# Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+# Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
 # License
 # -------
@@ -14,7 +14,7 @@ pkgver=1.0.0
 pkgrel=1
 pkgdesc='docker base configuration'
 arch=(any)
-url=https://torben.website/containerbase
+url=https://tsickert.com/containerbase
 license=(CC-BY-3.0)
 depends=(bash docker)
 source=(base.yaml Dockerfile proxy.service)

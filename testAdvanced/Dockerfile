@@ -1,6 +1,6 @@
 FROM        ghcr.io/thaibault/containerbase:latest
 
-LABEL       maintainer="Torben Sickert <info@torben.website>"
+LABEL       maintainer="Torben Sickert <info@tsickert.com>"
 LABEL       Description="proxy" Vendor="thaibault products" Version="1.0"
 
 # This file is used to retrieve hosts application user and group id.
