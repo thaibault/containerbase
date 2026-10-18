@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile-upstream:master-labs
 # check=skip=SecretsUsedInArgOrEnv
 # region header
-# [Project page](https://torben.website/containerbase)
+# [Project page](https://tsickert.com/containerbase)
 
-# Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+# Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
 # License
 # -------
@@ -338,7 +338,7 @@ FROM        ${BASE_IMAGE:-${MULTI:+'menci/'}archlinux${MULTI:+'arm'}}
 
 LABEL       org.opencontainers.image.title='Multi-Architecture Arch Linux base Image'
 LABEL       org.opencontainers.image.description='Multi-Architecture unofficial containerd image of Arch Linux, a simple, lightweight Linux distribution aimed for flexibility with some utility helpers included.'
-LABEL       org.opencontainers.image.authors='Torben Sickert <info@torben.website> (@thaibault)'
+LABEL       org.opencontainers.image.authors='Torben Sickert <info@tsickert.com> (@thaibault)'
 LABEL       org.opencontainers.image.url=https://github.com/thaibault/containerbase/pkgs/container/containerbase
 LABEL       org.opencontainers.image.documentation=https://github.com/thaibault/containerbase/blob/main/readme.md
 LABEL       org.opencontainers.image.source=https://github.com/thaibault/containerbase
