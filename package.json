@@ -38,8 +38,8 @@
     "update:documentation": "web-documentation"
   },
   "devDependencies": {
-    "bashlink": "^1.0.280",
-    "web-documentation": "^1.0.64"
+    "bashlink": "^1.0.282",
+    "web-documentation": "^1.0.65"
   },
   "engines": {
     "node": ">=26",
