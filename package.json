@@ -1,6 +1,6 @@
 {
   "name": "containerbase",
-  "version": "1.0.256-2",
+  "version": "1.0.256-3",
   "description": "generic containerized application",
   "keywords": [
     "application",
