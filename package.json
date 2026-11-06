@@ -39,9 +39,9 @@
     "update:documentation": "web-documentation"
   },
   "devDependencies": {
-    "bashlink": "^1.0.291",
+    "bashlink": "^1.0.292",
     "shellcheck": "^4.1.0",
-    "web-documentation": "^1.0.65"
+    "web-documentation": "^1.0.72"
   },
   "engines": {
     "node": ">=26",
