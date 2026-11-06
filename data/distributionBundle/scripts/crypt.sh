@@ -9,13 +9,18 @@
 # This library written by Torben Sickert stands under a creative commons naming
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
+# shellcheck source=SCRIPTDIR/get-bashlink.sh
 source get-bashlink
 
 # crypt -d -p PASSWORD /from /to
 # crypt --decrypt --password PASSWORD /from /to
+# crypt --decrypt --password-file /path/to/password/file /from /to
+# NOTE: Prefer "--password-file" since a given password is visible in the
+# process list.
 
 decrypt=false
 password=''
+password_file_path=''
 source_path=''
 target_path=''
 while true; do
@@ -28,6 +33,12 @@ while true; do
         -p|--password)
             shift
             password="$1"
+            shift
+            ;;
+
+        -f|--password-file)
+            shift
+            password_file_path="$1"
             shift
             ;;
 
@@ -49,22 +60,19 @@ while true; do
     esac
 done
 
-GPG_ARGUMENTS=(--batch)
-if [[ "$password" != '' ]]; then
+GPG_ARGUMENTS=(--batch --pinentry-mode loopback)
+if [[ "$password_file_path" != '' ]]; then
+    GPG_ARGUMENTS+=(--passphrase-file "$password_file_path")
+elif [[ "$password" != '' ]]; then
     GPG_ARGUMENTS+=(--passphrase "$password")
 fi
 
-FILES=$(find "$source_path" -type f)
-
-# NOTE: Set internal field separator to the newline character to handle paths
-# with whitespaces.
-IFS=$'\n'
-set -f
-
-for file_path in $FILES; do
+failed=false
+while IFS= read -r -d '' file_path; do
     bl.logging.info "Process \"$file_path\"."
 
-    outfile="${file_path/$source_path/$target_path}"
+    # NOTE: Replace the leading source path literally (not as pattern).
+    outfile="${target_path}${file_path#"$source_path"}"
     directory_path="$(dirname "$outfile")"
     if [ ! -d "$directory_path" ]; then
         bl.logging.info "Create directory \"$directory_path\"."
@@ -73,23 +81,26 @@ for file_path in $FILES; do
     fi
 
     if "$decrypt"; then
-        gpg \
-            --decrypt \
-            --output "${outfile/.gpg/}" \
-            --quiet \
-            "${GPG_ARGUMENTS[@]}" \
-            "$file_path" \
-                1>/dev/null
+        gpg_arguments=(--decrypt --output "${outfile%.gpg}")
     else
-        gpg \
-            --symmetric \
-            --output "${outfile}.gpg" \
-            --quiet \
-            "${GPG_ARGUMENTS[@]}" \
-            "$file_path" \
-                1>/dev/null
+        gpg_arguments=(--symmetric --output "${outfile}.gpg")
     fi
-done
 
-unset IFS
-set +f
+    # NOTE: Prevent gpg from consuming the file list given via stdin.
+    if ! gpg \
+        "${gpg_arguments[@]}" \
+        --quiet \
+        "${GPG_ARGUMENTS[@]}" \
+        "$file_path" \
+            1>/dev/null \
+            </dev/null
+    then
+        bl.logging.error "Processing \"$file_path\" failed."
+
+        failed=true
+    fi
+done < <(find "$source_path" -type f -print0)
+
+if "$failed"; then
+    exit 1
+fi

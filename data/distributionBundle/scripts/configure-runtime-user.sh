@@ -10,6 +10,7 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155,SC2028
+# shellcheck source=SCRIPTDIR/get-bashlink.sh
 source get-bashlink
 
 if (( UID != 0 )); then
@@ -86,7 +87,7 @@ elif $USER_GROUP_ID_CHANGED; then
             "\"${HOST_USER_GROUP_NAME}\": assign it to them."
 
         usermod --gid "$HOST_USER_GROUP_ID" "$MAIN_USER_NAME"
-        groupmod --new-name "$MAIN_USER_NAME" "$HOST_USER_GROUP_NAME"
+        groupmod --new-name "$MAIN_USER_GROUP_NAME" "$HOST_USER_GROUP_NAME"
     else
         bl.logging.error \
             "Host user group id ${HOST_USER_GROUP_ID} could not be mapped" \
@@ -208,7 +209,7 @@ for path in "$@"; do
         path=${path%:follow}
     fi
 
-    find_command="find ${path} -xdev"
+    find_command=(find "$path" -xdev)
 
     # region handle group
     if $all; then
@@ -216,17 +217,18 @@ for path in "$@"; do
             "Map file\'s group ownership in \"${path}\" to" \
             "\"${MAIN_USER_GROUP_NAME}\"."
 
-        $find_command \
+        "${find_command[@]}" \
             -exec \
                 chgrp \
                     --no-dereference \
                     --preserve-root \
                     "$MAIN_USER_GROUP_NAME" \
                     {} \
-                    \;
+                    +
 
         if $follow; then
-            $find_command \
+            "${find_command[@]}" \
+                -type l \
                 -exec \
                     chgrp \
                         --dereference \
@@ -235,7 +237,7 @@ for path in "$@"; do
                         --recursive \
                         "$MAIN_USER_GROUP_NAME" \
                         {} \
-                        \;
+                        +
         fi
     elif \
         $USER_GROUP_ID_CHANGED && \
@@ -246,7 +248,7 @@ for path in "$@"; do
             "Map file\'s group ownership in \"${path}\" to" \
             "\"${MAIN_USER_GROUP_NAME}\"."
 
-        $find_command \
+        "${find_command[@]}" \
             -group "$EXISTING_USER_GROUP_ID" \
             -exec \
                 chgrp \
@@ -254,10 +256,11 @@ for path in "$@"; do
                     --preserve-root \
                     "$MAIN_USER_GROUP_NAME" \
                     {} \
-                    \;
+                    +
 
         if $follow; then
-            $find_command \
+            "${find_command[@]}" \
+                -type l \
                 -group "$EXISTING_USER_GROUP_ID" \
                 -exec \
                     chgrp \
@@ -267,7 +270,7 @@ for path in "$@"; do
                         --recursive \
                         "$MAIN_USER_GROUP_NAME" \
                         {} \
-                        \;
+                        +
         fi
     fi
     # endregion
@@ -277,17 +280,18 @@ for path in "$@"; do
             "Map file\'s user ownership in \"${path}\" to" \
             "\"${MAIN_USER_NAME}\"."
 
-        $find_command \
+        "${find_command[@]}" \
             -exec \
                 chown \
                     --no-dereference \
                     --preserve-root \
                     "$MAIN_USER_NAME" \
                     {} \
-                    \;
+                    +
 
         if $follow; then
-            $find_command \
+            "${find_command[@]}" \
+                -type l \
                 -exec \
                     chown \
                         --dereference \
@@ -296,7 +300,7 @@ for path in "$@"; do
                         --recursive \
                         "$MAIN_USER_NAME" \
                         {} \
-                        \;
+                        +
         fi
     elif \
         $USER_ID_CHANGED && \
@@ -307,7 +311,7 @@ for path in "$@"; do
             "Map file\'s user ownership in \"${path}\" to" \
             "\"${MAIN_USER_NAME}\"."
 
-        $find_command \
+        "${find_command[@]}" \
             -user "$EXISTING_USER_ID" \
             -exec \
                 chown \
@@ -315,10 +319,11 @@ for path in "$@"; do
                     --preserve-root \
                     "$MAIN_USER_NAME" \
                     {} \
-                    \;
+                    +
 
         if $follow; then
-            $find_command \
+            "${find_command[@]}" \
+                -type l \
                 -user "$EXISTING_USER_ID" \
                 -exec \
                     chown \
@@ -328,7 +333,7 @@ for path in "$@"; do
                         --recursive \
                         "$MAIN_USER_NAME" \
                         {} \
-                        \;
+                        +
         fi
     fi
     # endregion

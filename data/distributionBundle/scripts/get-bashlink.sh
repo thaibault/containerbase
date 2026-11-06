@@ -27,12 +27,12 @@ cb_download() {
 }
 
 if [ -f "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh" ]; then
-    # shellcheck disable=SC1090
+    # shellcheck source=SCRIPTDIR/../node_modules/bashlink/module.sh
     source "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh"
 else
     declare -g CB_BASHLINK_PATH=/usr/lib/bashlink/
     if [ -f "${CB_BASHLINK_PATH}module.sh" ]; then
-        # shellcheck disable=SC1091
+        # shellcheck source=SCRIPTDIR/../node_modules/bashlink/module.sh
         source "${CB_BASHLINK_PATH}module.sh"
     else
         mkdir --parents "$CB_BASHLINK_PATH"
@@ -45,10 +45,10 @@ else
                     >"${CB_BASHLINK_PATH}module.sh"
         ); then
             echo Needed bashlink library could not be retrieved. 1>&2
-            rm --force  --recursive "$BR_BASHLINK_PATH"
+            rm --force --recursive "$CB_BASHLINK_PATH"
             exit 1
         fi
-        # shellcheck disable=SC1091
+        # shellcheck source=SCRIPTDIR/../node_modules/bashlink/module.sh
         source "${CB_BASHLINK_PATH}module.sh"
     fi
 fi

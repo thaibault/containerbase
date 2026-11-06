@@ -12,6 +12,7 @@
 # 3.0 unported license.
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
+# shellcheck source=SCRIPTDIR/get-bashlink.sh
 source get-bashlink
 
 for package in "$@"; do
