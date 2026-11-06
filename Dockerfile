@@ -354,7 +354,6 @@ ENV         COMMAND='echo "echo You have to set the \"COMMAND\" environment vari
 ENV         INITIALIZING_FILE_PATH=/usr/bin/initialize
 
 ENV         DECRYPT=false
-ENV         DECRYPT_AS_USER=true
 ENV         DECRYPTED_PATHS=/tmp/plain/
 ENV         ENCRYPTED_PATHS="${APPLICATION_PATH}encrypted/"
             # NOTE: You can provide the password via environmane variable
