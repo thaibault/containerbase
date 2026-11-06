@@ -295,7 +295,7 @@ __metadata:
   dependencies:
     bashlink: "npm:^1.0.292"
     shellcheck: "npm:^4.1.0"
-    web-documentation: "npm:^1.0.73"
+    web-documentation: "npm:^1.0.74"
   languageName: unknown
   linkType: soft
 
@@ -1146,12 +1146,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-documentation@npm:^1.0.73":
-  version: 1.0.73
-  resolution: "web-documentation@npm:1.0.73"
+"web-documentation@npm:^1.0.74":
+  version: 1.0.74
+  resolution: "web-documentation@npm:1.0.74"
   bin:
     web-documentation: dist/deploy.js
-  checksum: 10c0/6f6fbbc74235729aaafcb8ea52c6b0de064646e7dbd442c1519c07b9fc8b1aca949f6caf2bd62693cfb2d8d6d4dd3d619f2d865639a9c575ed58cd78124e9a21
+  checksum: 10c0/fbef518963c1931b0a8bb2c049ac9ec25ddeed4bf3f93ebb49bb0fcb7dbe0964999b6a6ca3a366f94fa770df5e7ceb4adf42b705ac0035f550da931cd6c34a20
   languageName: node
   linkType: hard
 
