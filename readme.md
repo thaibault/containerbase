@@ -21,8 +21,8 @@ Project Status
 [![build push image](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/build-image-and-push-periodically-1.yaml?label=build%20push%20image&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/build-image-and-push-periodically-1.yaml)
 
 [![lint](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/lint.yaml?label=lint&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/lint.yaml)
-[![test scripts](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/test-scripts.yaml?label=test%20scripts&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/test-scripts.yaml)
 [![test](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/test.yaml?label=test&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/test.yaml)
+[![test image](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/test-image.yaml?label=test%20image&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/test-image.yaml)
 
 [![deploy web documentation](https://img.shields.io/github/actions/workflow/status/thaibault/containerbase/deploy-web-documentation.yaml?label=deploy%20web%20documentation&style=for-the-badge)](https://github.com/thaibault/containerbase/actions/workflows/deploy-web-documentation.yaml)
 [![web documentation](https://img.shields.io/website-up-down-green-red/https/tsickert.com/containerbase.svg?label=web-documentation&style=for-the-badge)](https://tsickert.com/containerbase)

@@ -1,120 +1,33 @@
-name: Test encrypted build
+name: Test
+run-name: Test
 
 on:
-  # Runs when a new image was build.
-  workflow_run:
-    workflows:
-      - 'Build image and push'
+  # NOTE: Runs on branch or tag creation.
+  create:
     branches:
       - main
+  # Runs when a new pre-release version was prepared.
+  repository_dispatch:
     types:
-      - completed
+      - prepare-pre-release-event
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+    inputs:
+      debug:
+        description: Sets "NODE_ENV" to "debug".
+        default: false
+        type: boolean
 
 jobs:
-  encrypt:
+  main:
     runs-on: ubuntu-latest
-    container: ghcr.io/thaibault/containerbase:latest
-
-    # NOTE: These environment variables are only needed to test the encrypt
-    # script.
-    env:
-      DECRYPTED_PATHS: testSimple/
-      ENCRYPTED_PATHS: testEncryption/
-      PASSWORD_FILE_PATHS: testAdvanced/.encryptionPassword
-
+    container: node:lts
     steps:
-      - uses: actions/checkout@v6
-
-      - run: ./scripts/encrypt.sh
-      - run: ls --all --human-readable -l testEncryption
-
-      - run: rm --force --recursive testEncryption
-  buildAndRunSimple:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Build image
-        uses: docker/build-push-action@v7
+      - uses: thaibault/install-npm-package-dependencies-action@main
         with:
-          context: ./testSimple
-          push: false
-          tags: test-simple:latest
+          debug: ${{ inputs.debug }}
 
-      - uses: addnab/docker-run-action@v3
-        with:
-          image: test-simple:latest
-          run: /usr/bin/initialize
-  buildAndRunEnvironment:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Build image
-        uses: docker/build-push-action@v7
-        with:
-          context: ./testSimple
-          push: false
-          tags: test-environment:latest
-
-      - uses: addnab/docker-run-action@v3
-        with:
-          image: test-environment:latest
-          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/var/run/credentials/password
-          run: /usr/bin/initialize
-  buildAndRunAdvanced:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Build image
-        uses: docker/build-push-action@v7
-        with:
-          context: ./testAdvanced
-          push: false
-          tags: test-advanced:latest
-
-      - name: Decrypt with hidden mounted password file.
-        uses: addnab/docker-run-action@v3
-        with:
-          image: test-advanced:latest
-          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/application/.encryptionPassword
-          run: /usr/bin/initialize
-
-      - name: Decrypt with password provided as command line argument
-        uses: addnab/docker-run-action@v3
-        with:
-          image: test-advanced:latest
-          run: /usr/bin/initialize test
-
-      - name: Decrypt with password provided as environment variable.
-        uses: addnab/docker-run-action@v3
-        with:
-          image: test-advanced:latest
-          options: --env DECRYPTION_PASSWORD=test
-          run: /usr/bin/initialize
-
-      - name: Decrypt with password provided as secret.
-        uses: addnab/docker-run-action@v3
-        with:
-          image: test-advanced:latest
-          options: --mount type=bind,source=${{ github.workspace }}/testAdvanced/.encryptionPassword,target=/run/secrets/encryption_password
-          run: /usr/bin/initialize
+      - name: Run tests
+        env:
+          NODE_ENV: ${{ contains(inputs.debug, 'true') && 'debug' }}
+        run: yarn test
