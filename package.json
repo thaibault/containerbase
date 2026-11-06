@@ -32,13 +32,15 @@
     "service"
   ],
   "scripts": {
-    "lint": "hash shellcheck && shellcheck -x **/*.sh || echo Please install \"shellcheck\". || true",
+    "lint": "shellcheck -x scripts/*.sh test/*.sh testAdvanced/*.sh testEnvironment/*.sh",
     "lint:given": "shellcheck -x",
     "start": "docker compose --file service/docker-compose.yaml up",
+    "test": "bash ./test/crypt.sh",
     "update:documentation": "web-documentation"
   },
   "devDependencies": {
-    "bashlink": "^1.0.288",
+    "bashlink": "^1.0.291",
+    "shellcheck": "^4.1.0",
     "web-documentation": "^1.0.65"
   },
   "engines": {

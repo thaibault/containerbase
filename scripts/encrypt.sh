@@ -13,6 +13,7 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155
+# shellcheck source=SCRIPTDIR/get-bashlink.sh
 source get-bashlink
 
 # region convert environment variables given as string into local arrays
@@ -20,9 +21,12 @@ for name in \
     DECRYPTED_PATHS \
     ENCRYPTED_PATHS \
     ENVIRONMENT_FILE_PATHS \
-    PASSWORD_FILE_PATHS
+    PASSWORD_FILE_PATHS \
+    PASSWORD_SECRET_NAMES
 do
-    if ! [[ "$(declare -p "$name" 2>/dev/null)" =~ 'declare -a' ]]; then
+    if [[ "$(declare -p "$name" 2>/dev/null)" =~ 'declare -a' ]]; then
+        eval "declare -a ${name}_ARRAY=(\"\${${name}[@]}\")"
+    else
         eval "declare -a ${name}_ARRAY=(\$${name})"
     fi
 done
@@ -49,13 +53,6 @@ do
     fi
 done
 # endregion
-run() {
-    if (( HOST_USER_ID == 0 )) || [ "$USER" = "$MAIN_USER_NAME" ]; then
-        "$@"
-    else
-        su --group "$MAIN_USER_GROUP_NAME" "$MAIN_USER_NAME" -c "$*"
-    fi
-}
 # region encrypt security related artefacts needed at runtime
 for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
     if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
@@ -65,34 +62,42 @@ for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
             "${ENCRYPTED_PATHS_ARRAY[index]}" \
                 &>/dev/null
 
-        declare password_file_path=/tmp/intermediatePasswordFile
-
-        if [ -s "/run/secrets/${PASSWORD_SECRET_NAMES[index]}" ]; then
-            password_file_path="/run/secrets/${PASSWORD_SECRET_NAMES[index]}"
+        # region determine password file
+        password_file_path=''
+        temporary_password_file_path=''
+        secret_name="${PASSWORD_SECRET_NAMES_ARRAY[index]}"
+        if \
+            [[ "$secret_name" != '' ]] && \
+            [ -s "/run/secrets/$secret_name" ]
+        then
+            password_file_path="/run/secrets/$secret_name"
         elif [ -s "${PASSWORD_FILE_PATHS_ARRAY[index]}" ]; then
             password_file_path="${PASSWORD_FILE_PATHS_ARRAY[index]}"
-        elif [[ "$DECRYPTION_PASSWORD" != '' ]]; then
-            run echo -n "$DECRYPTION_PASSWORD" >"$password_file_path"
-        elif [[ "$1" != '' ]]; then
-            run echo -n "$1" >"$password_file_path"
+        elif [[ "$DECRYPTION_PASSWORD" != '' ]] || [[ "$1" != '' ]]; then
+            # NOTE: Do not leave the plain password in the file system.
+            temporary_password_file_path="$(mktemp)"
+            password_file_path="$temporary_password_file_path"
+            printf '%s' "${DECRYPTION_PASSWORD:-$1}" \
+                >"$password_file_path"
         fi
 
-        if [ -s "$password_file_path" ]; then
-            if ! "$encrypter" \
-                --password "$(cat "$password_file_path")" \
-                "${DECRYPTED_PATHS_ARRAY[index]}" \
-                "${ENCRYPTED_PATHS_ARRAY[index]}"
-            then
-                bl.logging.error \
-                    "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
-                    "\"${ENCRYPTED_PATHS_ARRAY[index]}\" failed."
-
-                exit 1
-            fi
-        elif ! "$encrypter" \
+        password_arguments=()
+        if [[ "$password_file_path" != '' ]]; then
+            password_arguments=(--password-file "$password_file_path")
+        fi
+        # endregion
+        succeeded=true
+        "$encrypter" \
+            "${password_arguments[@]}" \
             "${DECRYPTED_PATHS_ARRAY[index]}" \
-            "${ENCRYPTED_PATHS_ARRAY[index]}"
-        then
+            "${ENCRYPTED_PATHS_ARRAY[index]}" || \
+                succeeded=false
+
+        if [[ "$temporary_password_file_path" != '' ]]; then
+            rm --force "$temporary_password_file_path"
+        fi
+
+        if ! "$succeeded"; then
             bl.logging.error \
                 "Encrypting \"${DECRYPTED_PATHS_ARRAY[index]}\" to" \
                 "\"${ENCRYPTED_PATHS_ARRAY[index]}\" failed."
