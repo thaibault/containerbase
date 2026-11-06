@@ -1,6 +1,6 @@
 {
   "name": "containerbase",
-  "version": "1.0.256",
+  "version": "1.0.256-1",
   "description": "generic containerized application",
   "keywords": [
     "application",
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thaibault/containerbase"
+    "url": "git+https://github.com/thaibault/containerbase.git"
   },
   "main": "scripts/initialize.sh",
   "files": [
