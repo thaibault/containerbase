@@ -349,7 +349,7 @@ ENV         APPLICATION_PATH=/application/
 ENV         ENVIRONMENT_FILE_PATHS="/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
 
 ENV         COMMAND='echo "echo You have to set the \"COMMAND\" environment variable."'
-            # NOTE: This value has be in synchronisation with the "CMD" given
+            # NOTE: This value has be in synchronization with the "CMD" given
             # value.
 ENV         INITIALIZING_FILE_PATH=/usr/bin/initialize
 
@@ -387,7 +387,7 @@ WORKDIR     $APPLICATION_PATH
 
 USER        root
 ## endregion
-## region retrieve artefacts
+## region retrieve artifacts
 COPY        --link ./scripts/get-bashlink.sh           /usr/bin/get-bashlink
 COPY        --link ./scripts/clean-up.sh               /usr/bin/clean-up
 COPY        --link ./scripts/configure-runtime-user.sh /usr/bin/configure-runtime-user

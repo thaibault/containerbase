@@ -54,7 +54,7 @@ if [[ "$DECRYPT" != false ]]; then
         fi
     done
     # endregion
-    # region decrypt security related artefacts needed at runtime
+    # region decrypt security related artifacts needed at runtime
     for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
         if [ -d "${ENCRYPTED_PATHS_ARRAY[index]}" ]; then
             rm \
