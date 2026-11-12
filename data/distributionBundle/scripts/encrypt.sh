@@ -53,7 +53,7 @@ do
     fi
 done
 # endregion
-# region encrypt security related artefacts needed at runtime
+# region encrypt security related artifacts needed at runtime
 for index in "${!ENCRYPTED_PATHS_ARRAY[@]}"; do
     if [ -d "${DECRYPTED_PATHS_ARRAY[index]}" ]; then
         rm \

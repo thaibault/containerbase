@@ -10,7 +10,14 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck source=SCRIPTDIR/get-bashlink.sh
-source get-bashlink
+CURRENT_PATH="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/"
+# shellcheck source=SCRIPTDIR/get-bashlink.sh
+source get-bashlink &>/dev/null || \
+    source "${CURRENT_PATH}get-bashlink.sh" &>/dev/null || \
+    echo \
+        Could not source \"get-bashlink\" or \
+        "\"${CURRENT_PATH}get-bashlink.sh\"" \
+            1>&2
 
 # crypt -d -p PASSWORD /from /to
 # crypt --decrypt --password PASSWORD /from /to
