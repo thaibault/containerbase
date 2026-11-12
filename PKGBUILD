@@ -23,10 +23,6 @@ md5sums=(SKIP SKIP SKIP)
 copy_to_aur=true
 
 package() {
-    install -D --mode 755 "${srcdir}/base.yaml" \
-        "${pkgdir}/srv/http/proxy/base.yaml"
-    install -D --mode 755 "${srcdir}/Dockerfile" \
-        "${pkgdir}/srv/http/proxy/Dockerfile"
-    install -D --mode 655 "${srcdir}/proxy.service" \
-        "${pkgdir}/etc/systemd/system/proxy.service"
+    install -D --mode 755 "${srcdir}/service/systemd.service" \
+        "${pkgdir}/etc/systemd/system/containerbase.service"
 }
