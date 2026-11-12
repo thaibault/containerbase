@@ -13,8 +13,14 @@
 # See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC2155
+CURRENT_PATH="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/"
 # shellcheck source=SCRIPTDIR/get-bashlink.sh
-source get-bashlink
+source get-bashlink &>/dev/null || \
+    source "${CURRENT_PATH}get-bashlink.sh" &>/dev/null || \
+    echo \
+        Could not source \"get-bashlink\" or \
+        "\"${CURRENT_PATH}get-bashlink.sh\"" \
+            1>&2
 
 # region convert environment variables given as string into local arrays
 for name in \
