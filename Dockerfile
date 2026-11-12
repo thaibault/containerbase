@@ -433,8 +433,20 @@ USER        $INSTALLER_USER_NAME
 RUN \
             pushd /tmp && \
             if [[ "$(uname --machine)" == 'x86_64' ]]; then \
+                # NOTE: Aura's locked "openssl-sys" crate only supports \
+                # openssl up to version 3 so we build against the "openssl-3" \
+                # compatibility package. Only its build script checks the \
+                # version, the resulting binary does not link against it. \
+                sudo /usr/bin/pacman \
+                    --needed \
+                    --noconfirm \
+                    --sync \
+                    openssl-3 && \
                 git clone https://aur.archlinux.org/aura.git && \
                 pushd aura && \
+                OPENSSL_INCLUDE_DIR=/usr/include/openssl-3 \
+                OPENSSL_LIB_DIR=/usr/lib/openssl-3 \
+                PKG_CONFIG_PATH=/usr/lib/openssl-3/pkgconfig \
                 /usr/bin/makepkg \
                     --install \
                     --needed \
