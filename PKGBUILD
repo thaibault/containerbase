@@ -18,11 +18,11 @@ arch=(any)
 url=https://tsickert.com/containerbase
 license=(CC-BY-4.0)
 depends=(bash docker)
-source=(base.yaml Dockerfile proxy.service)
+source=(service/systemd.service)
 md5sums=(SKIP SKIP SKIP)
 copy_to_aur=true
 
 package() {
-    install -D --mode 755 "${srcdir}/service/systemd.service" \
+    install -D --mode 644 "${srcdir}/service/systemd.service" \
         "${pkgdir}/etc/systemd/system/containerbase.service"
 }

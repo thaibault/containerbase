@@ -342,7 +342,7 @@ LABEL       org.opencontainers.image.authors='Torben Sickert <info@tsickert.com>
 LABEL       org.opencontainers.image.url=https://github.com/thaibault/containerbase/pkgs/container/containerbase
 LABEL       org.opencontainers.image.documentation=https://github.com/thaibault/containerbase/blob/main/readme.md
 LABEL       org.opencontainers.image.source=https://github.com/thaibault/containerbase
-LABEL       org.opencontainers.image.licenses=CC-4.0
+LABEL       org.opencontainers.image.licenses=CC-BY-4.0
 LABEL       org.opencontainers.image.version=0.0.1
 
 ENV         APPLICATION_PATH=/application/
