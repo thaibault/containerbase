@@ -68,7 +68,7 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v7
         with:
-          context: ./testSimple
+          context: ./testEnvironment
           push: false
           tags: test-environment:latest
 
