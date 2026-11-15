@@ -19,7 +19,7 @@ url=https://tsickert.com/containerbase
 license=(CC-BY-4.0)
 depends=(bash docker)
 source=(service/systemd.service)
-md5sums=(SKIP)
+sha256sums=(SKIP)
 copy_to_aur=true
 
 package() {
