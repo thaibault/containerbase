@@ -10,7 +10,7 @@
 # 4.0 international license.
 # See https://creativecommons.org/licenses/by/4.0/deed.de
 # endregion
-pkgname=container-base
+pkgname=containerbase
 pkgver=1.0.0
 pkgrel=1
 pkgdesc='docker base configuration'
