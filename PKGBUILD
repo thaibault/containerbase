@@ -18,7 +18,7 @@ arch=(any)
 url=https://tsickert.com/containerbase
 license=(CC-BY-4.0)
 depends=(bash docker)
-source=(systemd.service)
+source=(service/systemd.service)
 md5sums=(SKIP)
 copy_to_aur=true
 

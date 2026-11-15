@@ -29,8 +29,7 @@
   "files": [
     "Dockerfile",
     "scripts",
-    "service",
-    "systemd.service"
+    "service"
   ],
   "scripts": {
     "lint": "shellcheck -x scripts/*.sh test/*.sh testAdvanced/*.sh testEnvironment/*.sh",
