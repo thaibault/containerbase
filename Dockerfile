@@ -326,7 +326,7 @@ RUN \
                 base-devel \
                 git && \
             clean-up && \
-            mkdir --parents /etc/containerBase
+            mkdir --parents /etc/containerbase
 ## endregion
 # endregion
 # region configuration
@@ -346,7 +346,7 @@ LABEL       org.opencontainers.image.licenses=CC-BY-4.0
 LABEL       org.opencontainers.image.version=0.0.1
 
 ENV         APPLICATION_PATH=/application/
-ENV         ENVIRONMENT_FILE_PATHS="/etc/containerBase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
+ENV         ENVIRONMENT_FILE_PATHS="/etc/containerbase/environment.sh ${APPLICATION_PATH}serviceHandler/environment.sh ${APPLICATION_PATH}environment.sh"
 
 ENV         COMMAND='echo "echo You have to set the \"COMMAND\" environment variable."'
             # NOTE: This value has be in synchronization with the "CMD" given

@@ -182,9 +182,9 @@ The entry point "/usr/bin/initialize" runs these steps:
 
 1. Hands over to an "initialize.sh" next to one of the environment files if
    present, so your application can replace the whole sequence.<!--deDE:Übergibt an ein "initialize.sh" neben einer der Umgebungsdateien, falls vorhanden, sodass Ihre Anwendung den gesamten Ablauf ersetzen kann.--><!--frFR:Passe la main à un "initialize.sh" situé à côté de l'un des fichiers d'environnement s'il existe, afin que votre application puisse remplacer toute la séquence.-->
-2. Loads the environment files "/etc/containerBase/environment.sh",
+2. Loads the environment files "/etc/containerbase/environment.sh",
    "/application/serviceHandler/environment.sh" and
-   "/application/environment.sh" if they exist.<!--deDE:Lädt die Umgebungsdateien "/etc/containerBase/environment.sh", "/application/serviceHandler/environment.sh" und "/application/environment.sh", sofern vorhanden.--><!--frFR:Charge les fichiers d'environnement "/etc/containerBase/environment.sh", "/application/serviceHandler/environment.sh" et "/application/environment.sh" s'ils existent.-->
+   "/application/environment.sh" if they exist.<!--deDE:Lädt die Umgebungsdateien "/etc/containerbase/environment.sh", "/application/serviceHandler/environment.sh" und "/application/environment.sh", sofern vorhanden.--><!--frFR:Charge les fichiers d'environnement "/etc/containerbase/environment.sh", "/application/serviceHandler/environment.sh" et "/application/environment.sh" s'ils existent.-->
 3. Decrypts encrypted files if "DECRYPT" is "true".<!--deDE:Entschlüsselt verschlüsselte Dateien, wenn "DECRYPT" auf "true" steht.--><!--frFR:Déchiffre les fichiers chiffrés si "DECRYPT" vaut "true".-->
 4. Maps the application user to the host ids.<!--deDE:Ordnet den Anwendungsbenutzer den Host-IDs zu.--><!--frFR:Fait correspondre l'utilisateur de l'application aux identifiants de l'hôte.-->
 5. Runs the command as application user, or as "root" if mapped to it.<!--deDE:Führt den Befehl als Anwendungsbenutzer aus oder als "root", falls diesem zugeordnet.--><!--frFR:Exécute la commande en tant qu'utilisateur de l'application, ou en tant que "root" si c'est à lui qu'il correspond.-->
