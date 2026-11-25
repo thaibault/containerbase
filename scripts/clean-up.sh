@@ -15,23 +15,31 @@
 # shellcheck source=SCRIPTDIR/get-bashlink.sh
 source get-bashlink
 
+# NOTE: Root does not need (and in the root build stage does not have) sudo,
+# and aura refuses to run as root, so "pacman-wrapper" is only for others.
+pacman_command=pacman-wrapper
+if (( UID == 0 )); then
+    pacman_command=pacman
+fi
+
 for package in "$@"; do
-    if pacman-wrapper --query --info "$package" &>/dev/null; then
+    if "$pacman_command" --query --info "$package" &>/dev/null; then
         bl.logging.info "Remove package ${package}."
 
-        pacman-wrapper --remove --noconfirm --recursive --nosave "$package"
+        "$pacman_command" \
+            --remove --noconfirm --recursive --nosave "$package"
     fi
 done
 
-if pacman-wrapper --query --deps --unrequired --quiet; then
+if "$pacman_command" --query --deps --unrequired --quiet; then
     orphans="$(
-        pacman-wrapper --query --deps --unrequired --quiet | \
+        "$pacman_command" --query --deps --unrequired --quiet | \
             tr '\n' ' ' | \
             sed --regexp-extended 's/.*->.+\. (.+)/\1/'
     )"
     bl.logging.info "Remove unneeded packages: ${orphans}."
     # shellcheck disable=SC2086
-    pacman-wrapper --remove --noconfirm --recursive --nosave $orphans
+    "$pacman_command" --remove --noconfirm --recursive --nosave $orphans
 fi
 
 # NOTE: We should avoid leaving unnecessary data in that layer.
