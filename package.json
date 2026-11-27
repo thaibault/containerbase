@@ -41,7 +41,7 @@
   "devDependencies": {
     "bashlink": "2.0.1",
     "shellcheck": "^4.1.0",
-    "web-documentation": "^1.0.77"
+    "web-documentation": "^2.0.0"
   },
   "engines": {
     "node": ">=26",
